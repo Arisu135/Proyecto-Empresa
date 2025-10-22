@@ -7,36 +7,27 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration
 {
     /**
-     * Run the migrations.
+     * Elimina la columna 'categoria' que es redundante y causa el error en PostgreSQL
      */
-    // ...
-
-public function up(): void
-{
-    Schema::table('productos', function (Blueprint $table) {
-        // 1. ELIMINAR ESTA LÍNEA, ya que 'categoria_id' ya existe en tu DB
-        // $table->foreignId('categoria_id')->nullable()->constrained()->after('id'); 
-        
-        // 2. SOLO DEJAR la columna 'imagen_nombre'
-        $table->string('imagen_nombre')->nullable();
-    });
-}
-
-// ...
+    public function up(): void
+    {
+        Schema::table('productos', function (Blueprint $table) {
+            // VERIFICACIÓN CLAVE: Si la columna 'categoria' existe, la eliminamos.
+            if (Schema::hasColumn('productos', 'categoria')) {
+                $table->dropColumn('categoria');
+            }
+        });
+    }
 
     /**
-     * Reverse the migrations.
+     * Revierte la migración (vuelve a añadir la columna 'categoria' si es necesario)
      */
     public function down(): void
-{
-    Schema::table('productos', function (Blueprint $table) {
-        // Eliminar clave foránea y columna 'categoria_id'
-        // ELIMINAR ESTAS LÍNEAS TAMBIÉN
-        // $table->dropForeign(['categoria_id']);
-        // $table->dropColumn('categoria_id');
-        
-        // Mantener solo la eliminación de la columna que estamos añadiendo
-        $table->dropColumn('imagen_nombre');
-    });
-}
+    {
+        Schema::table('productos', function (Blueprint $table) {
+            // Recreamos la columna 'categoria' como string y opcional (nullable)
+            // Esto es solo para reversibilidad si se usa 'migrate:rollback'
+            $table->string('categoria')->nullable(); 
+        });
+    }
 };
