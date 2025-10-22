@@ -16,8 +16,8 @@
                         'brand-dark': '#4d2925',       // Marrón Oscuro (del logo)
                         'brand-accent': '#ff9800',     // Naranja (Flor del logo)
                         'brand-green': '#1b5e20',      // Verde Oscuro (Hojas del logo)
-                        'brand-soft-green': '#81c784',// Verde Suave (Fondo de productos)
-                        'brand-red': '#E5002B',       // Rojo de alerta (para "Empezar de nuevo")
+                        'brand-soft-green': '#81c784', // Verde Suave (Fondo de productos)
+                        'brand-red': '#E5002B',        // Rojo de alerta (para "Empezar de nuevo")
                     },
                     fontFamily: {
                         // Usamos Inter como base.
@@ -90,48 +90,25 @@
             </div>
         @endif
 
-        @php
-            // Lista de CATEGORÍAS ajustada para coincidir con la vista de la Tablet.
-            // *RECUERDA*: Las imágenes con estos nombres (ej. 'espresso-bar.jpg')
-            // deben estar en la carpeta: public/img/categorias/
-            $categoriasMenu = [
-                // Fila 1 (según Tablet - bebidas calientes y básicas)
-                (object)['id' => 1, 'nombre' => 'BEBIDAS CALIENTES', 'imagen_nombre' => 'bebidas_calientes.jpg'],
-                (object)['id' => 2, 'nombre' => 'INFUSIONES', 'imagen_nombre' => 'infusiones.jpg'],
-                (object)['id' => 3, 'nombre' => 'JUGOS', 'imagen_nombre' => 'jugos.jpg'],
-                (object)['id' => 4, 'nombre' => 'LIMONADAS', 'imagen_nombre' => 'limonadas.jpg'],
-
-                // Fila 2 (según Tablet - bebidas frías y especiales)
-                (object)['id' => 5, 'nombre' => 'BEBIDAS HELADAS', 'imagen_nombre' => 'bebidas_heladas.jpg'],
-                (object)['id' => 6, 'nombre' => 'FRAPPE', 'imagen_nombre' => 'frappe.jpg'],
-                (object)['id' => 7, 'nombre' => 'COCTELES', 'imagen_nombre' => 'cocteles.jpg'],
-                (object)['id' => 8, 'nombre' => 'POSTRES Y PASTELES', 'imagen_nombre' => 'postres_pasteles.jpg'],
-                
-                // Fila 3 (según Tablet - comida y otros)
-                (object)['id' => 9, 'nombre' => 'WAFFLES', 'imagen_nombre' => 'waffles.jpg'],
-                (object)['id' => 10, 'nombre' => 'SALADOS', 'imagen_nombre' => 'salados.jpg'],
-                (object)['id' => 11, 'nombre' => 'REBEL BUBBLES', 'imagen_nombre' => 'rebel_bubbles.jpg'],
-                (object)['id' => 12, 'nombre' => 'CAFÉ', 'imagen_nombre' => 'cafe.jpg'],
-            ];
-            // Para mantener el foreach existente, reasignamos la variable
-            $productos = $categoriasMenu;
-        @endphp
-
+        {{-- INICIO DEL GRID DE CATEGORÍAS --}}
         <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
 
-            @foreach ($productos as $producto)
-            {{-- Se usa Str::slug() para garantizar una URL limpia a la ruta de categoría --}}
-            <a href="{{ route('productos.categoria', \Illuminate\Support\Str::slug($producto->nombre)) }}" class="product-card bg-white p-4 rounded-2xl shadow-md flex flex-col justify-between cursor-pointer">
-                {{-- CORRECCIÓN: bg-white para eliminar el fondo gris, flex items-center justify-center para centrar --}}
+            {{-- 🛑 CORRECCIÓN CLAVE: Iteramos sobre $categorias que vienen de la DB, no un array estático. --}}
+            {{-- También se corrige la sintaxis del route() para asegurar que el slug se pase correctamente. --}}
+            @foreach ($categorias as $categoria)
+            
+            <a href="{{ route('productos.categoria', ['categoria_slug' => $categoria->slug]) }}" 
+               class="product-card bg-white p-4 rounded-2xl shadow-md flex flex-col justify-between cursor-pointer">
+                
                 <div class="h-36 bg-white rounded-lg mb-4 flex items-center justify-center overflow-hidden">
-                    {{-- class="object-contain" asegura que la imagen se vea completa y centrada --}}
-                    <img src="{{ asset('img/categorias/' . $producto->imagen_nombre) }}" 
-                         alt="{{ $producto->nombre }}" 
-                         class="h-full w-full object-contain">
+                    <img src="{{ asset('img/categorias/' . $categoria->imagen_nombre) }}" 
+                         alt="{{ $categoria->nombre }}" 
+                         class="h-full w-full object-contain"
+                         onerror="this.onerror=null; this.src='https://placehold.co/150x150/f8f8f8/4d2925?text=IMG'">
                 </div>
                 
                 <div class="flex flex-col justify-between flex-grow">
-                    <h3 class="text-xl font-bold text-brand-dark mb-1 leading-tight text-center">{{ $producto->nombre }}</h3>
+                    <h3 class="text-xl font-bold text-brand-dark mb-1 leading-tight text-center">{{ $categoria->nombre }}</h3>
                 </div>
             </a>
             @endforeach
