@@ -27,7 +27,7 @@ return new class extends Migration
         Schema::table('productos', function (Blueprint $table) {
             // Recreamos la columna 'categoria' como string y opcional (nullable)
             // Esto es solo para reversibilidad si se usa 'migrate:rollback'
-            $table->string('categoria')->nullable(); 
+            $table->string('imagen_nombre')->nullable(); 
         });
     }
 };
