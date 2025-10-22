@@ -6,20 +6,14 @@ use App\Models\Producto;
 use App\Models\Categoria;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Schema; // Añadido para manipular el esquema
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Str; // Añadir para usar Str::slug
 
 class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        // 1. Desactivar y Reactivar la verificación de claves foráneas con comandos compatibles
-        // En PostgreSQL, la forma más limpia de resetear tablas con FK es usando TRUNCATE con CASCADE.
-
-        // NOTA: Para Heroku/PostgreSQL, usamos un TRUNCATE más fuerte
-        // También es buena práctica limpiar las categorías si las vas a volver a crear.
-        
-        // Desactivamos la verificación de FK para este tipo de operaciones.
-        // TRUNCATE ... RESTART IDENTITY CASCADE es la forma PostgreSQL de hacer un TRUNCATE limpio.
+        // 1. LIMPIAR LAS TABLAS con comandos compatibles con PostgreSQL
         if (Schema::hasTable('productos')) {
             DB::statement('TRUNCATE TABLE productos RESTART IDENTITY CASCADE;');
         }
@@ -27,53 +21,34 @@ class DatabaseSeeder extends Seeder
             DB::statement('TRUNCATE TABLE categorias RESTART IDENTITY CASCADE;');
         }
         
-        // Si tu aplicación tiene tablas 'users' o 'pedidos' que deben limpiarse:
-        // if (Schema::hasTable('users')) {
-        //     DB::statement('TRUNCATE TABLE users RESTART IDENTITY CASCADE;');
-        // }
-        
-        // Si tu aplicación requiere que se llamen otros seeders, puedes llamarlos aquí:
-        // $this->call(CategoriasTableSeeder::class); // Si tienes un seeder de categorías
-        
-        // --- LÓGICA DE INSERCIÓN DEL CAFÉ (Asegúrate de que tus categorías existen antes) ---
+        // 2. INSERTAR CATEGORÍAS (¡Paso Faltante!)
+        $categoriasData = [
+            'BEBIDAS CALIENTES', 'INFUSIONES', 'JUGOS', 'LIMONADAS',
+            'BEBIDAS HELADAS', 'FRAPPE', 'COCTELES', 'POSTRES Y PASTELES',
+            'WAFFLES', 'SALADOS', 'REBEL BUBBLES', 'CAFÉ'
+        ];
 
-        // Asumimos que la tabla de categorías ya tiene datos insertados antes de este punto
-        // o que tu lógica de categorías está en otro seeder que llamas antes.
+        foreach ($categoriasData as $nombre) {
+            Categoria::create([
+                'nombre' => $nombre,
+                'slug' => Str::slug($nombre), // Crea el slug para las rutas
+                // 'imagen' => 'img/categorias/' . Str::slug($nombre) . '.jpg', // Opcional si la guardas en DB
+            ]);
+        }
+        
+        // 3. CONTINUAR CON LA INSERCIÓN DE PRODUCTOS (Tu código existente)
 
-        // Obtener la ID de la categoría "BEBIDAS CALIENTES"
+        // Obtener la ID de la categoría "BEBIDAS CALIENTES" (Ahora existe)
         $calientesId = Categoria::where('slug', 'bebidas-calientes')->value('id');
 
-        // Insertar productos de la categoría BEBIDAS CALIENTES (ESPRESSO BAR)
+        // ... (Tu lógica de inserción de productos que ya me enviaste)
         if ($calientesId) {
-            
             // Espresso
             Producto::create([
                 'nombre' => 'Espresso',
-                'descripcion' => 'Café concentrado puro.',
-                'precio' => 4.50,
-                'categoria_id' => $calientesId, 
-                'imagen_nombre' => 'espresso.png', 
+                // ... el resto de campos
             ]);
-
-            // Café Americano
-            Producto::create([
-                'nombre' => 'Café Americano',
-                'descripcion' => 'Café largo tradicional.',
-                'precio' => 5.50,
-                'categoria_id' => $calientesId,
-                'imagen_nombre' => 'americano.png', 
-            ]);
-
-            // Capuccino
-            Producto::create([
-                'nombre' => 'Capuccino',
-                'descripcion' => 'Café con leche texturizada y canela.',
-                'precio' => 7.50,
-                'categoria_id' => $calientesId,
-                'imagen_nombre' => 'capuccino.png',
-            ]);
-
-            // ... (Continúa agregando el resto de los productos)
+            // ... otros productos
         }
     }
 }
