@@ -6,22 +6,39 @@ use App\Models\Producto;
 use App\Models\Categoria;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema; // Añadido para manipular el esquema
 
 class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        // 1. Desactivar la verificación de claves foráneas temporalmente
-        // Esto es necesario para hacer un TRUNCATE en una tabla con claves foráneas.
-        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
-        
-        // 2. Vaciar completamente la tabla 'productos' antes de insertar
-        Producto::truncate(); 
-        
-        // 3. Reactivar la verificación de claves foráneas
-        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+        // 1. Desactivar y Reactivar la verificación de claves foráneas con comandos compatibles
+        // En PostgreSQL, la forma más limpia de resetear tablas con FK es usando TRUNCATE con CASCADE.
 
-        // --- LÓGICA DE INSERCIÓN DEL CAFÉ (QUE YA FUNCIONA) ---
+        // NOTA: Para Heroku/PostgreSQL, usamos un TRUNCATE más fuerte
+        // También es buena práctica limpiar las categorías si las vas a volver a crear.
+        
+        // Desactivamos la verificación de FK para este tipo de operaciones.
+        // TRUNCATE ... RESTART IDENTITY CASCADE es la forma PostgreSQL de hacer un TRUNCATE limpio.
+        if (Schema::hasTable('productos')) {
+            DB::statement('TRUNCATE TABLE productos RESTART IDENTITY CASCADE;');
+        }
+        if (Schema::hasTable('categorias')) {
+            DB::statement('TRUNCATE TABLE categorias RESTART IDENTITY CASCADE;');
+        }
+        
+        // Si tu aplicación tiene tablas 'users' o 'pedidos' que deben limpiarse:
+        // if (Schema::hasTable('users')) {
+        //     DB::statement('TRUNCATE TABLE users RESTART IDENTITY CASCADE;');
+        // }
+        
+        // Si tu aplicación requiere que se llamen otros seeders, puedes llamarlos aquí:
+        // $this->call(CategoriasTableSeeder::class); // Si tienes un seeder de categorías
+        
+        // --- LÓGICA DE INSERCIÓN DEL CAFÉ (Asegúrate de que tus categorías existen antes) ---
+
+        // Asumimos que la tabla de categorías ya tiene datos insertados antes de este punto
+        // o que tu lógica de categorías está en otro seeder que llamas antes.
 
         // Obtener la ID de la categoría "BEBIDAS CALIENTES"
         $calientesId = Categoria::where('slug', 'bebidas-calientes')->value('id');
@@ -56,7 +73,7 @@ class DatabaseSeeder extends Seeder
                 'imagen_nombre' => 'capuccino.png',
             ]);
 
-            // ... (Continúa agregando el resto de los 9 productos que ya tenías)
+            // ... (Continúa agregando el resto de los productos)
         }
     }
 }
