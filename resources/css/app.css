@@ -1,0 +1,105 @@
+/* --- ESTILOS MOVIDOS DE app.blade.php (Para la vista Admin/General) --- */
+.admin-body { font-family: sans-serif; margin: 20px; background-color: #f5f5f5; }
+.container { max-width: 800px; margin: 0 auto; background-color: white; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+
+/* Color Verde Natural para la cabecera */
+header { 
+    background: #4CAF50; 
+    color: white; 
+    padding: 15px; 
+    text-align: center; 
+    margin-bottom: 30px; 
+    border-radius: 8px 8px 0 0; 
+}
+
+nav a { 
+    color: white; 
+    margin: 0 15px; 
+    text-decoration: none; 
+    font-weight: bold; 
+    padding: 5px 10px; 
+    border-radius: 4px;
+    transition: background-color 0.3s;
+}
+nav a:hover {
+    background-color: #388E3C; 
+}
+
+/* Contenedor de contenido */
+.content { padding: 0; } 
+
+/* Estilo para los productos */
+.producto { 
+    border: 1px solid #c8e6c9; 
+    background-color: #e8f5e9; 
+    padding: 15px; 
+    margin-bottom: 15px; 
+    border-radius: 5px; 
+}
+
+/* Estilo para acciones (botones y enlaces) */
+.acciones a { 
+    background-color: #FFC107; /* Amarillo */
+    color: black; 
+    padding: 5px 10px; 
+    text-decoration: none; 
+    border-radius: 4px; 
+    display: inline-block;
+    margin-right: 5px;
+    transition: background-color 0.3s;
+}
+.acciones a:hover {
+    background-color: #FFB300; 
+}
+
+.acciones button { 
+    background-color: #D32F2F; /* Rojo */
+    color: white; 
+    border: none; 
+    padding: 5px 10px; 
+    border-radius: 4px; 
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+.acciones button:hover {
+    background-color: #C62828; 
+}
+
+/* Estilo para el panel de gestión */
+.btn-gestion {
+    background-color: #007bff;
+    color: white;
+    padding: 8px 15px;
+    text-decoration: none;
+    border-radius: 4px;
+    display: inline-block;
+    margin-bottom: 20px;
+}
+.btn-gestion:hover {
+    background-color: #0056b3;
+}
+
+/* --- ESTILOS ESPECÍFICOS DEL KIÓSCO (Fondo, etc.) --- */
+
+.kiosko-body {
+    /* Ruta relativa a resources/css/app.css para el fondo de pantalla */
+    background-image: url('../images/naturalezacafe.png'); 
+    background-size: cover;
+    background-position: center center;
+    background-attachment: fixed; /* Opcional: fija la imagen */
+    min-height: 100vh;
+    margin: 0; /* Quitar margen que heredaba de body */
+}
+
+/* Ocultar el header si estamos en el kiosco */
+.kiosko-body header {
+    display: none;
+}
+
+/* Si tu contenedor principal del kiosco usa la clase 'container' en index.blade.php: */
+.kiosko-body .container {
+    max-width: none;
+    background-color: transparent;
+    padding: 0;
+    box-shadow: none;
+}
