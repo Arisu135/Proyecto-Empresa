@@ -10,7 +10,7 @@ class Producto extends Model
 {
     use HasFactory;
     
-    // CAMPOS NECESARIOS para Asignación Masiva (Producto::create)
+
     protected $fillable = [
         'nombre', 
         'descripcion', 
