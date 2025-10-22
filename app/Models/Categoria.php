@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Models;
+namespace App\Models; // Asume que tus modelos están en el namespace App\Models
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Producto; // Importamos la clase Producto
 
 class Categoria extends Model
 {
@@ -11,35 +12,30 @@ class Categoria extends Model
 
     /**
      * Define la tabla asociada al modelo.
-     * Por convención, Laravel asume 'categorias', pero es bueno explicitar.
-     *
      * @var string
      */
     protected $table = 'categorias'; 
 
     /**
-     * Los atributos que son asignables masivamente (Mass Assignable).
-     * Asegúrate de incluir 'nombre' y 'slug' si los usas al crear categorías.
-     *
+     * Los atributos que son asignables masivamente.
      * @var array<int, string>
      */
     protected $fillable = [
         'nombre',
         'slug',
         'descripcion',
-        // Agrega cualquier otro campo que tu tabla 'categorias' tenga
+        // Si tu tabla categorias tiene una columna para la imagen de la categoría, inclúyela aquí:
+        // 'imagen_nombre', 
     ];
 
     /**
      * Define la relación "uno a muchos" con el modelo Producto.
-     * Una Categoría tiene muchos Productos.
-     *
+     * Esto busca productos que tengan el 'categoria_id' igual al ID de esta categoría.
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function productos()
     {
-        // Asume que la tabla 'productos' tiene una columna 'categoria_id'
-        // que es la clave foránea que apunta a esta categoría.
-        return $this->hasMany(Producto::class);
+        // Se usa la clase 'Producto::class' importada, y se especifica la llave foránea.
+        return $this->hasMany(Producto::class, 'categoria_id');
     }
 }
