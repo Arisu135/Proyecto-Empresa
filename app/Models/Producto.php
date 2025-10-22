@@ -10,7 +10,10 @@ class Producto extends Model
 {
     use HasFactory;
     
-
+    // Indica la clave foránea si no es la convención predeterminada de Laravel (categoria_id)
+    // Es bueno dejarlo explícito para evitar fallos.
+    protected $table = 'productos'; 
+    
     protected $fillable = [
         'nombre', 
         'descripcion', 
@@ -27,9 +30,11 @@ class Producto extends Model
 
     /**
      * Define la relación: Un producto pertenece a una Categoría.
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function categoria()
     {
-        return $this->belongsTo(Categoria::class);
+        // Se especifica la clave foránea 'categoria_id' para total seguridad.
+        return $this->belongsTo(Categoria::class, 'categoria_id');
     }
 }

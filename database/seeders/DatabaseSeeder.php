@@ -30,7 +30,7 @@ class DatabaseSeeder extends Seeder
             'BEBIDAS HELADAS' => 'bebidas_heladas.jpg', 
             'FRAPPE' => 'frappe.jpg', 
             'COCTELES' => 'cocteles.jpg', 
-            'POSTRES Y PASTELES' => 'postres.jpg',
+            'POSTRES Y PASTELES' => 'postres_pasteles.jpg',
             'WAFFLES' => 'waffles.jpg', 
             'SALADOS' => 'salados.jpg', 
             'REBEL BUBBLES' => 'rebel_bubbles.jpg', 
