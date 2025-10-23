@@ -16,14 +16,12 @@ class ProductoSeeder extends Seeder
      */
     public function run(): void
     {
-        // Limpieza de la tabla de productos (compatible con Heroku/PostgreSQL)
-        // Desactivamos temporalmente la verificación de claves foráneas
-        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
-        Producto::truncate(); 
-        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+        // 1. Limpieza de la tabla de productos
+        // Este comando es el más compatible con PostgreSQL/Heroku y maneja la reinicialización
+        // de IDs y la cascada de claves foráneas.
+        DB::statement('TRUNCATE TABLE productos RESTART IDENTITY CASCADE;');
 
         // --- Mapeo de Categorías por Slug ---
-        // Esto asegura que obtendremos el ID correcto sin importar el orden.
         $categorias = Categoria::pluck('id', 'slug');
 
         // ===================================================================
@@ -42,23 +40,16 @@ class ProductoSeeder extends Seeder
             Producto::create(['nombre' => 'Chocolate Caliente', 'descripcion' => 'Chocolate espeso tradicional.', 'precio' => 7.50, 'categoria' => 'Bebidas', 'disponible' => 1, 'categoria_id' => $calientesId, 'imagen_nombre' => 'chocolate_caliente.png']);
             Producto::create(['nombre' => 'Leche', 'descripcion' => 'Vaso de leche caliente o fría.', 'precio' => 5.00, 'categoria' => 'Bebidas', 'disponible' => 1, 'categoria_id' => $calientesId, 'imagen_nombre' => 'leche.png']);
         }
-
-        // ===================================================================
-        // 2. INFUSIONES (Slug: infusiones)
-        // ===================================================================
+        
+        // ... (El resto de tu lógica de seeders)
         $infusionesId = $categorias['infusiones'] ?? null;
-
         if ($infusionesId) {
             Producto::create(['nombre' => 'Frutos Rojos', 'descripcion' => 'Infusión natural de frutos rojos, caliente.', 'precio' => 8.00, 'categoria' => 'Bebidas', 'disponible' => 1, 'categoria_id' => $infusionesId, 'imagen_nombre' => 'frutos_rojos.png']);
             Producto::create(['nombre' => 'Verde Selva', 'descripcion' => 'Té verde aromático con hierbas de la selva.', 'precio' => 8.00, 'categoria' => 'Bebidas', 'disponible' => 1, 'categoria_id' => $infusionesId, 'imagen_nombre' => 'verde_selva.png']);
             Producto::create(['nombre' => 'Mate', 'descripcion' => 'Infusión tradicional de hierba mate.', 'precio' => 4.00, 'categoria' => 'Bebidas', 'disponible' => 1, 'categoria_id' => $infusionesId, 'imagen_nombre' => 'mate.png']);
         }
-
-        // ===================================================================
-        // 3. JUGOS (Slug: jugos)
-        // ===================================================================
-        $jugosId = $categorias['jugos'] ?? null;
         
+        $jugosId = $categorias['jugos'] ?? null;
         if ($jugosId) {
             Producto::create(['nombre' => 'Zumo de Naranja', 'descripcion' => 'Jugo fresco de naranja natural.', 'precio' => 7.00, 'categoria' => 'Bebidas', 'disponible' => 1, 'categoria_id' => $jugosId, 'imagen_nombre' => 'zumo_naranja.png']);
             Producto::create(['nombre' => 'Jugo de Fresa', 'descripcion' => 'Jugo de fresa con agua o leche.', 'precio' => 7.00, 'categoria' => 'Bebidas', 'disponible' => 1, 'categoria_id' => $jugosId, 'imagen_nombre' => 'jugo_fresa.png']);
@@ -66,11 +57,7 @@ class ProductoSeeder extends Seeder
             Producto::create(['nombre' => 'Smoothie de Arandanos', 'descripcion' => 'Batido de arándanos y base de yogurt.', 'precio' => 9.50, 'categoria' => 'Bebidas', 'disponible' => 1, 'categoria_id' => $jugosId, 'imagen_nombre' => 'smoothie_arandanos.png']);
         }
         
-        // ===================================================================
-        // 4. LIMONADAS (Slug: limonadas)
-        // ===================================================================
         $limonadasId = $categorias['limonadas'] ?? null;
-
         if ($limonadasId) {
             Producto::create(['nombre' => 'Limonada Tradicional', 'descripcion' => 'Limonada clásica y refrescante.', 'precio' => 6.50, 'categoria' => 'Bebidas', 'disponible' => 1, 'categoria_id' => $limonadasId, 'imagen_nombre' => 'limonada_tradicional.png']);
             Producto::create(['nombre' => 'Limonada de Mango', 'descripcion' => 'Limonada refrescante con pulpa de mango.', 'precio' => 7.00, 'categoria' => 'Bebidas', 'disponible' => 1, 'categoria_id' => $limonadasId, 'imagen_nombre' => 'limonada_mango.png']);
@@ -78,11 +65,7 @@ class ProductoSeeder extends Seeder
             Producto::create(['nombre' => 'Limonada de Menta', 'descripcion' => 'Limonada con menta fresca.', 'precio' => 7.00, 'categoria' => 'Bebidas', 'disponible' => 1, 'categoria_id' => $limonadasId, 'imagen_nombre' => 'limonada_menta.png']);
         }
         
-        // ===================================================================
-        // 5. BEBIDAS HELADAS (Slug: bebidas-heladas)
-        // ===================================================================
         $bebidasHeladasId = $categorias['bebidas-heladas'] ?? null;
-
         if ($bebidasHeladasId) {
             Producto::create(['nombre' => 'Iced Americano', 'descripcion' => 'Café americano frío.', 'precio' => 8.50, 'categoria' => 'Bebidas', 'disponible' => 1, 'categoria_id' => $bebidasHeladasId, 'imagen_nombre' => 'iced_americano.png']);
             Producto::create(['nombre' => 'Orange Americano', 'descripcion' => 'Café americano con toque de naranja.', 'precio' => 9.50, 'categoria' => 'Bebidas', 'disponible' => 1, 'categoria_id' => $bebidasHeladasId, 'imagen_nombre' => 'orange_americano.png']);
@@ -95,11 +78,7 @@ class ProductoSeeder extends Seeder
             Producto::create(['nombre' => 'Hawai Soda', 'descripcion' => 'Soda sabor Hawái.', 'precio' => 8.00, 'categoria' => 'Bebidas', 'disponible' => 1, 'categoria_id' => $bebidasHeladasId, 'imagen_nombre' => 'hawai_soda.png']);
         }
         
-        // ===================================================================
-        // 6. FRAPPE (Slug: frappe)
-        // ===================================================================
         $frappeId = $categorias['frappe'] ?? null;
-
         if ($frappeId) {
             Producto::create(['nombre' => 'Frappe de Oreo', 'descripcion' => 'Frappé con galletas Oreo trituradas.', 'precio' => 9.90, 'categoria' => 'Bebidas', 'disponible' => 1, 'categoria_id' => $frappeId, 'imagen_nombre' => 'frappe_oreo.png']);
             Producto::create(['nombre' => 'Frappe de Fresa', 'descripcion' => 'Frappé refrescante de fresa.', 'precio' => 9.90, 'categoria' => 'Bebidas', 'disponible' => 1, 'categoria_id' => $frappeId, 'imagen_nombre' => 'frappe_fresa.png']);
@@ -108,21 +87,13 @@ class ProductoSeeder extends Seeder
             Producto::create(['nombre' => 'Frappe Chocomenta', 'descripcion' => 'Frappé de chocolate con un toque de menta.', 'precio' => 9.90, 'categoria' => 'Bebidas', 'disponible' => 1, 'categoria_id' => $frappeId, 'imagen_nombre' => 'frappe_chocomenta.png']);
         }
         
-        // ===================================================================
-        // 7. COCTELES (Slug: cocteles)
-        // ===================================================================
         $coctelesId = $categorias['cocteles'] ?? null;
-
         if ($coctelesId) {
             Producto::create(['nombre' => 'Naranja con Miel', 'descripcion' => 'Coctel de naranja con un toque de miel.', 'precio' => 11.50, 'categoria' => 'Bebidas', 'disponible' => 1, 'categoria_id' => $coctelesId, 'imagen_nombre' => 'naranja_miel.png']);
             Producto::create(['nombre' => 'Pisco Sour', 'descripcion' => 'Coctel tradicional peruano.', 'precio' => 12.00, 'categoria' => 'Bebidas', 'disponible' => 1, 'categoria_id' => $coctelesId, 'imagen_nombre' => 'pisco_sour.png']);
         }
         
-        // ===================================================================
-        // 8. POSTRES Y PASTELES (Slug: postres-y-pasteles)
-        // ===================================================================
         $postresId = $categorias['postres-y-pasteles'] ?? null;
-
         if ($postresId) {
             Producto::create(['nombre' => 'Rollo de Canela', 'descripcion' => 'Rollo de canela horneado.', 'precio' => 7.50, 'categoria' => 'Postres', 'disponible' => 1, 'categoria_id' => $postresId, 'imagen_nombre' => 'rollo_canela.png']);
             Producto::create(['nombre' => 'Torta de Zanahoria', 'descripcion' => 'Porción de torta de zanahoria con glaseado.', 'precio' => 8.00, 'categoria' => 'Postres', 'disponible' => 1, 'categoria_id' => $postresId, 'imagen_nombre' => 'torta_zanahoria.png']);
@@ -137,22 +108,14 @@ class ProductoSeeder extends Seeder
             Producto::create(['nombre' => 'Fresas y Helados', 'descripcion' => 'Bowl de fresas frescas con bolas de helado.', 'precio' => 12.00, 'categoria' => 'Postres', 'disponible' => 1, 'categoria_id' => $postresId, 'imagen_nombre' => 'fresas_helados.png']);
         }
         
-        // ===================================================================
-        // 9. WAFFLES (Slug: waffles)
-        // ===================================================================
         $wafflesId = $categorias['waffles'] ?? null;
-
         if ($wafflesId) {
             Producto::create(['nombre' => 'Waffles con Fruta', 'descripcion' => 'Waffles frescos con frutas de temporada.', 'precio' => 11.50, 'categoria' => 'Postres', 'disponible' => 1, 'categoria_id' => $wafflesId, 'imagen_nombre' => 'waffles_fruta.png']);
             Producto::create(['nombre' => 'Waffles con Helado', 'descripcion' => 'Waffles servidos con una bola de helado.', 'precio' => 11.50, 'categoria' => 'Postres', 'disponible' => 1, 'categoria_id' => $wafflesId, 'imagen_nombre' => 'waffles_helado.png']);
             Producto::create(['nombre' => 'Waffles con fruta y helado', 'descripcion' => 'Waffles con fruta de temporada y helado.', 'precio' => 13.00, 'categoria' => 'Postres', 'disponible' => 1, 'categoria_id' => $wafflesId, 'imagen_nombre' => 'waffles_fruta_helado.png']);
         }
         
-        // ===================================================================
-        // 10. SALADOS (Slug: salados)
-        // ===================================================================
         $saladosId = $categorias['salados'] ?? null;
-
         if ($saladosId) {
             Producto::create(['nombre' => 'Empanada', 'descripcion' => 'Empanada de carne o pollo.', 'precio' => 6.00, 'categoria' => 'Individual', 'disponible' => 1, 'categoria_id' => $saladosId, 'imagen_nombre' => 'empanada.png']);
             Producto::create(['nombre' => 'Pastel de Acelga', 'descripcion' => 'Porción de pastel salado de acelga.', 'precio' => 6.50, 'categoria' => 'Individual', 'disponible' => 1, 'categoria_id' => $saladosId, 'imagen_nombre' => 'pastel_acelga.png']);
@@ -160,11 +123,7 @@ class ProductoSeeder extends Seeder
             Producto::create(['nombre' => 'Sandwich de Jamon y Queso', 'descripcion' => 'Sándwich clásico de jamón y queso.', 'precio' => 8.50, 'categoria' => 'Individual', 'disponible' => 1, 'categoria_id' => $saladosId, 'imagen_nombre' => 'sandwich_jamon_queso.png']);
         }
         
-        // ===================================================================
-        // 11. REBEL BUBBLES (Slug: rebel-bubbles)
-        // ===================================================================
         $rebelBubblesId = $categorias['rebel-bubbles'] ?? null;
-
         if ($rebelBubblesId) {
             Producto::create(['nombre' => 'Green Tea', 'descripcion' => 'Té verde con bubbles.', 'precio' => 10.50, 'categoria' => 'Bebidas', 'disponible' => 1, 'categoria_id' => $rebelBubblesId, 'imagen_nombre' => 'green_tea_bubbles.png']);
             Producto::create(['nombre' => 'Mango Tea', 'descripcion' => 'Té sabor mango con bubbles.', 'precio' => 10.50, 'categoria' => 'Bebidas', 'disponible' => 1, 'categoria_id' => $rebelBubblesId, 'imagen_nombre' => 'mango_tea_bubbles.png']);
@@ -175,7 +134,5 @@ class ProductoSeeder extends Seeder
             Producto::create(['nombre' => 'Choco Bubbles', 'descripcion' => 'Bebida de chocolate con bubbles.', 'precio' => 13.50, 'categoria' => 'Bebidas', 'disponible' => 1, 'categoria_id' => $rebelBubblesId, 'imagen_nombre' => 'choco_bubbles.png']);
             Producto::create(['nombre' => 'Pink Bubbles', 'descripcion' => 'Bebida rosa con sabor a frutos y bubbles.', 'precio' => 13.50, 'categoria' => 'Bebidas', 'disponible' => 1, 'categoria_id' => $rebelBubblesId, 'imagen_nombre' => 'pink_bubbles.png']);
         }
-
-        // Ya que ProductoSeeder.php no tiene la categoría 'CAFÉ', ignoro ese slug aquí.
     }
 }
