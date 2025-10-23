@@ -9,7 +9,8 @@ use App\Models\PedidoDetalle;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log; // Mantenemos el uso de Log
+use Illuminate\Support\Facades\Log;
+use Illuminate\Database\Eloquent\Collection; // <-- IMPORTACIÓN NECESARIA
 use Illuminate\Support\Str; 
 
 class CatalogoController extends Controller
@@ -41,46 +42,27 @@ class CatalogoController extends Controller
     
     /**
      * Muestra la vista de productos de una categoría específica.
-     * ✅ CORREGIDO: Añadido try/catch para capturar errores de BD/relación y registrarlos en Heroku.
+     * ✅ CORREGIDO: Simplificado para mayor robustez en Heroku/Blade.
      */
     public function mostrarProductosPorCategoria($categoria_slug)
     {
-        try {
-            // 1. Buscar la categoría por el slug. firstOrFail lanza 404 si no existe.
-            $categoria = Categoria::where('slug', $categoria_slug)->firstOrFail();
+        // 1. Buscar la categoría por el slug. firstOrFail lanza 404 si no existe.
+        $categoria = Categoria::where('slug', $categoria_slug)->firstOrFail();
 
-            // 2. Obtener los productos relacionados con esa categoría
-            $productos = $categoria->productos()->orderBy('nombre')->get(); 
-            
-            if ($productos->isEmpty()) {
-                // Redirige si la categoría existe, pero está vacía.
-                return redirect()->route('productos.menu')->with('warning', 'No hay productos disponibles en esta categoría.');
-            }
-
-            // 3. Pasamos el objeto $categoria y $productos
-            return view('productos.categoria', compact('categoria', 'productos'));
+        // 2. Obtener los productos relacionados con esa categoría
+        // Se carga la relación y si está vacía, la vista Blade la maneja con @empty.
+        $productos = $categoria->productos()->orderBy('nombre')->get(); 
         
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            // Maneja específicamente la categoría no encontrada (error 404)
-            return redirect()->route('catalogo.index')->with('error', 'Categoría no encontrada.');
-
-        } catch (\Throwable $e) {
-            // Captura cualquier otro error (incluyendo fallos de la base de datos)
-            Log::error("ERROR FATAL AL CARGAR CATEGORÍA '{$categoria_slug}': " . $e->getMessage() . " en línea: " . $e->getLine());
-            
-            // Redirige para evitar un error fatal, pero el error queda registrado en Heroku.
-            return redirect()->route('productos.menu')->with('error', 'Hubo un error al cargar los productos. Inténtalo de nuevo.');
-        }
+        // 3. Pasamos el objeto $categoria y $productos
+        return view('productos.categoria', compact('categoria', 'productos'));
     }
     
     /**
      * Muestra la vista de detalle y personalización de un producto.
-     * ✅ REVISADO: La precarga de categoría es correcta.
      */
     public function mostrarDetalle(Producto $producto)
     {
-        // --- LÍNEA CORREGIDA: Forzamos la carga de la relación 'categoria' ---
-        // Esto resuelve el error 'categoria es NULL' en la vista Blade.
+        // Forzamos la carga de la relación 'categoria' para evitar errores Blade
         $producto = Producto::with('categoria')->findOrFail($producto->id); 
         
         return view('catalogo.detalle_pedido', compact('producto')); 
@@ -278,8 +260,12 @@ class CatalogoController extends Controller
     {
         // Carga los pedidos ordenados por estado (Pendiente primero) y luego por fecha
         $pedidos = Pedido::with('detalles')
-                         ->where('estado', '!=', 'Entregado')
-                         ->orderByRaw("FIELD(estado, 'Pendiente', 'Preparando', 'Listo')")
+                         // Reemplazamos orderByRaw por una lógica más compatible con PostgreSQL de Heroku
+                         // Buscamos estados diferentes a 'Entregado'
+                         ->where('estado', '!=', 'Entregado') 
+                         // Ordenamos primero por estado (manualmente) y luego por fecha.
+                         // Usamos un CASE que es compatible con PostgreSQL.
+                         ->orderByRaw("CASE estado WHEN 'Pendiente' THEN 1 WHEN 'Preparando' THEN 2 WHEN 'Listo' THEN 3 ELSE 4 END")
                          ->orderBy('created_at', 'asc')
                          ->get();
                          
