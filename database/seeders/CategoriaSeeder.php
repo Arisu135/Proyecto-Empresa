@@ -22,7 +22,7 @@ class CategoriaSeeder extends Seeder
             'BEBIDAS HELADAS', 
             'FRAPPE', 
             'COCTELES', 
-            'POSTRES Y PASTELES',
+            'POSTRES PASTELES',
             'WAFFLES', 
             'SALADOS', 
             'REBEL BUBBLES', 
