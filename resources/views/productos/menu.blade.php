@@ -13,11 +13,11 @@
             theme: {
                 extend: {
                     colors: {
-                        'brand-dark': '#4d2925',       // Marrón Oscuro (del logo)
-                        'brand-accent': '#ff9800',     // Naranja (Flor del logo)
-                        'brand-green': '#1b5e20',      // Verde Oscuro (Hojas del logo)
+                        'brand-dark': '#4d2925',       // Marrón Oscuro (del logo)
+                        'brand-accent': '#ff9800',     // Naranja (Flor del logo)
+                        'brand-green': '#1b5e20',      // Verde Oscuro (Hojas del logo)
                         'brand-soft-green': '#81c784', // Verde Suave (Fondo de productos)
-                        'brand-red': '#E5002B',        // Rojo de alerta (para "Empezar de nuevo")
+                        'brand-red': '#E5002B',        // Rojo de alerta (para "Empezar de nuevo")
                     },
                     fontFamily: {
                         // Usamos Inter como base.
@@ -68,10 +68,15 @@
 
             <div class="absolute top-6 right-4 flex space-x-3">
                 
+                {{-- ❌ CÓDIGO ELIMINADO: Se ha quitado el enlace "Volver al Inicio" para evitar la duplicidad con el botón "Empezar de nuevo".
+
                 <a href="{{ route('catalogo.index') }}" class="px-4 py-2 text-brand-dark rounded-full hover:bg-gray-100 transition duration-150 text-sm font-semibold">
                     Volver al Inicio
                 </a>
+                
+                --}}
 
+                {{-- ✅ CÓDIGO MANTENIDO: Solo queda el botón de reinicio (limpia el carrito y vuelve al inicio). --}}
                 <a href="{{ route('carrito.limpiar') }}" class="btn-restart px-4 py-2 bg-brand-red text-white font-bold rounded-full shadow-lg hover:shadow-xl transition duration-150 text-sm">
                     Empezar de nuevo
                 </a>
@@ -102,9 +107,9 @@
                 
                 <div class="h-36 bg-white rounded-lg mb-4 flex items-center justify-center overflow-hidden">
                     <img src="{{ asset('img/categorias/' . $categoria->imagen_nombre) }}" 
-                         alt="{{ $categoria->nombre }}" 
-                         class="h-full w-full object-contain"
-                         onerror="this.onerror=null; this.src='https://placehold.co/150x150/f8f8f8/4d2925?text=IMG'">
+                        alt="{{ $categoria->nombre }}" 
+                        class="h-full w-full object-contain"
+                        onerror="this.onerror=null; this.src='https://placehold.co/150x150/f8f8f8/4d2925?text=IMG'">
                 </div>
                 
                 <div class="flex flex-col justify-between flex-grow">
