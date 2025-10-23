@@ -113,7 +113,7 @@ class ProductoSeeder extends Seeder
         // ===================================================================
         // 8. POSTRES Y PASTELES (Slug: postres-y-pasteles)
         // ===================================================================
-        $postresId = $categorias['postres-y-pasteles'] ?? null;
+        $postresId = $categorias['postres-pasteles'] ?? null;
         if ($postresId) {
             Producto::create(['nombre' => 'Rollo de Canela', 'descripcion' => 'Rollo de canela horneado.', 'precio' => 7.50, 'disponible' => 1, 'categoria_id' => $postresId, 'imagen_nombre' => 'rollo_canela.png']);
             Producto::create(['nombre' => 'Torta de Zanahoria', 'descripcion' => 'Porción de torta de zanahoria con glaseado.', 'precio' => 8.00, 'disponible' => 1, 'categoria_id' => $postresId, 'imagen_nombre' => 'torta_zanahoria.png']);
