@@ -1,36 +1,17 @@
-@php
-    // Define las opciones de bebidas calientes
-    $conditional_options['Temperatura'] = [
-        [
-            'id' => 'temp-caliente',
-            'nombre' => 'Caliente',
-            'precio_extra' => 0.00,
-            'default' => true,
-        ],
-        [
-            'id' => 'temp-tibio',
-            'nombre' => 'Tibio',
-            'precio_extra' => 0.00,
-        ],
-    ];
+<div class="opciones-producto mt-4 border-t pt-4">
+    <h4 class="text-lg font-semibold mb-3 text-gray-800">Adicionales</h4>
     
-    // Opcional: Agregar Endulzante solo para bebidas calientes
-    $conditional_options['Endulzante'] = [
-        [
-            'id' => 'endulzante-azucar',
-            'nombre' => 'Azúcar',
-            'precio_extra' => 0.00,
-            'default' => true,
-        ],
-        [
-            'id' => 'endulzante-stevia',
-            'nombre' => 'Stevia',
-            'precio_extra' => 0.00,
-        ],
-        [
-            'id' => 'endulzante-ninguno',
-            'nombre' => 'Sin endulzante',
-            'precio_extra' => 0.00,
-        ],
-    ];
-@endphp
+    <div class="flex items-center space-x-6">
+        <label for="azucar" class="flex items-center cursor-pointer">
+            <input type="checkbox" name="adicionales[]" id="azucar" value="Con Azúcar" 
+                   class="form-checkbox text-green-600 h-5 w-5 rounded border-gray-300 focus:ring-green-500">
+            <span class="ml-2 text-gray-700 font-medium">Con Azúcar</span>
+        </label>
+        
+        <label for="leche" class="flex items-center cursor-pointer">
+            <input type="checkbox" name="adicionales[]" id="leche" value="Con Leche Extra" 
+                   class="form-checkbox text-green-600 h-5 w-5 rounded border-gray-300 focus:ring-green-500">
+            <span class="ml-2 text-gray-700 font-medium">Con Leche Extra</span>
+        </label>
+    </div>
+</div>

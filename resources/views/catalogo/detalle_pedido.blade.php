@@ -12,9 +12,9 @@
             theme: {
                 extend: {
                     colors: {
-                        'brand-dark': '#4d2925',       // Marrón Oscuro
-                        'brand-accent': '#ff9800',     // Naranja (Énfasis)
-                        'brand-green': '#1b5e20',      // Verde Oscuro
+                        'brand-dark': '#4d2925',      // Marrón Oscuro
+                        'brand-accent': '#ff9800',    // Naranja (Énfasis)
+                        'brand-green': '#1b5e20',     // Verde Oscuro
                         'brand-soft-green': '#e8f5e9', // Verde Suave (Fondo para imágenes)
                         'btn-green': '#4CAF50',        // Verde para el botón de Confirmar
                         'btn-green-hover': '#45a049',  // Verde más oscuro para hover
@@ -27,6 +27,7 @@
         }
     </script>
     <style>
+        /* (Tus estilos CSS se mantienen igual) */
         body {
             font-family: 'Inter', sans-serif;
             background-color: #f7f7f7;
@@ -73,50 +74,16 @@
 <body>
 
 @php
-    // --- LÓGICA DE OPCIONES CONDICIONALES ---
+    // --- LÓGICA DE OPCIONES ---
+    // 1. Obtener el SLUG de la categoría (es más seguro que el nombre).
+    // Asegúrate de que $producto fue cargado con la relación: Producto::with('categoria')
+    $categoria_slug = $producto->categoria->slug ?? '';
     
-    // 1. Obtener el nombre de la categoría de forma SEGURA.
-    // VERIFICACIÓN CLAVE: Asegura que la categoría es un objeto antes de acceder a su propiedad.
-    if (is_object($producto->categoria) && property_exists($producto->categoria, 'nombre')) {
-        $categoria_nombre = $producto->categoria->nombre;
-    } else {
-        // En caso de que el Route Model Binding haya traído el nombre de la columna 'categoria' (cadena)
-        $categoria_nombre = (string)($producto->categoria ?? ''); 
-    }
-    
-    // Usamos mb_strtolower para manejar correctamente las tildes y mayúsculas.
-    $categoria_nombre_lower = mb_strtolower($categoria_nombre, 'UTF-8'); 
-    
-    // Inicializar el array de opciones condicionales (ej: Temperatura)
-    $conditional_options = [];
-
-    // 2. Usar un switch simple para incluir el archivo de opciones correcto
-    switch ($categoria_nombre_lower) {
-        
-        // Categorías Calientes (Usa hot.blade.php)
-        case 'bebidas calientes': 
-        case 'café': 
-            @include('partials.opciones.hot'); 
-            break;
-            
-        // Categorías Frías (Usa cold.blade.php)
-        case 'limonada': 
-        case 'limonadas': 
-        case 'jugos': 
-        case 'bebidas heladas': 
-            @include('partials.opciones.cold'); 
-            break;
-            
-        // Para otras categorías ($conditional_options se queda vacío)
-    }
-    
-    // 3. FUSIONAR opciones de DB con opciones condicionales (Temperatura, etc.).
+    // Asume que las opciones de la DB son un array o vacío por defecto
     $opciones_a_mostrar = is_array($producto->opciones) ? $producto->opciones : [];
-
-    if (!empty($conditional_options)) {
-        // Fusiona las opciones base del producto con las opciones condicionales (Temperatura/Endulzante)
-        $opciones_a_mostrar = array_merge($opciones_a_mostrar, $conditional_options);
-    }
+    
+    // Nota: Eliminamos la lógica de fusión con $conditional_options, ya que
+    // ahora usaremos @include directamente en el HTML.
 @endphp
 
     <main class="max-w-xl mx-auto mt-8 bg-white rounded-xl shadow-2xl overflow-hidden"> 
@@ -146,8 +113,25 @@
                 <p class="text-brand-accent text-lg font-bold mb-4">S/. <span id="basePriceDisplay">{{ number_format($producto->precio, 2) }}</span></p>
                 <p class="text-gray-600 border-b pb-4 mb-6">{{ $producto->descripcion }}</p>
 
+
+                {{-- AQUI VA LA INCLUSIÓN CONDICIONAL DE OPCIONES --}}
+                {{-- Esto debe ir DENTRO del div principal y ANTES del control de Cantidad --}}
+                
+                @if ($categoria_slug === 'limonadas' || $categoria_slug === 'jugos' || $categoria_slug === 'bebidas-heladas' || $categoria_slug === 'frappe' || $categoria_slug === 'rebel-bubbles')
+                    {{-- Opciones Frías: Con/Sin Hielo --}}
+                    @include('partials.opciones.cold')
+                @endif
+
+                @if ($categoria_slug === 'bebidas-calientes' || $categoria_slug === 'cafe' || $categoria_slug === 'infusiones')
+                    {{-- Opciones Calientes: Azúcar/Leche --}}
+                    @include('partials.opciones.hot')
+                @endif
+                
+                {{-- FIN DE LA INCLUSIÓN CONDICIONAL --}}
+                
+                
                 {{-- Control de Cantidad --}}
-                <h2 class="text-xl font-bold text-brand-dark text-center mb-2">Cantidad</h2>
+                <h2 class="text-xl font-bold text-brand-dark text-center mb-2 mt-6">Cantidad</h2>
                 <div class="qty-control">
                     <button type="button" id="decreaseBtn">—</button>
                     <span id="quantityDisplay">1</span>
@@ -155,18 +139,16 @@
                 </div>
                 <hr class="mb-6">
 
-                {{-- Opciones de Personalización --}}
+                {{-- Opciones de Personalización (Si las tuvieras en la DB) --}}
                 @foreach ($opciones_a_mostrar as $grupo_nombre => $opciones_grupo)
                     @php
-                        // Solo 'Extras' y 'Complementos' son checkbox (selección múltiple)
+                        // ... (Tu lógica de renderizado de opciones de DB se mantiene igual)
                         $is_single_select = $grupo_nombre != 'Extras' && $grupo_nombre != 'Complementos'; 
                         $input_type = $is_single_select ? 'radio' : 'checkbox';
-                        // Generar el nombre del input: "tamaño", "endulzante", "temperatura", etc.
                         $input_name = strtolower(str_replace(' ', '_', $grupo_nombre));
                         if (!$is_single_select) {
                             $input_name .= '[]'; // Para checkbox
                         }
-                        // Asume que todos los grupos de selección simple (radio) son obligatorios
                         $is_required = $is_single_select; 
                     @endphp
                     
@@ -187,7 +169,7 @@
                                     $is_default = isset($opcion->default) && $opcion->default;
                                 @endphp
                                 <label 
-                                    for="{{ $opcion->id }}" 
+                                    for="{{ $input_name . '-' . Str::slug($opcion->nombre) }}" {{-- ID único para cada opción --}}
                                     class="option-card flex justify-between items-center p-3 border-2 border-gray-200 rounded-lg bg-gray-50 hover:bg-white
                                         {{ $is_single_select && $is_default ? 'option-selected' : '' }}"
                                     data-price="{{ $opcion->precio_extra }}"
@@ -197,7 +179,7 @@
                                         <input 
                                             type="{{ $input_type }}" 
                                             name="{{ $input_name }}" 
-                                            id="{{ $opcion->id }}" 
+                                            id="{{ $input_name . '-' . Str::slug($opcion->nombre) }}" 
                                             value="{{ $opcion->nombre }}" 
                                             class="form-{{ $input_type }} h-5 w-5 text-brand-accent focus:ring-brand-accent border-gray-300 rounded-full"
                                             @if($is_default) checked @endif
@@ -218,7 +200,7 @@
             {{-- Botón Final (Fijo) --}}
             <div class="p-6 pt-0">
                 <button type="submit" id="confirmSelectionBtn" class="w-full py-3 bg-btn-green text-white font-bold rounded-xl shadow-lg hover:bg-btn-green-hover transition duration-150 text-lg">
-                    Confirmar selección
+                    Confirmar selección (S/. {{ number_format($producto->precio, 2) }})
                 </button>
             </div>
 
@@ -231,6 +213,8 @@
     </main>
     
     <script>
+        // (Tu script JS se mantiene igual)
+
         const basePrice = {{ $producto->precio }};
         let currentQuantity = 1;
 
@@ -240,7 +224,9 @@
         const confirmSelectionBtn = document.getElementById('confirmSelectionBtn');
         const hiddenOptions = document.getElementById('hiddenOptions');
         const hiddenFinalPrice = document.getElementById('hiddenFinalPrice');
-        const allOptions = document.querySelectorAll('.option-card');
+        // Seleccionamos ahora todos los labels de opciones, incluyendo los dinámicos
+        const allOptionsContainer = document.querySelector('main'); 
+
 
         // Función para calcular el precio total basado en las opciones y la cantidad
         function calculateTotal() {
@@ -250,7 +236,8 @@
             // 1. Recorrer todas las opciones seleccionadas (radio y checkbox)
             document.querySelectorAll('input:checked').forEach(input => {
                 const label = input.closest('label');
-                const price = parseFloat(label.dataset.price || 0);
+                // Se agregó un manejo de IDs únicos en el HTML, pero el precio se obtiene del data-price
+                const price = parseFloat(label.dataset.price || 0); 
                 subtotalOpciones += price;
                 
                 // 2. Construir el array de opciones seleccionadas para el JSON
@@ -262,21 +249,22 @@
 
                 // 3. Manejo visual de la selección (solo para radio)
                 if (input.type === 'radio') {
+                    // Desmarcar visualmente todos los radios del mismo grupo
                     document.querySelectorAll(`input[name="${input.name}"]`).forEach(radio => {
                         radio.closest('label').classList.remove('option-selected');
                     });
                     label.classList.add('option-selected');
                 } else if (input.type === 'checkbox') {
-                     // Para checkboxes, la clase debe toggles al hacer clic en el input
-                     if (input.checked) {
+                    // Marcar/Desmarcar visualmente el checkbox
+                    if (input.checked) {
                         label.classList.add('option-selected');
-                     } else {
+                    } else {
                         label.classList.remove('option-selected');
-                     }
+                    }
                 }
             });
 
-            // Para los checkboxes que se desmarcan, quitar la clase. (Este paso es redundante si se usa el event listener del label, pero asegura la consistencia).
+            // Para los checkboxes que se desmarcan, quitar la clase.
             document.querySelectorAll('input[type="checkbox"]:not(:checked)').forEach(input => {
                 input.closest('label').classList.remove('option-selected');
             });
@@ -312,29 +300,11 @@
         });
 
         // Manejador de Eventos para Opciones (Radio/Checkbox)
-        document.querySelectorAll('input[type="radio"], input[type="checkbox"]').forEach(input => {
-            input.addEventListener('change', calculateTotal);
-        });
-
-        // Manejador de Eventos para el CLIC en el Label (Mejora UX)
-        allOptions.forEach(label => {
-            label.addEventListener('click', (event) => {
-                const input = label.querySelector('input');
-                
-                // Si el clic no fue directamente en el input, simula el cambio
-                if (event.target !== input) {
-                    if (input.type === 'checkbox') {
-                        // Toggle el estado del checkbox
-                        input.checked = !input.checked;
-                        // Forzar el recálculo (ya lo hace el change listener, pero es seguro llamarlo)
-                    } else if (input.type === 'radio') {
-                        // Marcar el radio
-                        input.checked = true;
-                    }
-                    // Disparar el cálculo después de la simulación del clic
-                    calculateTotal();
-                }
-            });
+        // Se usa un delegado de eventos para capturar los inputs dinámicos (de cold/hot.blade.php)
+        allOptionsContainer.addEventListener('change', (event) => {
+            if (event.target.matches('input[type="radio"], input[type="checkbox"]')) {
+                 calculateTotal();
+            }
         });
 
 
