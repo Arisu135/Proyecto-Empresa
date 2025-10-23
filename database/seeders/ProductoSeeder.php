@@ -16,17 +16,18 @@ class ProductoSeeder extends Seeder
      */
     public function run(): void
     {
-        // 1. Desactivar la verificación de claves foráneas temporalmente y limpiar la tabla
+        // Limpieza de la tabla de productos (compatible con Heroku/PostgreSQL)
+        // Desactivamos temporalmente la verificación de claves foráneas
         DB::statement('SET FOREIGN_KEY_CHECKS=0;');
         Producto::truncate(); 
-        
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+
         // --- Mapeo de Categorías por Slug ---
         // Esto asegura que obtendremos el ID correcto sin importar el orden.
         $categorias = Categoria::pluck('id', 'slug');
 
         // ===================================================================
         // 1. BEBIDAS CALIENTES (Slug: bebidas-calientes)
-        // Se cambió de .jpg a .png
         // ===================================================================
         $calientesId = $categorias['bebidas-calientes'] ?? null;
 
@@ -44,7 +45,6 @@ class ProductoSeeder extends Seeder
 
         // ===================================================================
         // 2. INFUSIONES (Slug: infusiones)
-        // Se cambió de .jpg a .png
         // ===================================================================
         $infusionesId = $categorias['infusiones'] ?? null;
 
@@ -56,7 +56,6 @@ class ProductoSeeder extends Seeder
 
         // ===================================================================
         // 3. JUGOS (Slug: jugos)
-        // Se cambió de .jpg a .png
         // ===================================================================
         $jugosId = $categorias['jugos'] ?? null;
         
@@ -69,7 +68,6 @@ class ProductoSeeder extends Seeder
         
         // ===================================================================
         // 4. LIMONADAS (Slug: limonadas)
-        // Se cambió de .jpg a .png
         // ===================================================================
         $limonadasId = $categorias['limonadas'] ?? null;
 
@@ -82,7 +80,6 @@ class ProductoSeeder extends Seeder
         
         // ===================================================================
         // 5. BEBIDAS HELADAS (Slug: bebidas-heladas)
-        // Se cambió de .jpg a .png
         // ===================================================================
         $bebidasHeladasId = $categorias['bebidas-heladas'] ?? null;
 
@@ -100,7 +97,6 @@ class ProductoSeeder extends Seeder
         
         // ===================================================================
         // 6. FRAPPE (Slug: frappe)
-        // Se cambió de .jpg a .png
         // ===================================================================
         $frappeId = $categorias['frappe'] ?? null;
 
@@ -114,7 +110,6 @@ class ProductoSeeder extends Seeder
         
         // ===================================================================
         // 7. COCTELES (Slug: cocteles)
-        // Se cambió de .jpg a .png
         // ===================================================================
         $coctelesId = $categorias['cocteles'] ?? null;
 
@@ -125,7 +120,6 @@ class ProductoSeeder extends Seeder
         
         // ===================================================================
         // 8. POSTRES Y PASTELES (Slug: postres-y-pasteles)
-        // Se cambió de .jpg a .png
         // ===================================================================
         $postresId = $categorias['postres-y-pasteles'] ?? null;
 
@@ -145,7 +139,6 @@ class ProductoSeeder extends Seeder
         
         // ===================================================================
         // 9. WAFFLES (Slug: waffles)
-        // Se cambió de .jpg a .png
         // ===================================================================
         $wafflesId = $categorias['waffles'] ?? null;
 
@@ -157,7 +150,6 @@ class ProductoSeeder extends Seeder
         
         // ===================================================================
         // 10. SALADOS (Slug: salados)
-        // Se cambió de .jpg a .png
         // ===================================================================
         $saladosId = $categorias['salados'] ?? null;
 
@@ -170,7 +162,6 @@ class ProductoSeeder extends Seeder
         
         // ===================================================================
         // 11. REBEL BUBBLES (Slug: rebel-bubbles)
-        // Se cambió de .jpg a .png
         // ===================================================================
         $rebelBubblesId = $categorias['rebel-bubbles'] ?? null;
 
@@ -184,8 +175,7 @@ class ProductoSeeder extends Seeder
             Producto::create(['nombre' => 'Choco Bubbles', 'descripcion' => 'Bebida de chocolate con bubbles.', 'precio' => 13.50, 'categoria' => 'Bebidas', 'disponible' => 1, 'categoria_id' => $rebelBubblesId, 'imagen_nombre' => 'choco_bubbles.png']);
             Producto::create(['nombre' => 'Pink Bubbles', 'descripcion' => 'Bebida rosa con sabor a frutos y bubbles.', 'precio' => 13.50, 'categoria' => 'Bebidas', 'disponible' => 1, 'categoria_id' => $rebelBubblesId, 'imagen_nombre' => 'pink_bubbles.png']);
         }
-        
-        // 4. Reactivar la verificación de claves foráneas
-        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+
+        // Ya que ProductoSeeder.php no tiene la categoría 'CAFÉ', ignoro ese slug aquí.
     }
 }
