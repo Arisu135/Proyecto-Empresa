@@ -26,7 +26,7 @@ class CategoriaSeeder extends Seeder
             'WAFFLES', 
             'SALADOS', 
             'REBEL BUBBLES', 
-            'CAFÉ',
+            
         ];
 
         foreach ($categorias as $nombre) {
