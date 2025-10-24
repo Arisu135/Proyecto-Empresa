@@ -5,13 +5,13 @@ namespace App\Http\Controllers;
 use App\Models\Producto;
 use App\Models\Categoria; 
 use App\Models\Pedido;
-use App\Models\PedidoDetalle; // Asumiendo que esta es tu tabla de ítems de pedido
+use App\Models\PedidoDetalle; 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str; 
-use Illuminate\Database\Eloquent\Collection; // Mantenemos esta importación
+use Illuminate\Database\Eloquent\Collection; 
 
 class CatalogoController extends Controller
 {
@@ -33,10 +33,8 @@ class CatalogoController extends Controller
             Session::put('tipo_pedido', $request->get('tipo_pedido'));
         }
         
-        // Carga las categorías reales de la base de datos
         $categorias = Categoria::orderBy('nombre', 'asc')->get(); 
 
-        // Retorna la vista pasando la colección de categorías
         return view('productos.menu', compact('categorias'));
     }
     
@@ -98,7 +96,7 @@ class CatalogoController extends Controller
                 'nombre' => $nombreProductoCarrito,
                 'precio' => $precioUnitarioFinal, 
                 'cantidad' => $cantidadAñadir,
-                'opciones' => $opcionesArray, // Esto es el array que necesitamos guardar en DB
+                'opciones' => $opcionesArray, 
             ];
         }
 
@@ -106,7 +104,6 @@ class CatalogoController extends Controller
 
         Session::put('carrito', $carrito);
         
-        // Redirige a la vista de resumen
         return redirect('/pedido/resumen')->with('success', $cantidadAñadir . 'x ' . $producto->nombre . ' agregado al pedido.');
     }
 
@@ -142,11 +139,9 @@ class CatalogoController extends Controller
     {
         $carrito = Session::get('carrito', []);
         
-        // Cálculo del total general del pedido
         $total = array_sum(array_column($carrito, 'subtotal'));
         $tipoPedido = Session::get('tipo_pedido');
 
-        // Apunta a la vista de resumen
         return view('carrito.resumen', [ 
             'carrito_items' => $carrito,
             'total' => $total,
@@ -180,15 +175,16 @@ class CatalogoController extends Controller
     
     /**
      * Procesa la finalización del pedido y lo guarda en la base de datos.
-     * ✅ LÓGICA DE REDIRECCIÓN CORREGIDA
      */
     public function finalizarPedido(Request $request)
     {
         $tipoPedido = Session::get('tipo_pedido');
         $carrito = Session::get('carrito', []);
         
+        // 🚨 MODIFICACIÓN CLAVE: Si falta el tipo de pedido, redirigimos al inicio
+        // para forzar la selección, evitando el 'back()' confuso.
         if (!$tipoPedido) {
-            return back()->with('error', 'Por favor, selecciona el tipo de pedido antes de finalizar.');
+            return redirect()->route('catalogo.index')->with('error', 'Por favor, selecciona el tipo de pedido (Mesa/Llevar) para comenzar.');
         }
 
         if (empty($carrito)) {
@@ -200,17 +196,13 @@ class CatalogoController extends Controller
         DB::beginTransaction();
 
         try {
-            // Asumo que el campo 'nombre_cliente' no es requerido por ahora, se genera el Pedido.
             $pedido = Pedido::create([
                 'tipo_pedido' => $tipoPedido, 
                 'total' => $total,
                 'estado' => 'Pendiente', 
-                // Si la columna existe, podrías querer guardar un nombre por defecto
-                // 'nombre_cliente' => 'Cliente Kiosco',
             ]);
 
             foreach ($carrito as $itemKey => $item) { 
-                // Usamos PedidoDetalle, el modelo que definiste
                 PedidoDetalle::create([
                     'pedido_id'       => $pedido->id,
                     'producto_id'     => $item['id'], 
@@ -226,7 +218,7 @@ class CatalogoController extends Controller
 
             Session::forget(['carrito', 'tipo_pedido']); 
 
-            // 🎯 CAMBIO CLAVE: Redirige a la nueva ruta dinámica de confirmación.
+            // Redirige al cliente a la página de confirmación con el ID del pedido.
             return redirect()->route('pedido.confirmacion', $pedido->id)->with('success', '¡Tu pedido ha sido enviado con éxito!');
 
         } catch (\Exception $e) {
@@ -234,29 +226,26 @@ class CatalogoController extends Controller
             
             Log::error("Error al finalizar el pedido: " . $e->getMessage());
 
-            return back()->with('error', 'Hubo un error al procesar tu pedido. Por favor, inténtalo de nuevo.');
+            // 🚨 MODIFICACIÓN: Redirigimos al resumen con el error para que sea visible.
+            return redirect()->route('pedido.resumen')->with('error', 'Hubo un error al procesar tu pedido. Por favor, inténtalo de nuevo. Contacta al personal. (Error: ' . $e->getMessage() . ')');
         }
     }
 
     /**
-     * Muestra la vista de confirmación del pedido específico (reemplaza agradecimiento).
-     * ✅ MÉTODO NUEVO AÑADIDO
+     * Muestra la vista de confirmación del pedido específico.
      */
     public function confirmacionPedido($id)
     {
-        // 1. Buscamos el pedido con sus detalles
-        // Asumiendo que la relación se llama 'detalles' en el modelo Pedido
+        // Si falla aquí, significa que la vista 'pedidos.confirmacion' no existe o la relación 'detalles' está mal.
         $pedido = Pedido::with('detalles')->findOrFail($id);
         
-        // 2. Cargamos la nueva vista que creaste
         return view('pedidos.confirmacion', [
             'pedido' => $pedido
         ]);
     }
     
     /**
-     * NOTA: Este método (agradecimiento) ya no es usado por el flujo principal,
-     * pero lo mantenemos por si lo necesitas como ruta de respaldo.
+     * Muestra la vista de agradecimiento (método de respaldo, no usado en el flujo principal).
      */
     public function agradecimiento()
     {
@@ -273,7 +262,6 @@ class CatalogoController extends Controller
      */
     public function gestion()
     {
-        // Carga los pedidos ordenados por estado (Pendiente primero) y luego por fecha
         $pedidos = Pedido::with('detalles')
                             ->where('estado', '!=', 'Entregado') 
                             ->orderByRaw("CASE estado WHEN 'Pendiente' THEN 1 WHEN 'Preparando' THEN 2 WHEN 'Listo' THEN 3 ELSE 4 END")
