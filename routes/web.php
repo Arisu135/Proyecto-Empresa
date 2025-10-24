@@ -30,15 +30,19 @@ Route::get('/carrito/restar/{itemKey}', [CatalogoController::class, 'restarDelCa
 
 // Rutas de Eliminación/Limpieza (Simplificado para Kiosko: usa GET)
 Route::get('/carrito/eliminar/{itemKey}', [CatalogoController::class, 'eliminarItem'])->name('carrito.eliminar'); 
-// Opcional: Si necesitas el método DELETE por convención, usa esta ruta:
-// Route::delete('/carrito/eliminar/{itemKey}', [CatalogoController::class, 'eliminarItem'])->name('carrito.eliminar.rest');
-
 Route::get('/carrito/limpiar', [CatalogoController::class, 'empezarDeNuevo'])->name('carrito.limpiar');
 
 // Proceso de Pedido
 Route::get('/pedido/resumen', [CatalogoController::class, 'verResumen'])->name('pedido.resumen');
+
+// --- FLUJO CLAVE DE PEDIDO ---
+// 1. Guarda la Orden en DB y redirige.
 Route::post('/pedido/finalizar', [CatalogoController::class, 'finalizarPedido'])->name('pedido.finalizar'); 
-Route::get('/agradecimiento', [CatalogoController::class, 'agradecimiento'])->name('pedido.agradecimiento');
+
+// 2. Muestra la Confirmación del pedido específico (ruta dinámica)
+Route::get('/pedido/{id}/confirmacion', [CatalogoController::class, 'confirmacionPedido'])->name('pedido.confirmacion');
+// -----------------------------
+
 
 /*
 |--------------------------------------------------------------------------

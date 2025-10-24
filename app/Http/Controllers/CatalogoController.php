@@ -5,13 +5,13 @@ namespace App\Http\Controllers;
 use App\Models\Producto;
 use App\Models\Categoria; 
 use App\Models\Pedido;
-use App\Models\PedidoDetalle;
+use App\Models\PedidoDetalle; // Asumiendo que esta es tu tabla de ítems de pedido
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Database\Eloquent\Collection; // <-- IMPORTACIÓN NECESARIA
 use Illuminate\Support\Str; 
+use Illuminate\Database\Eloquent\Collection; // Mantenemos esta importación
 
 class CatalogoController extends Controller
 {
@@ -42,18 +42,12 @@ class CatalogoController extends Controller
     
     /**
      * Muestra la vista de productos de una categoría específica.
-     * ✅ CORREGIDO: Simplificado para mayor robustez en Heroku/Blade.
      */
     public function mostrarProductosPorCategoria($categoria_slug)
     {
-        // 1. Buscar la categoría por el slug. firstOrFail lanza 404 si no existe.
         $categoria = Categoria::where('slug', $categoria_slug)->firstOrFail();
-
-        // 2. Obtener los productos relacionados con esa categoría
-        // Se carga la relación y si está vacía, la vista Blade la maneja con @empty.
         $productos = $categoria->productos()->orderBy('nombre')->get(); 
         
-        // 3. Pasamos el objeto $categoria y $productos
         return view('productos.categoria', compact('categoria', 'productos'));
     }
     
@@ -62,7 +56,6 @@ class CatalogoController extends Controller
      */
     public function mostrarDetalle(Producto $producto)
     {
-        // Forzamos la carga de la relación 'categoria' para evitar errores Blade
         $producto = Producto::with('categoria')->findOrFail($producto->id); 
         
         return view('catalogo.detalle_pedido', compact('producto')); 
@@ -114,7 +107,6 @@ class CatalogoController extends Controller
         Session::put('carrito', $carrito);
         
         // Redirige a la vista de resumen
-        // ✅ CAMBIO REALIZADO: Redirección directa por URL para mayor robustez en Heroku
         return redirect('/pedido/resumen')->with('success', $cantidadAñadir . 'x ' . $producto->nombre . ' agregado al pedido.');
     }
 
@@ -188,6 +180,7 @@ class CatalogoController extends Controller
     
     /**
      * Procesa la finalización del pedido y lo guarda en la base de datos.
+     * ✅ LÓGICA DE REDIRECCIÓN CORREGIDA
      */
     public function finalizarPedido(Request $request)
     {
@@ -207,13 +200,17 @@ class CatalogoController extends Controller
         DB::beginTransaction();
 
         try {
+            // Asumo que el campo 'nombre_cliente' no es requerido por ahora, se genera el Pedido.
             $pedido = Pedido::create([
                 'tipo_pedido' => $tipoPedido, 
                 'total' => $total,
                 'estado' => 'Pendiente', 
+                // Si la columna existe, podrías querer guardar un nombre por defecto
+                // 'nombre_cliente' => 'Cliente Kiosco',
             ]);
 
             foreach ($carrito as $itemKey => $item) { 
+                // Usamos PedidoDetalle, el modelo que definiste
                 PedidoDetalle::create([
                     'pedido_id'       => $pedido->id,
                     'producto_id'     => $item['id'], 
@@ -221,7 +218,6 @@ class CatalogoController extends Controller
                     'cantidad'        => $item['cantidad'],
                     'precio_unitario' => $item['precio'], 
                     'subtotal'        => $item['subtotal'],
-                    // Mantiene el guardado de opciones personalizadas
                     'opciones_personalizadas' => json_encode($item['opciones'] ?? []), 
                 ]);
             }
@@ -230,7 +226,8 @@ class CatalogoController extends Controller
 
             Session::forget(['carrito', 'tipo_pedido']); 
 
-            return redirect()->route('pedido.agradecimiento')->with('success', '¡Tu pedido ha sido enviado con éxito! Pedido para: '.$tipoPedido);
+            // 🎯 CAMBIO CLAVE: Redirige a la nueva ruta dinámica de confirmación.
+            return redirect()->route('pedido.confirmacion', $pedido->id)->with('success', '¡Tu pedido ha sido enviado con éxito!');
 
         } catch (\Exception $e) {
             DB::rollBack();
@@ -242,7 +239,24 @@ class CatalogoController extends Controller
     }
 
     /**
-     * Muestra la vista de agradecimiento después de un pedido exitoso.
+     * Muestra la vista de confirmación del pedido específico (reemplaza agradecimiento).
+     * ✅ MÉTODO NUEVO AÑADIDO
+     */
+    public function confirmacionPedido($id)
+    {
+        // 1. Buscamos el pedido con sus detalles
+        // Asumiendo que la relación se llama 'detalles' en el modelo Pedido
+        $pedido = Pedido::with('detalles')->findOrFail($id);
+        
+        // 2. Cargamos la nueva vista que creaste
+        return view('pedidos.confirmacion', [
+            'pedido' => $pedido
+        ]);
+    }
+    
+    /**
+     * NOTA: Este método (agradecimiento) ya no es usado por el flujo principal,
+     * pero lo mantenemos por si lo necesitas como ruta de respaldo.
      */
     public function agradecimiento()
     {
@@ -261,15 +275,12 @@ class CatalogoController extends Controller
     {
         // Carga los pedidos ordenados por estado (Pendiente primero) y luego por fecha
         $pedidos = Pedido::with('detalles')
-                             // Buscamos estados diferentes a 'Entregado'
-                             ->where('estado', '!=', 'Entregado') 
-                             // Ordenamos primero por estado (manualmente) y luego por fecha.
-                             // Usamos un CASE que es compatible con PostgreSQL.
-                             ->orderByRaw("CASE estado WHEN 'Pendiente' THEN 1 WHEN 'Preparando' THEN 2 WHEN 'Listo' THEN 3 ELSE 4 END")
-                             ->orderBy('created_at', 'asc')
-                             ->get();
+                            ->where('estado', '!=', 'Entregado') 
+                            ->orderByRaw("CASE estado WHEN 'Pendiente' THEN 1 WHEN 'Preparando' THEN 2 WHEN 'Listo' THEN 3 ELSE 4 END")
+                            ->orderBy('created_at', 'asc')
+                            ->get();
                              
-        return view('admin.gestion-pedidos', compact('pedidos'));
+        return view('admin.gestion_pedidos', compact('pedidos'));
     }
 
     /**
@@ -278,10 +289,9 @@ class CatalogoController extends Controller
     public function actualizarEstado(Request $request, Pedido $pedido)
     {
         $request->validate([
-            'estado' => 'required|in:Pendiente,Preparando,Listo,Entregado',
+            'estado' => 'required|in:Pendiente,Preparando,Listo,Entregado,Cancelado',
         ]);
         
-
         $pedido->estado = $request->estado;
         $pedido->save();
 
