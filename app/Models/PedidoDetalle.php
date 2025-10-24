@@ -18,24 +18,29 @@ class PedidoDetalle extends Model
 
     /**
      * Los atributos que son asignables masivamente.
-     * Estos campos coinciden con los datos que insertas en el controlador.
-     *
-     * @var array<int, string>
+     * * @var array<int, string>
      */
     protected $fillable = [
-        'pedido_id',        // Clave foránea al Pedido
-        'producto_id',      // Clave foránea al Producto
-        'nombre_producto',  // Nombre del producto con personalización (e.g., "Capuccino (Sin Hielo)")
+        'pedido_id', 
+        'producto_id', 
+        'nombre_producto', 
         'cantidad',
         'precio_unitario',
         'subtotal',
-        // Puedes agregar campos para guardar las opciones de personalización aquí si los tienes en la tabla
+        'opciones_personalizadas', // ⬅️ ¡ESTA ES LA LÍNEA CRÍTICA QUE FALTABA!
     ];
 
     /**
+     * Los atributos que deben ser casteados.
+     * Opcional: Esto asegura que 'opciones_personalizadas' siempre se trate como JSON en el modelo.
+     */
+    protected $casts = [
+        'opciones_personalizadas' => 'array',
+    ];
+
+
+    /**
      * Un detalle de pedido pertenece a un solo pedido.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function pedido()
     {
@@ -44,8 +49,6 @@ class PedidoDetalle extends Model
     
     /**
      * Un detalle de pedido se refiere a un producto.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function producto()
     {
