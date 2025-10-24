@@ -96,7 +96,7 @@
                 </p>
             @endif
         </div>
-
+        
         <div class="p-6 md:p-8 pt-0 flex flex-col space-y-3">
             
             {{-- Botón Seguir Comprando (GET) --}}
