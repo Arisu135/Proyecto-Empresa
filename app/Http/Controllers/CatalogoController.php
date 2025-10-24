@@ -114,7 +114,8 @@ class CatalogoController extends Controller
         Session::put('carrito', $carrito);
         
         // Redirige a la vista de resumen
-        return redirect()->route('pedido.resumen')->with('success', $cantidadAñadir . 'x ' . $producto->nombre . ' agregado al pedido.');
+        // ✅ CAMBIO REALIZADO: Redirección directa por URL para mayor robustez en Heroku
+        return redirect('/pedido/resumen')->with('success', $cantidadAñadir . 'x ' . $producto->nombre . ' agregado al pedido.');
     }
 
     /**
@@ -260,15 +261,14 @@ class CatalogoController extends Controller
     {
         // Carga los pedidos ordenados por estado (Pendiente primero) y luego por fecha
         $pedidos = Pedido::with('detalles')
-                         // Reemplazamos orderByRaw por una lógica más compatible con PostgreSQL de Heroku
-                         // Buscamos estados diferentes a 'Entregado'
-                         ->where('estado', '!=', 'Entregado') 
-                         // Ordenamos primero por estado (manualmente) y luego por fecha.
-                         // Usamos un CASE que es compatible con PostgreSQL.
-                         ->orderByRaw("CASE estado WHEN 'Pendiente' THEN 1 WHEN 'Preparando' THEN 2 WHEN 'Listo' THEN 3 ELSE 4 END")
-                         ->orderBy('created_at', 'asc')
-                         ->get();
-                         
+                             // Buscamos estados diferentes a 'Entregado'
+                             ->where('estado', '!=', 'Entregado') 
+                             // Ordenamos primero por estado (manualmente) y luego por fecha.
+                             // Usamos un CASE que es compatible con PostgreSQL.
+                             ->orderByRaw("CASE estado WHEN 'Pendiente' THEN 1 WHEN 'Preparando' THEN 2 WHEN 'Listo' THEN 3 ELSE 4 END")
+                             ->orderBy('created_at', 'asc')
+                             ->get();
+                             
         return view('admin.gestion-pedidos', compact('pedidos'));
     }
 
