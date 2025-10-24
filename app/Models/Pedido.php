@@ -14,9 +14,20 @@ class Pedido extends Model
      * Esta propiedad soluciona el error MassAssignmentException.
      */
     protected $fillable = [
-        'nombre_cliente', // Usado para guardar el NÚMERO DE MESA
-        'direccion',      // Usado para guardar las Notas/Instrucciones
+        'nombre_cliente', 
+        'direccion',      
         'total',
-        'estado',         // Estado inicial: Pendiente
+        'estado',         
+        'tipo_pedido', // ⬅️ ¡¡ESTA ES LA COLUMNA QUE FALTABA!!
     ];
+
+    /**
+     * Define la relación con los detalles (ítems) del pedido.
+     * Esto es necesario para el método confirmacionPedido($id).
+     */
+    public function detalles()
+    {
+        // Asumiendo que tu modelo de detalle se llama 'PedidoDetalle'
+        return $this->hasMany(PedidoDetalle::class);
+    }
 }
