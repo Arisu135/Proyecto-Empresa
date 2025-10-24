@@ -280,6 +280,7 @@ class CatalogoController extends Controller
         $request->validate([
             'estado' => 'required|in:Pendiente,Preparando,Listo,Entregado',
         ]);
+        
 
         $pedido->estado = $request->estado;
         $pedido->save();

@@ -58,5 +58,6 @@ Route::get('/admin/pedidos', [CatalogoController::class, 'gestion'])->name('admi
 // Actualización de estado de pedidos
 Route::put('/admin/pedidos/{pedido}/actualizar', [CatalogoController::class, 'actualizarEstado'])->name('pedido.actualizarEstado'); 
 
+
 // CRUD de Productos 
 Route::resource('productos', ProductoController::class);

@@ -85,6 +85,7 @@
                 @endforelse
             </ul>
             
+            
             <div class="flex justify-between items-center pt-4 border-t-2 border-brand-accent/50 mt-4">
                 <p class="text-2xl font-extrabold text-brand-dark">TOTAL DEL PEDIDO:</p>
                 <p class="text-2xl font-extrabold text-btn-green">S/. {{ number_format($total ?? $total_calculado, 2) }}</p>
@@ -96,7 +97,7 @@
                 </p>
             @endif
         </div>
-        
+
         <div class="p-6 md:p-8 pt-0 flex flex-col space-y-3">
             
             {{-- Botón Seguir Comprando (GET) --}}
