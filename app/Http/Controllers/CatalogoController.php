@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str; 
 use Illuminate\Database\Eloquent\Collection; 
+use Illuminate\Validation\ValidationException; // Aseguramos el uso de ValidationException
 
 class CatalogoController extends Controller
 {
@@ -65,6 +66,7 @@ class CatalogoController extends Controller
     public function agregarAlCarrito(Request $request, Producto $producto)
     {
         $cantidadAñadir = (int) $request->input('cantidad', 1);
+        // Asegúrate de obtener el precio unitario del producto o el precio final calculado si hay opciones.
         $precioUnitarioFinal = (float) $request->input('precio_final', $producto->precio); 
         $opcionesSeleccionadasJson = $request->input('opciones_seleccionadas');
         
@@ -175,14 +177,25 @@ class CatalogoController extends Controller
     
     /**
      * Procesa la finalización del pedido y lo guarda en la base de datos.
+     * ESTE ES EL MÉTODO CLAVE.
      */
     public function finalizarPedido(Request $request)
     {
+        // 1. Validar el formulario de envío (nombre y dirección)
+        try {
+            $validated = $request->validate([
+                // Nota: Los campos 'nombre_cliente' y 'direccion' deben estar en tu formulario de resumen.
+                'nombre_cliente' => ['nullable', 'string', 'max:255'],
+                'direccion' => ['nullable', 'string', 'max:500'], 
+            ]);
+        } catch (ValidationException $e) {
+            return back()->withErrors($e->errors())->withInput();
+        }
+
         $tipoPedido = Session::get('tipo_pedido');
         $carrito = Session::get('carrito', []);
         
-        // 🚨 MODIFICACIÓN CLAVE: Si falta el tipo de pedido, redirigimos al inicio
-        // para forzar la selección, evitando el 'back()' confuso.
+        // Comprobaciones de seguridad
         if (!$tipoPedido) {
             return redirect()->route('catalogo.index')->with('error', 'Por favor, selecciona el tipo de pedido (Mesa/Llevar) para comenzar.');
         }
@@ -196,38 +209,49 @@ class CatalogoController extends Controller
         DB::beginTransaction();
 
         try {
+            // A. Crear el Pedido Principal
             $pedido = Pedido::create([
                 'tipo_pedido' => $tipoPedido, 
+                // Añadimos 'nombre_cliente' y 'direccion', que son opcionales en el kiosco pero útiles para delivery/takeaway
+                'nombre_cliente' => $validated['nombre_cliente'] ?? 'Cliente Kiosco',
+                'direccion' => $validated['direccion'] ?? ($tipoPedido == 'takeaway' ? 'Para llevar' : 'En el lugar'),
                 'total' => $total,
                 'estado' => 'Pendiente', 
             ]);
 
+            // B. Crear los Detalles del Pedido
             foreach ($carrito as $itemKey => $item) { 
+                
+                // CRUCIAL: Convertir el array de opciones a JSON string para la columna TEXT
+                $opcionesJson = json_encode($item['opciones'] ?? []); 
+                
                 PedidoDetalle::create([
-                    'pedido_id'       => $pedido->id,
-                    'producto_id'     => $item['id'], 
-                    'nombre_producto' => $item['nombre'],
-                    'cantidad'        => $item['cantidad'],
-                    'precio_unitario' => $item['precio'], 
-                    'subtotal'        => $item['subtotal'],
-                    'opciones_personalizadas' => json_encode($item['opciones'] ?? []), 
+                    'pedido_id'               => $pedido->id,
+                    'producto_id'             => $item['id'], 
+                    'nombre_producto'         => $item['nombre'],
+                    'cantidad'                => $item['cantidad'],
+                    'precio_unitario'         => $item['precio'], 
+                    'subtotal'                => $item['subtotal'],
+                    'opciones_personalizadas' => $opcionesJson, // ¡Aquí se usa la columna que migramos!
                 ]);
             }
 
             DB::commit();
 
+            // 2. Limpiar la sesión
             Session::forget(['carrito', 'tipo_pedido']); 
 
-            // Redirige al cliente a la página de confirmación con el ID del pedido.
+            // 3. Redirección de Éxito
             return redirect()->route('pedido.confirmacion', $pedido->id)->with('success', '¡Tu pedido ha sido enviado con éxito!');
 
         } catch (\Exception $e) {
             DB::rollBack();
             
-            Log::error("Error al finalizar el pedido: " . $e->getMessage());
+            // Log de error detallado para Heroku
+            Log::error("Error al finalizar el pedido: " . $e->getMessage() . " en " . $e->getFile() . ":" . $e->getLine());
 
-            // 🚨 MODIFICACIÓN: Redirigimos al resumen con el error para que sea visible.
-            return redirect()->route('pedido.resumen')->with('error', 'Hubo un error al procesar tu pedido. Por favor, inténtalo de nuevo. Contacta al personal. (Error: ' . $e->getMessage() . ')');
+            // Redirigimos al resumen con el error para que sea visible.
+            return redirect()->route('pedido.resumen')->with('error', 'Hubo un error al procesar tu pedido. Por favor, inténtalo de nuevo. Detalles: ' . $e->getMessage());
         }
     }
 
@@ -236,7 +260,6 @@ class CatalogoController extends Controller
      */
     public function confirmacionPedido($id)
     {
-        // Si falla aquí, significa que la vista 'pedidos.confirmacion' no existe o la relación 'detalles' está mal.
         $pedido = Pedido::with('detalles')->findOrFail($id);
         
         return view('pedidos.confirmacion', [
@@ -244,15 +267,6 @@ class CatalogoController extends Controller
         ]);
     }
     
-    /**
-     * Muestra la vista de agradecimiento (método de respaldo, no usado en el flujo principal).
-     */
-    public function agradecimiento()
-    {
-        $mensaje = Session::get('success', 'Gracias por tu compra.'); 
-        return view('catalogo.agradecimiento', compact('mensaje'));
-    }
-
     // =======================================================
     // MÉTODOS DE ADMINISTRACIÓN (COCINA)
     // =======================================================
@@ -267,7 +281,7 @@ class CatalogoController extends Controller
                             ->orderByRaw("CASE estado WHEN 'Pendiente' THEN 1 WHEN 'Preparando' THEN 2 WHEN 'Listo' THEN 3 ELSE 4 END")
                             ->orderBy('created_at', 'asc')
                             ->get();
-                             
+                            
         return view('admin.gestion_pedidos', compact('pedidos'));
     }
 
