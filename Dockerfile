@@ -28,7 +28,7 @@ COPY . /var/www/html
 
 # 4. CONFIGURACIÓN CRÍTICA DE APACHE:
 # Reemplaza el archivo de configuración por defecto con nuestro archivo personalizado.
-# Asegúrate de que este archivo 000-default.conf exista en la raíz de tu proyecto.
+# ¡Este paso requiere que el archivo 000-default.conf exista en la raíz de tu proyecto!
 COPY 000-default.conf /etc/apache2/sites-available/000-default.conf
 
 # Define el directorio de trabajo
@@ -39,15 +39,17 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 RUN composer install --no-interaction --prefer-dist --optimize-autoloader
 
 # Correcciones finales (permissions y .env)
+# Da permisos a Laravel para escritura
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 
+# 🛑 SOLUCIÓN AL ERROR DE BUILD (key:generate necesita el .env)
 # Copia .env.example a .env para que key:generate pueda ejecutarse
 RUN cp .env.example .env 
 
 # Genera clave de aplicación y cachea la configuración
 RUN php artisan key:generate && php artisan config:cache
 
-# Expone el puerto 80
+# Expone el puerto 80 (Apache)
 EXPOSE 80
 
 # Comando para iniciar Apache
