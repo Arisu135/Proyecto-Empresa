@@ -1,7 +1,7 @@
-# Etapa base: PHP + Composer + dependencias de Laravel
-FROM php:8.2-fpm
+# Imagen base de PHP con Apache
+FROM php:8.2-apache
 
-# Instala dependencias del sistema y extensiones necesarias
+# Instala dependencias del sistema y extensiones necesarias (ahora incluye libpq-dev)
 RUN apt-get update && apt-get install -y \
     git \
     zip \
@@ -11,25 +11,27 @@ RUN apt-get update && apt-get install -y \
     libfreetype6-dev \
     libonig-dev \
     libzip-dev \
-    libpq-dev \ 
+    libpq-dev \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install pdo pdo_mysql pdo_pgsql gd zip
+
+# Copia el contenido del proyecto al contenedor
+COPY . /var/www/html
+
+# Define el directorio de trabajo
+WORKDIR /var/www/html
 
 # Instala Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
-# Copia el código de la aplicación
-WORKDIR /var/www/html
-COPY . .
+# Instala dependencias de Laravel sin interacción
+RUN composer install --no-interaction --prefer-dist --optimize-autoloader
 
-# Instala dependencias de Laravel
-RUN composer install --no-dev --optimize-autoloader
+# Da permisos a Laravel para escritura
+RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 
-# Genera clave de aplicación y cachea la configuración
-RUN php artisan key:generate && php artisan config:cache
+# Expone el puerto 80
+EXPOSE 80
 
-# Expone el puerto 10000 (Render usa este por defecto)
-EXPOSE 10000
-
-# Comando para iniciar Laravel
-CMD php artisan serve --host=0.0.0.0 --port=10000
+# Comando para iniciar Apache
+CMD ["apache2-foreground"]
