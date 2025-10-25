@@ -55,3 +55,4 @@ class PedidoDetalle extends Model
         return $this->belongsTo(Producto::class);
     }
 }
+

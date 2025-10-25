@@ -27,3 +27,4 @@ class AuthServiceProvider extends ServiceProvider // <--- ¡CLAVE! Debe decir Au
         //
     }
 }
+

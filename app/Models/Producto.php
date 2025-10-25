@@ -38,3 +38,4 @@ class Producto extends Model
         return $this->belongsTo(Categoria::class, 'categoria_id');
     }
 }
+

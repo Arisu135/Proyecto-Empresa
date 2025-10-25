@@ -25,3 +25,5 @@ class DatabaseSeeder extends Seeder
         $this->command->info('Base de datos sembrada completamente con Categorías y Productos.');
     }
 }
+
+

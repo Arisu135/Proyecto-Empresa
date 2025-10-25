@@ -21,3 +21,4 @@ class TrustProxies extends Middleware
      */
     protected $headers = Request::HEADER_ALL; // <--- ¡CAMBIO CLAVE! Esto soluciona el 505
 } 
+

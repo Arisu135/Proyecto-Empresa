@@ -114,3 +114,4 @@ class PedidoController extends Controller
     public function update(Request $request, Pedido $pedido) { /* ... */ }
     public function destroy(Pedido $pedido) { /* ... */ }
 }
+
