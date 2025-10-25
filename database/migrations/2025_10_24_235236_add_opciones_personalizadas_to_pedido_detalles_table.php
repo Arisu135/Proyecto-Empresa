@@ -11,12 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // 🚨 CAMBIO CLAVE: Usamos el nombre 'pedido_detalles' pero con mayúsculas y minúsculas
-        // para asegurarnos de que PostgreSQL lo encuentre, si fue creado con camelCase.
-        // Si tu tabla fue creada con un nombre diferente (ej: 'order_items'), cámbialo aquí.
-        // Nota: Laravel usa comillas dobles para PostgreSQL, así que no es necesario aquí.
-        
-        Schema::table('pedido_detalles', function (Blueprint $table) {
+        // 🚨 CAMBIO A SINGULAR: Es la causa más común de fallo de nombre en Laravel/PostgreSQL.
+        // Si la tabla original se llama 'pedido_detalle', esto funcionará.
+        Schema::table('pedido_detalle', function (Blueprint $table) {
             $table->text('opciones_personalizadas')->nullable()->after('subtotal');
         });
     }
@@ -26,7 +23,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('pedido_detalles', function (Blueprint $table) {
+        Schema::table('pedido_detalle', function (Blueprint $table) {
             $table->dropColumn('opciones_personalizadas');
         });
     }
