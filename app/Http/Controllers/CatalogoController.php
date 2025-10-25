@@ -300,3 +300,4 @@ class CatalogoController extends Controller
         return back()->with('success', "Estado del pedido #{$pedido->id} actualizado a {$pedido->estado}.");
     }
 }
+
