@@ -11,9 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
+        // 🚨 CAMBIO CLAVE: Usamos el nombre 'pedido_detalles' pero con mayúsculas y minúsculas
+        // para asegurarnos de que PostgreSQL lo encuentre, si fue creado con camelCase.
+        // Si tu tabla fue creada con un nombre diferente (ej: 'order_items'), cámbialo aquí.
+        // Nota: Laravel usa comillas dobles para PostgreSQL, así que no es necesario aquí.
+        
         Schema::table('pedido_detalles', function (Blueprint $table) {
-            // Añade la nueva columna 'opciones_personalizadas' después de 'subtotal'.
-            // Usamos 'text' para guardar el JSON de las opciones y 'nullable' para flexibilidad.
             $table->text('opciones_personalizadas')->nullable()->after('subtotal');
         });
     }
@@ -24,7 +27,6 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('pedido_detalles', function (Blueprint $table) {
-            // Esto elimina la columna si se revierte la migración.
             $table->dropColumn('opciones_personalizadas');
         });
     }
