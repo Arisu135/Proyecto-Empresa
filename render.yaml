@@ -1,0 +1,46 @@
+services:
+  - type: web
+    name: proyecto-empresa
+    env: php
+    plan: free
+    buildCommand: |
+      composer install --no-interaction --prefer-dist --optimize-autoloader
+      php artisan key:generate
+      php artisan migrate --force
+    startCommand: |
+      php artisan serve --host 0.0.0.0 --port 10000
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: false
+      - key: APP_KEY
+        sync: false
+      - key: APP_URL
+        value: https://proyecto-empresa.onrender.com
+      - key: DB_CONNECTION
+        value: pgsql
+      - key: DB_HOST
+        fromDatabase:
+          name: proyecto-empresa-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: proyecto-empresa-db
+          property: port
+      - key: DB_DATABASE
+        fromDatabase:
+          name: proyecto-empresa-db
+          property: database
+      - key: DB_USERNAME
+        fromDatabase:
+          name: proyecto-empresa-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: proyecto-empresa-db
+          property: password
+
+databases:
+  - name: proyecto-empresa-db
+    plan: free
