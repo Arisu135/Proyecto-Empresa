@@ -1,25 +1,34 @@
-# Usa PHP 8.2 con Apache
-FROM php:8.2-apache
+# Etapa base: PHP + Composer + dependencias de Laravel
+FROM php:8.2-fpm
 
-# Instala extensiones necesarias para Laravel y PostgreSQL
+# Instala dependencias del sistema y extensiones necesarias
 RUN apt-get update && apt-get install -y \
-    git unzip libpq-dev libzip-dev zip && \
-    docker-php-ext-install pdo pdo_pgsql zip
-
-# Copia el código al contenedor
-COPY . /var/www/html
-
-# Define el directorio de trabajo
-WORKDIR /var/www/html
+    git \
+    zip \
+    unzip \
+    libpng-dev \
+    libjpeg-dev \
+    libfreetype6-dev \
+    libonig-dev \
+    libzip-dev \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install pdo pdo_mysql pdo_pgsql gd zip
 
 # Instala Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
-# Instala dependencias
+# Copia el código de la aplicación
+WORKDIR /var/www/html
+COPY . .
+
+# Instala dependencias de Laravel
 RUN composer install --no-dev --optimize-autoloader
 
-# Expone el puerto 10000 (Render lo usa internamente)
+# Genera clave de aplicación y cachea la configuración
+RUN php artisan key:generate && php artisan config:cache
+
+# Expone el puerto 10000 (Render usa este por defecto)
 EXPOSE 10000
 
-# Comando de inicio de Laravel
+# Comando para iniciar Laravel
 CMD php artisan serve --host=0.0.0.0 --port=10000
