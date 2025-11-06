@@ -68,6 +68,7 @@ RUN apt-get update && apt-get install -y \
     libfreetype6-dev \
     libpq-dev \
     libzip-dev \
+    libonig-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # Instala extensiones de PHP
