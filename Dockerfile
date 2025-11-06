@@ -35,11 +35,11 @@ WORKDIR /var/www/html
 COPY composer.json composer.lock* ./
 COPY package.json package-lock.json* ./
 
-# Instala dependencias de PHP
-RUN composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader --no-scripts
+# Instala dependencias de PHP (CON dev dependencies para el build)
+RUN composer install --no-interaction --prefer-dist --optimize-autoloader
 
 # Instala dependencias de Node
-RUN npm ci --only=production 2>/dev/null || npm install --only=production
+RUN npm ci 2>/dev/null || npm install
 
 # Copia el resto del código
 COPY . .
@@ -48,10 +48,13 @@ COPY . .
 RUN cp .env.example .env
 
 # Genera la clave de aplicación
-RUN php artisan key:generate
+RUN php artisan key:generate --force
 
 # Construye los assets con Vite
 RUN npm run build
+
+# AHORA elimina las dependencias de dev para reducir tamaño
+RUN composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader
 
 # Limpia archivos innecesarios
 RUN rm -rf node_modules tests
