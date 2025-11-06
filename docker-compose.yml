@@ -3,8 +3,6 @@
 # ============================================
 # Uso: docker-compose up -d
 
-version: '3.8'
-
 services:
   # Aplicación Laravel
   app:
@@ -16,12 +14,9 @@ services:
     working_dir: /var/www/html
     ports:
       - "8000:80"
-    volumes:
-      # Monta el código para desarrollo
-      - .:/var/www/html
-      # Excluye vendor y node_modules para mejor rendimiento
-      - /var/www/html/vendor
-      - /var/www/html/node_modules
+    # NO montamos el código en desarrollo para evitar conflictos
+    # volumes:
+    #   - .:/var/www/html
     environment:
       - APP_ENV=local
       - APP_DEBUG=true
