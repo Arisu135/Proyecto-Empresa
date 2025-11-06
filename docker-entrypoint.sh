@@ -8,8 +8,9 @@ echo "⏳ Esperando a la base de datos..."
 max_attempts=30
 attempt=0
 
+# Espera a que PostgreSQL acepte conexiones
 while [ $attempt -lt $max_attempts ]; do
-    if php artisan db:show > /dev/null 2>&1; then
+    if nc -z ${DB_HOST:-postgres} ${DB_PORT:-5432} 2>/dev/null; then
         echo "✅ Base de datos disponible"
         break
     fi

@@ -52,8 +52,8 @@ RUN php artisan key:generate --force
 # Construye los assets con Vite
 RUN npm run build
 
-# AHORA elimina las dependencias de dev para reducir tamaño
-RUN composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader
+# AHORA elimina las dependencias de dev para reducir tamaño (sin ejecutar scripts)
+RUN composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader --no-scripts
 
 # Limpia archivos innecesarios
 RUN rm -rf node_modules tests
@@ -71,6 +71,7 @@ RUN apt-get update && apt-get install -y \
     libpq-dev \
     libzip-dev \
     libonig-dev \
+    netcat-openbsd \
     && rm -rf /var/lib/apt/lists/*
 
 # Instala extensiones de PHP
