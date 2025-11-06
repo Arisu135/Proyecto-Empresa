@@ -1,0 +1,75 @@
+# ============================================
+# Docker Compose para Desarrollo Local
+# ============================================
+# Uso: docker-compose up -d
+
+version: '3.8'
+
+services:
+  # Aplicación Laravel
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: proyecto-empresa-app
+    restart: unless-stopped
+    working_dir: /var/www/html
+    ports:
+      - "8000:80"
+    volumes:
+      # Monta el código para desarrollo
+      - .:/var/www/html
+      # Excluye vendor y node_modules para mejor rendimiento
+      - /var/www/html/vendor
+      - /var/www/html/node_modules
+    environment:
+      - APP_ENV=local
+      - APP_DEBUG=true
+      - DB_CONNECTION=pgsql
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_DATABASE=proyecto_empresa
+      - DB_USERNAME=postgres
+      - DB_PASSWORD=secret
+    depends_on:
+      - postgres
+    networks:
+      - proyecto-empresa-network
+
+  # Base de datos PostgreSQL
+  postgres:
+    image: postgres:16-alpine
+    container_name: proyecto-empresa-db
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: proyecto_empresa
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: secret
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - proyecto-empresa-network
+
+  # Adminer (interfaz web para la base de datos)
+  adminer:
+    image: adminer:latest
+    container_name: proyecto-empresa-adminer
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      ADMINER_DEFAULT_SERVER: postgres
+    depends_on:
+      - postgres
+    networks:
+      - proyecto-empresa-network
+
+networks:
+  proyecto-empresa-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+    driver: local

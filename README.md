@@ -1,61 +1,231 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Proyecto Empresa - Kiosco Digital 🏪
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Sistema de kiosco digital para gestión de pedidos desarrollado con Laravel 12, diseñado para ser desplegado en Render usando Docker.
 
-## About Laravel
+## 🚀 Inicio Rápido
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+### Despliegue en Render (Producción)
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+```bash
+# 1. Preparar el proyecto
+./deploy-prepare.sh
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+# 2. Subir a Git
+git add .
+git commit -m "Listo para despliegue"
+git push
 
-## Learning Laravel
+# 3. En Render.com
+# - Conecta tu repositorio
+# - Selecciona "Blueprint"
+# - ¡Listo! Render hará el resto
+```
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+📖 **[Guía Completa de Despliegue](./RENDER_GUIDE.md)**
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+### Desarrollo Local con Docker
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+```bash
+# Iniciar proyecto
+./local-test.sh
 
-## Laravel Sponsors
+# Acceder a:
+# - App: http://localhost:8000
+# - Adminer: http://localhost:8080
+```
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+### Desarrollo Local sin Docker
 
-### Premium Partners
+```bash
+composer install
+npm install
+cp .env.example .env
+php artisan key:generate
+php artisan migrate --seed
+npm run dev
+php artisan serve
+```
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+## 📚 Documentación
 
-## Contributing
+- **[RENDER_GUIDE.md](./RENDER_GUIDE.md)** - Guía completa de despliegue en Render
+- **[DEPLOYMENT.md](./DEPLOYMENT.md)** - Documentación técnica y troubleshooting
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+## 🛠️ Stack Tecnológico
 
-## Code of Conduct
+- **Backend:** Laravel 12 (PHP 8.2)
+- **Base de datos:** PostgreSQL 16
+- **Frontend:** Tailwind CSS 4 + Vite
+- **Contenedor:** Docker
+- **Hosting:** Render.com
+- **Servidor Web:** Apache 2.4
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+## 📁 Estructura del Proyecto
 
-## Security Vulnerabilities
+```
+├── app/                    # Código de la aplicación
+│   ├── Http/Controllers/   # Controladores
+│   └── Models/            # Modelos Eloquent
+├── database/
+│   ├── migrations/        # Migraciones de BD
+│   └── seeders/          # Datos de prueba
+├── public/               # Archivos públicos
+│   ├── img/             # Imágenes
+│   └── css/             # Estilos compilados
+├── resources/
+│   ├── views/           # Vistas Blade
+│   ├── css/             # CSS (Tailwind)
+│   └── js/              # JavaScript
+├── Dockerfile           # Configuración Docker
+├── docker-compose.yml   # Docker Compose (dev)
+├── render.yaml          # Configuración Render
+└── deploy-prepare.sh    # Script de preparación
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## 🎯 Características
 
-## License
+✅ **Kiosco Digital**
+- Catálogo de productos por categorías
+- Carrito de compras interactivo
+- Sistema de pedidos en tiempo real
+- Códigos QR para pedidos
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+✅ **Panel de Administración**
+- Gestión de productos
+- Gestión de pedidos
+- Panel de cocina
+- Estados de pedido
+
+✅ **Optimizado para Producción**
+- Docker multi-stage build
+- OPcache configurado
+- Assets compilados con Vite
+- Cache de rutas y configuración
+- Headers de seguridad
+
+## 🔧 Scripts Útiles
+
+```bash
+# Preparar para despliegue
+./deploy-prepare.sh
+
+# Probar localmente con Docker
+./local-test.sh
+
+# Comandos Laravel
+php artisan migrate          # Ejecutar migraciones
+php artisan db:seed         # Cargar datos de prueba
+php artisan cache:clear     # Limpiar caché
+php artisan config:cache    # Cachear configuración
+
+# Docker
+docker-compose up -d        # Iniciar contenedores
+docker-compose down         # Detener contenedores
+docker-compose logs -f app  # Ver logs
+```
+
+## 🌍 Variables de Entorno
+
+### Producción (Render)
+
+```env
+APP_NAME=CorporacionOrganicaKiosco
+APP_ENV=production
+APP_DEBUG=false
+APP_KEY=base64:...
+APP_URL=https://tu-app.onrender.com
+
+DB_CONNECTION=pgsql
+DATABASE_URL=<auto-configurado-por-render>
+
+SESSION_DRIVER=database
+CACHE_STORE=database
+QUEUE_CONNECTION=database
+```
+
+### Desarrollo Local
+
+```env
+APP_ENV=local
+APP_DEBUG=true
+APP_URL=http://localhost:8000
+
+DB_CONNECTION=pgsql
+DB_HOST=localhost  # o 'postgres' si usas docker-compose
+DB_PORT=5432
+DB_DATABASE=proyecto_empresa
+DB_USERNAME=postgres
+DB_PASSWORD=secret
+```
+
+## 🔐 Seguridad
+
+- ✅ `.env` excluido del repositorio
+- ✅ APP_DEBUG=false en producción
+- ✅ Headers de seguridad configurados
+- ✅ HTTPS automático en Render
+- ✅ Variables sensibles en Environment Variables
+- ✅ CSRF protection habilitado
+- ✅ SQL injection prevention (Eloquent ORM)
+
+## 🐛 Troubleshooting
+
+### Error: "No application encryption key"
+```bash
+php artisan key:generate
+```
+
+### Error de permisos
+```bash
+chmod -R 775 storage bootstrap/cache
+chown -R www-data:www-data storage bootstrap/cache
+```
+
+### Imágenes no se cargan
+```bash
+php artisan storage:link
+```
+
+### Cambios no se reflejan
+```bash
+php artisan cache:clear
+php artisan config:clear
+php artisan view:clear
+```
+
+📖 **Ver [RENDER_GUIDE.md](./RENDER_GUIDE.md) para más soluciones**
+
+## 📊 Estado del Proyecto
+
+- ✅ Configuración de Docker completada
+- ✅ Configuración de Render completada
+- ✅ Scripts de despliegue creados
+- ✅ Documentación completa
+- ✅ Optimizaciones de producción aplicadas
+- ✅ Seguridad configurada
+
+## 🚀 Próximos Pasos
+
+1. **Revisar y actualizar seeders** si necesitas datos específicos
+2. **Agregar imágenes** de productos y categorías en `public/img/`
+3. **Ejecutar** `./deploy-prepare.sh` para verificar
+4. **Probar localmente** con `./local-test.sh`
+5. **Desplegar en Render** siguiendo [RENDER_GUIDE.md](./RENDER_GUIDE.md)
+
+## 📞 Soporte
+
+Si tienes problemas:
+1. Consulta [RENDER_GUIDE.md](./RENDER_GUIDE.md) - Solución de problemas
+2. Revisa los logs en Render Dashboard
+3. Verifica las variables de entorno
+4. Prueba localmente con Docker primero
+
+## 📄 Licencia
+
+Este proyecto es privado y confidencial.
+
+---
+
+**Desarrollado para Corporación Orgánica Kiosco**
+
+*Construido con Laravel 12*

@@ -1,44 +1,112 @@
+# ============================================
+# Configuración de Render para Laravel
+# ============================================
+
 services:
+  # Servicio Web (Laravel con Docker)
   - type: web
-    name: proyecto-empresa
-    env: docker
+    name: proyecto-empresa-web
+    runtime: docker
     plan: free
-    buildCommand: |
-      composer install --no-interaction --prefer-dist --optimize-autoloader
-      php artisan key:generate
-      php artisan migrate --force
+    region: oregon # Cambia según tu preferencia
+    
+    # Configuración de Docker
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    
+    # Health check
+    healthCheckPath: /
+    
+    # Variables de entorno
     envVars:
+      # Configuración de Laravel
+      - key: APP_NAME
+        value: CorporacionOrganicaKiosco
+      
       - key: APP_ENV
         value: production
+      
       - key: APP_DEBUG
         value: false
+      
       - key: APP_KEY
-        sync: false
+        generateValue: true
+      
       - key: APP_URL
-        value: https://proyecto-empresa.onrender.com
+        value: https://proyecto-empresa-web.onrender.com
+      
+      # Base de datos PostgreSQL (conexión automática)
       - key: DB_CONNECTION
         value: pgsql
+      
+      - key: DATABASE_URL
+        fromDatabase:
+          name: proyecto-empresa-db
+          property: connectionString
+      
       - key: DB_HOST
         fromDatabase:
           name: proyecto-empresa-db
           property: host
+      
       - key: DB_PORT
         fromDatabase:
           name: proyecto-empresa-db
           property: port
+      
       - key: DB_DATABASE
         fromDatabase:
           name: proyecto-empresa-db
           property: database
+      
       - key: DB_USERNAME
         fromDatabase:
           name: proyecto-empresa-db
           property: user
+      
       - key: DB_PASSWORD
         fromDatabase:
           name: proyecto-empresa-db
           property: password
+      
+      # Configuración de sesiones y caché
+      - key: SESSION_DRIVER
+        value: database
+      
+      - key: SESSION_LIFETIME
+        value: 120
+      
+      - key: CACHE_STORE
+        value: database
+      
+      - key: QUEUE_CONNECTION
+        value: database
+      
+      # Configuración de archivos
+      - key: FILESYSTEM_DISK
+        value: local
+      
+      # Logging
+      - key: LOG_CHANNEL
+        value: stack
+      
+      - key: LOG_LEVEL
+        value: info
+      
+      - key: LOG_STACK
+        value: single
+      
+      # Mail (opcional - configura según necesites)
+      - key: MAIL_MAILER
+        value: log
+      
+      # Bcrypt rounds
+      - key: BCRYPT_ROUNDS
+        value: 12
 
+# Base de datos PostgreSQL
 databases:
   - name: proyecto-empresa-db
+    databaseName: proyecto_empresa
     plan: free
+    region: oregon # Debe coincidir con el servicio web
