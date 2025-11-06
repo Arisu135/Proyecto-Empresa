@@ -46,6 +46,9 @@ RUN npm ci 2>/dev/null || npm install
 # Copia .env.example a .env para build
 RUN cp .env.example .env
 
+# Limpia el cache de paquetes que podría tener Pail registrado
+RUN rm -rf bootstrap/cache/*.php
+
 # Genera la clave de aplicación
 RUN php artisan key:generate --force
 

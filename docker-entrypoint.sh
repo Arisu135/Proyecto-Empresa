@@ -24,6 +24,11 @@ if [ $attempt -eq $max_attempts ]; then
     echo "⚠️  Continuando de todos modos..."
 fi
 
+# Limpia cache de paquetes primero
+echo "🧹 Limpiando cache de paquetes..."
+rm -rf /var/www/html/bootstrap/cache/packages.php
+rm -rf /var/www/html/bootstrap/cache/services.php
+
 # Ejecuta migraciones
 echo "🔄 Ejecutando migraciones..."
 php artisan migrate --force --no-interaction || {
