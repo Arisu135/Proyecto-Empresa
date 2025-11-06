@@ -43,9 +43,8 @@ storage/framework/views/*
 .DS_Store
 Thumbs.db
 
-# Composer
+# Composer (vendor se instalará en el build)
 vendor/
-composer.lock
 
 # Docker
 Dockerfile

@@ -34,8 +34,11 @@ WORKDIR /var/www/html
 # Copia TODO el código primero
 COPY . .
 
-# Instala dependencias de PHP (CON dev dependencies para el build)
-RUN composer install --no-interaction --prefer-dist --optimize-autoloader
+# Instala dependencias de PHP (CON dev dependencies, sin ejecutar scripts primero)
+RUN composer install --no-interaction --prefer-dist --optimize-autoloader --no-scripts
+
+# Ahora ejecuta los scripts de Composer (artisan ya existe)
+RUN composer run-script post-autoload-dump
 
 # Instala dependencias de Node
 RUN npm ci 2>/dev/null || npm install
