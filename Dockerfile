@@ -31,18 +31,14 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 # Establece directorio de trabajo
 WORKDIR /var/www/html
 
-# Copia archivos de dependencias primero (mejor cache de Docker)
-COPY composer.json composer.lock* ./
-COPY package.json package-lock.json* ./
+# Copia TODO el código primero
+COPY . .
 
 # Instala dependencias de PHP (CON dev dependencies para el build)
 RUN composer install --no-interaction --prefer-dist --optimize-autoloader
 
 # Instala dependencias de Node
 RUN npm ci 2>/dev/null || npm install
-
-# Copia el resto del código
-COPY . .
 
 # Copia .env.example a .env para build
 RUN cp .env.example .env
