@@ -44,9 +44,9 @@ php artisan migrate --force --no-interaction || {
     echo "⚠️  Error en migraciones, pero continuando..."
 }
 
-# Ejecuta seeders (opcional, comenta si no quieres ejecutar en cada deploy)
-# echo "🌱 Ejecutando seeders..."
-# php artisan db:seed --force --no-interaction || echo "⚠️  Seeders no ejecutados"
+# Ejecuta seeders (carga categorías y productos iniciales)
+echo "🌱 Ejecutando seeders..."
+php artisan db:seed --force --no-interaction || echo "⚠️  Seeders no ejecutados"
 
 # Limpia y optimiza la aplicación
 echo "🧹 Limpiando caches..."
