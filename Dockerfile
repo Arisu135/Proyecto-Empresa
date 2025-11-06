@@ -32,14 +32,14 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 WORKDIR /var/www/html
 
 # Copia archivos de dependencias primero (mejor cache de Docker)
-COPY composer.json composer.lock ./
+COPY composer.json composer.lock* ./
 COPY package.json package-lock.json* ./
 
 # Instala dependencias de PHP
 RUN composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader --no-scripts
 
 # Instala dependencias de Node
-RUN npm ci --only=production || npm install --only=production
+RUN npm ci --only=production 2>/dev/null || npm install --only=production
 
 # Copia el resto del código
 COPY . .
