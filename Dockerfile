@@ -109,8 +109,9 @@ RUN mkdir -p storage/framework/{sessions,views,cache} \
     && chown -R www-data:www-data storage bootstrap/cache \
     && chmod -R 775 storage bootstrap/cache
 
-# Expone puerto (Render usa variable PORT, pero Apache usa 80 internamente)
+# Expone puerto dinámico (Render asigna el puerto via $PORT)
 EXPOSE 80
+ENV PORT=80
 
 # Script de inicio para configurar en runtime
 COPY docker-entrypoint.sh /usr/local/bin/
