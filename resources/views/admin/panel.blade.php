@@ -8,7 +8,7 @@
     <div style="display: flex; justify-content: center; gap: 30px;">
 
         {{-- Botón para Ver Pedidos --}}
-        <a href="{{ route('pedidos.gestion') }}" style="
+        <a href="{{ route('admin.gestion') }}" style="
             display: block;
             width: 300px;
             padding: 30px;
