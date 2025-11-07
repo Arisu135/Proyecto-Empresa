@@ -9,7 +9,12 @@ body {
     
     font-family: sans-serif; 
     margin: 0; 
-    padding: 0; /* Eliminamos el padding del body */
+    padding: 0;
+}
+
+/* Estilos SOLO para vistas de kiosko */
+body.kiosko-body,
+body.menu-full-screen {
     /* Establece el body para ocupar toda la vista de la tablet */
     min-height: 100vh;
     width: 100vw;
@@ -18,16 +23,11 @@ body {
     align-items: flex-end; /* Mueve el contenido a la parte inferior */
 }
 
-/* |--------------------------------------------------------------------------
-| ANULACIÓN DE CLASES DINÁMICAS
-| Anula las clases que Blade aplica dinámicamente.
-*/
-.kiosko-body,
-.menu-full-screen,
-.admin-body {
+/* Admin body - sin flex, se comporta normal */
+body.admin-body {
     background: #ffffff !important;
     background-image: none !important;
-    padding: 0; /* Aseguramos que no haya padding extra aquí */
+    display: block; /* Comportamiento normal del body */
 }
 
 
@@ -553,10 +553,13 @@ body {
 .btn-crud-edit { background-color: #2196F3; color: white; }
 .btn-crud-delete { background-color: #F44336; color: white; }
 .btn-crud-create { background-color: #4CAF50; color: white; }
-body {
-    align-items: center !important; /* centra el contenido en medio */
+
+/* Estilos específicos solo para kiosko */
+body.kiosko-body,
+body.menu-full-screen {
+    align-items: center !important;
 }
 
-.kiosko-wrapper {
-    position: relative !important; /* quita el modo fijo */
+body.kiosko-body .kiosko-wrapper {
+    position: relative !important;
 }
