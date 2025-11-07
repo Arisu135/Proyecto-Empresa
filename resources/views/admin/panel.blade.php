@@ -2,11 +2,20 @@
 
 @section('title', 'Panel de Administración')
 
+@push('styles')
+<style>
+  /* Ensure admin header/nav sits at the top and is centered */
+  body.admin-body { display: block !important; }
+  header .admin-nav, .admin-nav { justify-content: center !important; max-width: 1100px; margin: 10px auto !important; }
+  header .admin-nav a { padding: 8px 14px; }
+</style>
+@endpush
+
 @section('content')
     <style>
         /* Panel admin limpio y responsive */
-    .admin-wrapper { max-width: 1100px; margin: 30px auto; padding: 20px; }
-    .admin-grid { display: flex; gap: 40px; align-items: center; justify-content: center; }
+        .admin-wrapper { max-width: 1100px; margin: 30px auto; padding: 20px; }
+        .admin-grid { display: flex; gap: 40px; align-items: center; justify-content: center; }
 
         /* Note: the global nav is provided by the layout; avoid duplicating it here */
 
