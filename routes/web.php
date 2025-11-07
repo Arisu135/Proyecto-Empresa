@@ -68,3 +68,23 @@ Route::get('/admin/ventas', [CatalogoController::class, 'ventas'])->name('admin.
 
 // CRUD de Productos 
 Route::resource('productos', ProductoController::class);
+
+// Temporary ops route: clear caches/view in environments where you cannot run artisan directly.
+// PROTECTION: set ADMIN_CLEAR_TOKEN in your environment (Render Dashboard) and call
+// /ops/clear-cache?token=YOUR_TOKEN once. Remove this route after use.
+use Illuminate\Support\Facades\Artisan;
+Route::get('/ops/clear-cache', function () {
+    $provided = request()->query('token');
+    $secret = env('ADMIN_CLEAR_TOKEN');
+    if (!$secret || !$provided || !hash_equals($secret, $provided)) {
+        abort(403, 'Unauthorized');
+    }
+
+    Artisan::call('view:clear');
+    Artisan::call('cache:clear');
+    Artisan::call('config:clear');
+    return response()->json([
+        'view' => trim(Artisan::output()),
+        'status' => 'ok',
+    ]);
+});

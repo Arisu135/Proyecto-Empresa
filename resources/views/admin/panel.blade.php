@@ -3,49 +3,69 @@
 @section('title', 'Panel de Administración')
 
 @section('content')
-    <h1 style="text-align: center; color: #333; margin-bottom: 40px;">Panel Central de Administración</h1>
+    <style>
+        /* Panel admin limpio y responsive */
+        .admin-wrapper { max-width: 1100px; margin: 30px auto; padding: 20px; }
+        .admin-grid { display: flex; gap: 40px; align-items: center; }
 
-    <div style="display: flex; justify-content: center; gap: 30px;">
+        .admin-nav {
+            width: 220px;
+            background: #222;
+            color: #fff;
+            padding: 18px;
+            border-radius: 8px;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+        }
+        .admin-nav ul { list-style: none; padding: 0; margin: 0; }
+        .admin-nav li { padding: 8px 0; }
+        .admin-nav a { color: #fff; text-decoration: none; opacity: .95; }
 
-        {{-- Botón para Ver Pedidos --}}
-        <a href="{{ route('admin.gestion') }}" style="
-            display: block;
-            width: 300px;
-            padding: 30px;
-            text-align: center;
-            background-color: #2196F3; /* Azul */
-            color: white;
-            text-decoration: none;
-            font-size: 1.5em;
-            font-weight: bold;
+        .admin-main { flex: 1; }
+        .admin-title { font-size: 28px; color: #222; margin: 0 0 10px 0; }
+        .admin-sub { color: #666; margin-bottom: 24px; }
+
+        .admin-actions { display: flex; gap: 24px; flex-wrap: wrap; }
+        .admin-btn {
+            display: inline-block;
+            padding: 14px 34px;
             border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            transition: background-color 0.3s;
-        " onmouseover="this.style.backgroundColor='#1976D2';" onmouseout="this.style.backgroundColor='#2196F3';">
-            Ver Pedidos Recibidos
-        </a>
-
-        {{-- Botón para Gestionar Productos (Menú) --}}
-        <a href="{{ route('productos.index') }}" style="
-            display: block;
-            width: 300px;
-            padding: 30px;
-            text-align: center;
-            background-color: #FF9800; /* Naranja */
-            color: white;
+            color: #fff;
             text-decoration: none;
-            font-size: 1.5em;
-            font-weight: bold;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            transition: background-color 0.3s;
-        " onmouseover="this.style.backgroundColor='#FB8C00';" onmouseout="this.style.backgroundColor='#FF9800';">
-            Gestionar Menú
-        </a>
+            font-weight: 700;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+            transition: transform .08s ease, box-shadow .12s ease;
+        }
+        .admin-btn:hover { transform: translateY(-3px); }
+        .admin-btn--primary { background: linear-gradient(#2DA1F7,#1B82D8); }
+        .admin-btn--accent { background: linear-gradient(#FFB04A,#FF9800); }
 
+        @media (max-width: 780px) {
+            .admin-grid { flex-direction: column; align-items: stretch; }
+            .admin-nav { width: 100%; }
+            .admin-actions { justify-content: center; }
+        }
+    </style>
+
+    <div class="admin-wrapper">
+        <div class="admin-grid">
+            <nav class="admin-nav" aria-label="Navegación admin">
+                <ul>
+                    <li><a href="{{ route('admin.panel') }}">Panel</a></li>
+                    <li><a href="{{ route('productos.index') }}">Productos</a></li>
+                    <li><a href="{{ route('admin.gestion') }}">Gestión de Pedidos</a></li>
+                </ul>
+            </nav>
+
+            <section class="admin-main">
+                <h1 class="admin-title">Panel Central de Administración</h1>
+                <p class="admin-sub">Usa este panel para llevar el control de las órdenes y actualizar el menú del café.</p>
+
+                <div class="admin-actions">
+                    <a class="admin-btn admin-btn--primary" href="{{ route('admin.gestion') }}">Ver Pedidos Recibidos</a>
+                    <a class="admin-btn admin-btn--accent" href="{{ route('productos.index') }}">Gestionar Menú</a>
+                </div>
+            </section>
+        </div>
     </div>
 
-    <p style="text-align: center; margin-top: 50px; color: #777;">
-        Usa este panel para llevar el control de las órdenes y actualizar el menú del café.
-    </p>
 @endsection
