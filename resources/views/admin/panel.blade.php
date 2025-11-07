@@ -5,20 +5,10 @@
 @section('content')
     <style>
         /* Panel admin limpio y responsive */
-        .admin-wrapper { max-width: 1100px; margin: 30px auto; padding: 20px; }
-        .admin-grid { display: flex; gap: 40px; align-items: center; }
+    .admin-wrapper { max-width: 1100px; margin: 30px auto; padding: 20px; }
+    .admin-grid { display: flex; gap: 40px; align-items: center; justify-content: center; }
 
-        .admin-nav {
-            width: 220px;
-            background: #222;
-            color: #fff;
-            padding: 18px;
-            border-radius: 8px;
-            box-shadow: 0 6px 18px rgba(0,0,0,0.06);
-        }
-        .admin-nav ul { list-style: none; padding: 0; margin: 0; }
-        .admin-nav li { padding: 8px 0; }
-        .admin-nav a { color: #fff; text-decoration: none; opacity: .95; }
+        /* Note: the global nav is provided by the layout; avoid duplicating it here */
 
         .admin-main { flex: 1; }
         .admin-title { font-size: 28px; color: #222; margin: 0 0 10px 0; }
@@ -48,14 +38,6 @@
 
     <div class="admin-wrapper">
         <div class="admin-grid">
-            <nav class="admin-nav" aria-label="Navegación admin">
-                <ul>
-                    <li><a href="{{ route('admin.panel') }}">Panel</a></li>
-                    <li><a href="{{ route('productos.index') }}">Productos</a></li>
-                    <li><a href="{{ route('admin.gestion') }}">Gestión de Pedidos</a></li>
-                </ul>
-            </nav>
-
             <section class="admin-main">
                 <h1 class="admin-title">Panel Central de Administración</h1>
                 <p class="admin-sub">Usa este panel para llevar el control de las órdenes y actualizar el menú del café.</p>
