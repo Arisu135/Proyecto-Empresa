@@ -62,6 +62,9 @@ Route::get('/admin/pedidos', [CatalogoController::class, 'gestion'])->name('admi
 // Actualización de estado de pedidos
 Route::put('/admin/pedidos/{pedido}/actualizar', [CatalogoController::class, 'actualizarEstado'])->name('pedido.actualizarEstado'); 
 
+// Panel de Ventas (Historial)
+Route::get('/admin/ventas', [CatalogoController::class, 'ventas'])->name('admin.ventas');
+
 
 // CRUD de Productos 
 Route::resource('productos', ProductoController::class);

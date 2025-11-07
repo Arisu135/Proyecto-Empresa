@@ -7,6 +7,7 @@ use App\Models\Categoria;
 use App\Models\Pedido;
 use App\Models\PedidoDetalle; 
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -21,7 +22,7 @@ class CatalogoController extends Controller
      */
     public function index()
     {
-        return view('catalogo.index'); 
+        return view('catalogo.index');
     }
 
     /**
@@ -293,6 +294,51 @@ class CatalogoController extends Controller
                             ->get();
                             
         return view('admin.gestion_pedidos', compact('pedidos'));
+    }
+
+    /**
+     * Muestra el historial de ventas.
+     * Permite filtrar por fecha (YYYY-MM-DD) o ver todas las ventas.
+     */
+    public function ventas(Request $request)
+    {
+        // Si se solicita 'todos' mostramos todo el historial
+        $filter = $request->query('filter', 'hoy'); // 'hoy' o 'todos' o fecha YYYY-MM-DD
+
+        if ($filter === 'todos') {
+            $pedidos = Pedido::with('detalles')->orderBy('created_at', 'desc')->get();
+            $titulo = 'Historial de Ventas - Todas las Fechas';
+        } elseif ($filter === 'hoy') {
+            $pedidos = Pedido::with('detalles')
+                        ->whereDate('created_at', now()->toDateString())
+                        ->orderBy('created_at', 'desc')
+                        ->get();
+            $titulo = 'Ventas de Hoy (' . now()->format('d/m/Y') . ')';
+        } else {
+            // Intentamos parsear la fecha enviada en formato YYYY-MM-DD
+            try {
+                $date = Carbon::createFromFormat('Y-m-d', $filter)->startOfDay();
+                $pedidos = Pedido::with('detalles')
+                            ->whereDate('created_at', $date->toDateString())
+                            ->orderBy('created_at', 'desc')
+                            ->get();
+                $titulo = 'Ventas del ' . $date->format('d/m/Y');
+            } catch (\Exception $e) {
+                // Si la fecha no es válida, por seguridad mostramos vacío y mensaje
+                $pedidos = collect();
+                $titulo = 'Ventas - Fecha inválida';
+            }
+        }
+
+        // Total de ventas sumando los totales de pedidos (solo pedidos entregados o todos?)
+        $totalVentas = $pedidos->sum('total');
+
+        return view('admin.ventas', [
+            'pedidos' => $pedidos,
+            'titulo' => $titulo,
+            'totalVentas' => $totalVentas,
+            'filter' => $filter,
+        ]);
     }
 
     /**

@@ -152,6 +152,12 @@
 </head>
 <body>
     <div class="kiosko-body">
+
+        <!-- Botón rápido de Admin: visible en el kiosco para acceso rápido al panel -->
+        <a href="{{ route('admin.panel') }}" 
+           style="position:fixed; top:18px; right:18px; z-index:1100; background:#333; color:#fff; padding:10px 14px; border-radius:8px; text-decoration:none; font-weight:700; box-shadow:0 4px 10px rgba(0,0,0,0.15);">
+            Admin
+        </a>
         
         {{-- Aquí puedes agregar el mensaje de bienvenida "¡Bienvenido!" si quieres --}}
 
