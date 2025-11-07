@@ -144,7 +144,7 @@ class CatalogoController extends Controller
         $total = array_sum(array_column($carrito, 'subtotal'));
         $tipoPedido = Session::get('tipo_pedido');
 
-        return view('carrito.resumen', [ 
+        return view('carrito.carrito_resumen', [ 
             'carrito_items' => $carrito,
             'total' => $total,
             'tipoPedido' => $tipoPedido, 
@@ -181,6 +181,12 @@ class CatalogoController extends Controller
      */
     public function finalizarPedido(Request $request)
     {
+        // Registro inicial para depuración: captura inputs y estado de sesión
+        Log::info('CatalogoController::finalizarPedido llamado', [
+            'input' => $request->all(),
+            'session_tipo_pedido' => Session::get('tipo_pedido'),
+            'session_carrito_count' => count(Session::get('carrito', [])),
+        ]);
         // 1. Validar el formulario de envío (nombre y dirección)
         try {
             $validated = $request->validate([
@@ -210,6 +216,8 @@ class CatalogoController extends Controller
 
         try {
             // A. Crear el Pedido Principal
+            Log::info('Creando Pedido en la DB', ['tipo_pedido' => $tipoPedido, 'total' => $total, 'nombre_cliente' => $validated['nombre_cliente'] ?? null]);
+
             $pedido = Pedido::create([
                 'tipo_pedido' => $tipoPedido, 
                 // Añadimos 'nombre_cliente' y 'direccion', que son opcionales en el kiosco pero útiles para delivery/takeaway
@@ -225,6 +233,8 @@ class CatalogoController extends Controller
                 // CRUCIAL: Convertir el array de opciones a JSON string para la columna TEXT
                 $opcionesJson = json_encode($item['opciones'] ?? []); 
                 
+                Log::info('Creando PedidoDetalle', ['pedido_id' => $pedido->id, 'producto_id' => $item['id'], 'cantidad' => $item['cantidad']]);
+
                 PedidoDetalle::create([
                     'pedido_id'               => $pedido->id,
                     'producto_id'             => $item['id'], 

@@ -53,7 +53,7 @@
                 {{-- Asumiendo que el nombre es "Cliente 1" si no se ha implementado la captura --}}
                 <p><strong>Cliente:</strong> <span class="font-semibold">{{ $pedido->nombre_cliente ?? 'Cliente Kiosco' }}</span></p>
                 
-                <p><strong>Fecha y Hora:</strong> <span>{{ $pedido->created_at->format('d/m/Y H:i') ?? 'N/A' }}</span></p>
+                <p><strong>Fecha y Hora:</strong> <span>{{ optional($pedido->created_at)->format('d/m/Y H:i') ?? 'N/A' }}</span></p>
 
                 <p><strong>Estado:</strong> 
                     <span class="font-bold text-red-500">
@@ -69,9 +69,9 @@
 
             <h3 class="text-lg font-bold text-gray-700 mb-3">Productos Incluidos:</h3>
             <ul class="list-disc list-inside space-y-1 text-gray-600 ml-4">
-                {{-- Debes pasar los ítems del pedido a la vista para que esto funcione --}}
-                @forelse ($pedido->items ?? [] as $item)
-                    <li>{{ $item->cantidad }}x {{ $item->nombre }} - S/. {{ number_format($item->subtotal, 2) }}</li>
+                {{-- Usar la relación 'detalles' y los campos reales del modelo PedidoDetalle --}}
+                @forelse ($pedido->detalles ?? [] as $item)
+                    <li>{{ $item->cantidad }}x {{ $item->nombre_producto }} - S/. {{ number_format($item->subtotal, 2) }}</li>
                 @empty
                     <li>No se encontraron detalles de productos.</li>
                 @endforelse

@@ -38,6 +38,15 @@ echo "🧹 Limpiando cache de paquetes..."
 rm -rf /var/www/html/bootstrap/cache/packages.php
 rm -rf /var/www/html/bootstrap/cache/services.php
 
+# DEBUG: Mostrar información PHP y drivers PDO instalados (útil para detectar pdo_pgsql faltante)
+echo "🔍 Información PHP y extensiones relevantes:"
+php -v || true
+echo "--- módulos PHP (filtrados) ---"
+php -m | grep -Ei "pdo|pgsql|pdo_pgsql" || php -m || true
+echo "--- PDO drivers disponibles ---"
+php -r "print_r(PDO::getAvailableDrivers());" || true
+echo "--------------------------------"
+
 # Ejecuta migraciones
 echo "🔄 Ejecutando migraciones..."
 php artisan migrate --force --no-interaction || {
