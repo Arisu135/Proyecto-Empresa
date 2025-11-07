@@ -33,6 +33,15 @@ print_info() {
     echo -e "${YELLOW}ℹ️  $1${NC}"
 }
 
+# 0. Verificar comandos necesarios
+print_info "Verificando herramientas necesarias (git, docker, composer, node)..."
+command -v git >/dev/null 2>&1 || { print_error "Git no está instalado. Por favor, instálalo para continuar."; exit 1; }
+command -v docker >/dev/null 2>&1 || { print_warning "Docker no se encuentra. No se podrán realizar pruebas de build locales."; }
+command -v composer >/dev/null 2>&1 || { print_error "Composer no está instalado. Por favor, instálalo para continuar."; exit 1; }
+command -v node >/dev/null 2>&1 || { print_error "Node.js no está instalado. Por favor, instálalo para continuar."; exit 1; }
+print_success "Herramientas básicas verificadas."
+echo ""
+
 # 1. Verificar que estamos en el directorio correcto
 if [ ! -f "artisan" ]; then
     print_error "Este script debe ejecutarse desde la raíz del proyecto Laravel"

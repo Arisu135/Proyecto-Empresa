@@ -3,71 +3,75 @@
 @section('title', 'Gestión de Pedidos')
 
 @section('content')
+<div class="container mx-auto px-4 py-8">
+    <h1 class="text-3xl font-bold text-center mb-2 text-gray-800">Gestión de Pedidos de Cocina</h1>
+    <p class="text-center text-gray-500 mb-8">Órdenes recibidas - Actualizado a las {{ now()->format('h:i:s A') }}</p>
 
-    <h1>Panel de Gestión de Pedidos - Rebel Jungle Café</h1>
-    <p>Órdenes Recibidas por Mesa - Actualizado a las {{ now()->format('h:i:s A') }}</p>
-    <hr>
-
-    <style>
-        .producto { border: 1px solid #ccc; padding: 15px; margin-bottom: 15px; border-radius: 8px; background-color: #f9f9f9; }
-        .producto.estado-entregado { border-left: 5px solid #4CAF50; }
-        .producto.estado-en-preparacion { border-left: 5px solid #FFC107; }
-        .producto.estado-cancelado { border-left: 5px solid #9E9E9E; }
-        .producto.estado-pendiente { border-left: 5px solid #D32F2F; }
-    </style>
-
-    @if(isset($pedidos) && $pedidos->count())
-        @foreach($pedidos as $pedido)
-            @php
-                switch ($pedido->estado) {
-                    case 'Entregado':
-                        $stateClass = 'estado-entregado';
-                        break;
-                    case 'En Preparación':
-                        $stateClass = 'estado-en-preparacion';
-                        break;
-                    case 'Cancelado':
-                        $stateClass = 'estado-cancelado';
-                        break;
-                    default:
-                        $stateClass = 'estado-pendiente';
-                }
-            @endphp
-
-            <div class="producto {{ $stateClass }}">
-                <h2 style="margin-top: 0; color: #333;">
-                    Pedido #{{ $pedido->id }} - {{ $pedido->nombre_cliente ?? 'Cliente' }}
-                </h2>
-
-                <p>Total: <strong style="color: #D32F2F; font-size: 1.2em;">S/. {{ number_format($pedido->total, 2) }}</strong></p>
-
-                <p>Notas/Instrucciones:
-                    <em style="color: #666;">{{ $pedido->direccion ?: 'Ninguna' }}</em>
-                </p>
-
-                <p>Hora de Pedido: {{ optional($pedido->created_at)->format('d/m/Y h:i:s A') }}</p>
-
-                <hr style="border-top: 1px dashed #ddd;">
-
-                <form action="{{ route('pedido.actualizarEstado', $pedido) }}" method="POST" style="display:inline-block; margin-top: 10px;">
-                    @csrf
-
-                    <label for="estado_{{ $pedido->id }}" style="font-weight: bold;">Estado:</label>
-                    <select name="estado" id="estado_{{ $pedido->id }}" style="padding: 5px; border-radius: 4px; border: 1px solid #ccc;">
-                        <option value="Pendiente" {{ $pedido->estado == 'Pendiente' ? 'selected' : '' }}>Pendiente</option>
-                        <option value="En Preparación" {{ $pedido->estado == 'En Preparación' ? 'selected' : '' }}>En Preparación</option>
-                        <option value="Entregado" {{ $pedido->estado == 'Entregado' ? 'selected' : '' }}>Entregado</option>
-                        <option value="Cancelado" {{ $pedido->estado == 'Cancelado' ? 'selected' : '' }}>Cancelado</option>
-                    </select>
-
-                    <button type="submit" style="background-color: #008CBA; color: white; padding: 5px 15px; border: none; border-radius: 4px; margin-left: 10px; cursor: pointer;">Guardar</button>
-                </form>
-            </div>
-        @endforeach
+    @if(!isset($pedidos) || $pedidos->isEmpty())
+        <div class="text-center py-12 bg-gray-50 rounded-lg shadow-inner">
+            <p class="text-2xl text-gray-500">🎉 ¡No hay pedidos pendientes por ahora!</p>
+        </div>
     @else
-        <p>No hay pedidos en este momento.</p>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            @foreach ($pedidos as $pedido)
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden border-l-8 
+                    @switch($pedido->estado)
+                        @case('Pendiente') border-red-500 @break
+                        @case('En Preparación') border-yellow-500 @break
+                        @case('Listo') border-green-500 @break
+                        @default border-gray-300
+                    @endswitch
+                ">
+                    <div class="p-5">
+                        <div class="flex justify-between items-baseline">
+                            <h2 class="text-2xl font-bold text-gray-800">Pedido #{{ $pedido->id }}</h2>
+                            <span class="text-sm font-semibold px-3 py-1 rounded-full
+                                @switch($pedido->estado)
+                                    @case('Pendiente') bg-red-100 text-red-800 @break
+                                    @case('En Preparación') bg-yellow-100 text-yellow-800 @break
+                                    @case('Listo') bg-green-100 text-green-800 @break
+                                @endswitch
+                            ">{{ $pedido->estado }}</span>
+                        </div>
+                        <p class="text-gray-500 text-sm mt-1">Recibido: {{ $pedido->created_at->format('H:i') }} (Hace {{ $pedido->created_at->diffForHumans(null, true) }})</p>
+                        
+                        <ul class="mt-4 space-y-3 border-t pt-3">
+                            @foreach($pedido->detalles as $detalle)
+                                <li>
+                                    <span class="font-bold text-lg">{{ $detalle->cantidad }}x</span> {{ $detalle->nombre_producto }}
+                                    @if($detalle->opciones_personalizadas && $detalle->opciones_personalizadas != '[]')
+                                        <p class="text-xs text-gray-600 pl-6">
+                                            @php 
+                                                try {
+                                                    $opciones = json_decode($detalle->opciones_personalizadas, true, 512, JSON_THROW_ON_ERROR);
+                                                    if (is_array($opciones) && !empty($opciones)) {
+                                                        echo '+ ' . implode(', ', array_column($opciones, 'value'));
+                                                    }
+                                                } catch (\JsonException $e) {
+                                                    // No hacer nada si el JSON es inválido
+                                                }
+                                            @endphp
+                                        </p>
+                                    @endif
+                                </li>
+                            @endforeach
+                        </ul>
+
+                        <form action="{{ route('pedido.actualizarEstado', $pedido) }}" method="POST" class="mt-5">
+                            @csrf
+                            @method('PATCH')
+                            <select name="estado" class="w-full p-2 border border-gray-300 rounded-md bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500" onchange="this.form.submit()">
+                                <option value="Pendiente" @if($pedido->estado == 'Pendiente') selected @endif>Pendiente</option>
+                                <option value="En Preparación" @if($pedido->estado == 'En Preparación') selected @endif>En Preparación</option>
+                                <option value="Listo" @if($pedido->estado == 'Listo') selected @endif>Listo para Entregar</option>
+                                <option value="Entregado" @if($pedido->estado == 'Entregado') selected @endif>Entregado</option>
+                                <option value="Cancelado" @if($pedido->estado == 'Cancelado') selected @endif>Cancelar</option>
+                            </select>
+                        </form>
+                    </div>
+                </div>
+            @endforeach
+        </div>
     @endif
-
-    <a href="{{ route('admin.gestion') }}" style="display: block; margin-top: 20px; text-align: center; color: #007bff;">Volver a Gestión</a>
-
+</div>
 @endsection

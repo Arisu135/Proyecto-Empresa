@@ -41,11 +41,16 @@
     
     {{-- Navegación del Admin (Solo si NO estamos en una ruta de Kiosco) --}}
     @unless($isKioscoView)
-        <header>
-            <nav class="admin-nav">
-                <a href="{{ route('admin.panel') }}">Panel</a>
-                <a href="{{ route('productos.index') }}">Productos</a>
-                <a href="{{ route('admin.gestion') }}">Gestión de Pedidos</a> 
+        <header class="bg-gray-800 text-white shadow-md">
+            <nav class="container mx-auto px-4 py-4">
+                {{-- Contenedor Flex para centrar el menú --}}
+                <div class="flex justify-center">
+                    <ul class="flex space-x-8 text-lg">
+                        <li><a href="{{ route('admin.panel') }}" class="hover:text-yellow-400 transition-colors duration-300">Panel</a></li>
+                        <li><a href="{{ route('productos.index') }}" class="hover:text-yellow-400 transition-colors duration-300">Productos</a></li>
+                        <li><a href="{{ route('admin.gestion') }}" class="hover:text-yellow-400 transition-colors duration-300">Gestión de Pedidos</a></li>
+                    </ul>
+                </div>
             </nav>
         </header>
     @endunless
