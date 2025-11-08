@@ -82,9 +82,12 @@
     @unless($isKioscoView)
         <div class="admin-header-custom">
             <ul>
-                <li><a href="{{ route('admin.panel') }}">Panel</a></li>
-                <li><a href="{{ route('productos.index') }}">Productos</a></li>
-                <li><a href="{{ route('admin.gestion') }}">Gestión de Pedidos</a></li>
+                <li><a href="{{ route('admin.panel') }}">🏠 Panel</a></li>
+                <li><a href="{{ route('admin.gestion') }}">🍳 Cocina</a></li>
+                <li><a href="{{ route('mesas.index') }}">🍽️ Mesas</a></li>
+                <li><a href="{{ route('caja.index') }}">💰 Caja</a></li>
+                <li><a href="{{ route('admin.ventas') }}">📊 Historial</a></li>
+                <li><a href="{{ route('productos.index') }}">📝 Menú</a></li>
             </ul>
         </div>
     @endunless
