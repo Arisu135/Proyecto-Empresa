@@ -221,11 +221,12 @@ class CatalogoController extends Controller
 
             $pedido = Pedido::create([
                 'tipo_pedido' => $tipoPedido, 
-                // Añadimos 'nombre_cliente' y 'direccion', que son opcionales en el kiosco pero útiles para delivery/takeaway
                 'nombre_cliente' => $validated['nombre_cliente'] ?? 'Cliente Kiosco',
                 'direccion' => $validated['direccion'] ?? ($tipoPedido == 'takeaway' ? 'Para llevar' : 'En el lugar'),
+                'numero_mesa' => $request->input('numero_mesa'),
                 'total' => $total,
-                'estado' => 'Pendiente', 
+                'estado' => 'Pendiente',
+                'pagado' => false,
             ]);
 
             // B. Crear los Detalles del Pedido

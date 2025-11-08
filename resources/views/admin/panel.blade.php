@@ -52,8 +52,11 @@
                 <p class="admin-sub">Usa este panel para llevar el control de las órdenes y actualizar el menú del café.</p>
 
                 <div class="admin-actions">
-                    <a class="admin-btn admin-btn--primary" href="{{ route('admin.gestion') }}">Ver Pedidos Recibidos</a>
-                    <a class="admin-btn admin-btn--accent" href="{{ route('productos.index') }}">Gestionar Menú</a>
+                    <a class="admin-btn admin-btn--primary" href="{{ route('admin.gestion') }}">🍳 Cocina</a>
+                    <a class="admin-btn admin-btn--accent" href="{{ route('mesas.index') }}">🍽️ Mesas</a>
+                    <a class="admin-btn admin-btn--primary" href="{{ route('caja.index') }}">💰 Caja</a>
+                    <a class="admin-btn admin-btn--accent" href="{{ route('admin.ventas') }}">📊 Historial</a>
+                    <a class="admin-btn admin-btn--primary" href="{{ route('productos.index') }}">📝 Menú</a>
                 </div>
             </section>
         </div>

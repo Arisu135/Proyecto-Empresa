@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\CatalogoController;
 use App\Http\Controllers\ProductoController;
+use App\Http\Controllers\CajaController;
+use App\Http\Controllers\MesaController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -55,6 +57,14 @@ Route::get('/pedido/{id}/confirmacion', [CatalogoController::class, 'confirmacio
 Route::get('/admin', function () {
     return view('admin.panel');
 })->name('admin.panel');
+
+// Vista de Caja
+Route::get('/caja', [CajaController::class, 'index'])->name('caja.index');
+Route::patch('/caja/{pedido}/pagar', [CajaController::class, 'marcarPagado'])->name('caja.marcarPagado');
+
+// Vista de Mesas
+Route::get('/mesas', [MesaController::class, 'index'])->name('mesas.index');
+Route::patch('/mesas/{pedido}/entregar', [MesaController::class, 'marcarEntregado'])->name('mesas.marcarEntregado');
 
 // Gestión de Pedidos (Cocina)
 Route::get('/admin/pedidos', [CatalogoController::class, 'gestion'])->name('admin.gestion'); 

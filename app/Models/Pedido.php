@@ -18,7 +18,13 @@ class Pedido extends Model
         'direccion',      
         'total',
         'estado',         
-        'tipo_pedido', // ⬅️ ¡¡ESTA ES LA COLUMNA QUE FALTABA!!
+        'tipo_pedido',
+        'numero_mesa',
+        'pagado',
+    ];
+
+    protected $casts = [
+        'pagado' => 'boolean',
     ];
 
     /**
