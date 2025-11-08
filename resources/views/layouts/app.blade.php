@@ -41,8 +41,12 @@
     
     {{-- Navegación del Admin (Solo si NO estamos en una ruta de Kiosco) --}}
     @unless($isKioscoView)
-        <header class="bg-gray-800 text-white shadow-md">
-            <nav class="container mx-auto px-4 py-4">
+        <header class="bg-green-600 text-white shadow-md">
+            <nav class="container mx-auto px-4 py-4 flex justify-between items-center">
+                {{-- Contenedor para el logo o título --}}
+                <div class="bg-white p-2 rounded-md text-gray-800 font-bold">
+                    Rebel Jungle Admin
+                </div>
                 {{-- Contenedor Flex para centrar el menú --}}
                 <div class="flex justify-center">
                     <ul class="flex space-x-8 text-lg">
