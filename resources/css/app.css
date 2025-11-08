@@ -9,18 +9,18 @@
 /* Color para la cabecera - Permitir que Tailwind controle el header principal */
 /* Solo aplicar estilos específicos cuando sea necesario */
 
-/* Estilo para navegación dentro del admin: limitar al header del layout */
-header nav a {
-    color: #ffffff; /* dejar que Tailwind gestione variantes */
+/* Estilo para navegación dentro del admin (color visible por defecto) */
+header.admin-header nav a {
+    color: #ffffff;
     margin: 0 15px;
     text-decoration: none;
     font-weight: bold;
     padding: 5px 10px;
     border-radius: 4px;
-    transition: background-color 0.3s;
+    transition: color 0.2s ease, background-color 0.3s;
 }
-header nav a:hover {
-    background-color: rgba(255, 255, 255, 0.1);
+header.admin-header nav a:hover {
+    color: #facc15; /* amarillo */
 }
 
 /* Contenedor de contenido */
