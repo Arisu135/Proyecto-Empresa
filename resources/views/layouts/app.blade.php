@@ -17,17 +17,47 @@
         html, body {
             margin: 0;
             padding: 0;
-            height: 100%; /* Importante para vistas full-screen */
+            height: 100%;
             width: 100%;
         }
         
-        /* Forzar color blanco en enlaces del header admin */
-        header.admin-header a {
-            color: #ffffff !important;
-            text-decoration: none !important;
+        /* Header admin con estilos inline puros */
+        .admin-header-custom {
+            background-color: #166534;
+            padding: 15px 20px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
-        header.admin-header a:hover {
-            color: #facc15 !important;
+        
+        .admin-header-custom ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            flex-wrap: wrap;
+        }
+        
+        .admin-header-custom li {
+            margin: 0;
+            padding: 0;
+        }
+        
+        .admin-header-custom a {
+            color: #ffffff;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 18px;
+            display: inline-block;
+            padding: 8px 15px;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+        
+        .admin-header-custom a:hover {
+            color: #facc15;
+            background-color: rgba(255, 255, 255, 0.1);
         }
     </style>
 </head>
@@ -50,16 +80,13 @@
     
     {{-- Navegación del Admin (Solo si NO estamos en una ruta de Kiosco) --}}
     @unless($isKioscoView)
-        <header class="admin-header shadow-md z-10">
-            <nav class="container mx-auto px-4 py-4 flex justify-center items-center gap-12">
-                {{-- Menú centrado --}}
-                <ul class="flex space-x-8 text-lg gap-4 min-w-max">
-                    <li><a href="{{ route('admin.panel') }}" style="color: #ffffff; text-decoration: none; font-weight: bold;">Panel</a></li>
-                    <li><a href="{{ route('productos.index') }}" style="color: #ffffff; text-decoration: none; font-weight: bold;">Productos</a></li>
-                    <li><a href="{{ route('admin.gestion') }}" style="color: #ffffff; text-decoration: none; font-weight: bold;">Gestión de Pedidos</a></li>
-                </ul>
-            </nav>
-        </header>
+        <div class="admin-header-custom">
+            <ul>
+                <li><a href="{{ route('admin.panel') }}">Panel</a></li>
+                <li><a href="{{ route('productos.index') }}">Productos</a></li>
+                <li><a href="{{ route('admin.gestion') }}">Gestión de Pedidos</a></li>
+            </ul>
+        </div>
     @endunless
 
     {{-- Aquí se inyecta el contenido de la vista hija (index, menu, etc.) --}}
