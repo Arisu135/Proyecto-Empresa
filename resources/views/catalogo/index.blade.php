@@ -10,31 +10,34 @@
     
     <style>
     /* --- Contenedor general del kiosco --- */
+    html, body {
+        margin: 0;
+        padding: 0;
+        height: 100vh;
+        overflow: hidden;
+    }
+    
     .kiosko-body {
         background-color: #ffffff;
-        margin: 0;
-        padding: 20px; /* Añade padding para móviles */
-        min-height: 100vh;
+        height: 100vh;
         display: flex;
         flex-direction: column;
-        justify-content: flex-start; /* Alinea arriba para evitar desbordamiento */
+        justify-content: space-between;
         align-items: center;
         text-align: center;
-        position: relative;
+        padding: 20px;
+        box-sizing: border-box;
     }
 
     /* --- Logo circular --- */
     .logo-wrapper {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        margin-bottom: 30px;
-        margin-top: 5vh; /* Usa viewport height para posicionamiento inicial */
+        flex-shrink: 0;
+        margin-top: 20px;
     }
 
     .logo-wrapper img {
-        width: 200px; /* Tamaño ligeramente reducido */
-        height: 200px;
+        width: 150px;
+        height: 150px;
         border-radius: 50%;
         object-fit: cover;
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
@@ -42,12 +45,16 @@
 
     /* --- QR --- */
     .qr-wrapper {
-        margin-bottom: 5vh; /* Ajuste para el espacio */
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
     }
 
     .qr-wrapper svg {
-        width: 180px; /* Reducir el tamaño del QR para móviles */
-        height: 180px;
+        width: 160px;
+        height: 160px;
         border: 5px solid #fff;
         border-radius: 10px;
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
@@ -55,7 +62,7 @@
 
     .qr-text {
         margin-top: 10px;
-        font-size: 16px; /* Letra más pequeña */
+        font-size: 14px;
         color: #3e2723;
         font-weight: bold;
     }
@@ -63,89 +70,85 @@
     /* --- Botones --- */
     .kiosko-wrapper {
         width: 100%;
-        display: flex;
-        justify-content: center;
-        /* IMPORTANTE: Cambiar de absolute a relative para que fluya en móviles */
-        position: relative; 
-        bottom: auto; 
-        left: auto;
-        padding-top: 20px;
+        flex-shrink: 0;
+        margin-bottom: 20px;
     }
 
     .button-group {
         display: flex;
-        flex-direction: column; /* Apilar botones verticalmente en móviles */
-        gap: 20px;
-        width: 90%; /* Ocupar casi todo el ancho */
-        max-width: 400px; /* Límite para que no sean demasiado anchos en desktop */
+        flex-direction: row;
+        gap: 15px;
+        justify-content: center;
+        max-width: 600px;
+        margin: 0 auto;
     }
     
     .btn-kiosko {
-        /* ... (tus estilos de color y sombra se mantienen) ... */
+        flex: 1;
         border: none;
         color: white;
-        padding: 15px 0; /* Padding adaptado */
+        padding: 15px 20px;
         border-radius: 10px;
-        font-size: 20px; /* Letra más grande para tocar */
+        font-size: 18px;
         font-weight: bold;
         cursor: pointer;
         box-shadow: 0 4px 10px rgba(0,0,0,0.2);
         transition: transform 0.15s ease;
-        letter-spacing: 0.5px;
         text-align: center;
-        /* Quitar min-width para que el ancho se adapte al 90% */
-        display: block; 
         text-decoration: none;
+        max-width: 250px;
     }
 
-    .btn-kiosko:hover {
-        transform: scale(1.03); /* Ligeramente más pequeño el efecto hover */
+    .btn-kiosko:active {
+        transform: scale(0.98);
     }
 
-    /* --- Media Query para DESKTOP (pantallas grandes) --- */
-    /* Cuando la pantalla es ancha, volvemos al diseño de dos columnas */
-    @media (min-width: 768px) {
-        .kiosko-body {
-             /* Restaurar la justificación para centrar verticalmente en desktop */
-            justify-content: center; 
-        }
-        
-        .logo-wrapper {
-            margin-bottom: 35px;
-            margin-top: 0;
-        }
-
+    /* --- Media Query para móviles verticales --- */
+    @media (max-width: 768px) and (orientation: portrait) {
         .logo-wrapper img {
-            width: 250px;
-            height: 250px;
-        }
-
-        .qr-wrapper {
-             margin-bottom: 100px;
+            width: 120px;
+            height: 120px;
         }
         
         .qr-wrapper svg {
-            width: 230px;
-            height: 230px;
+            width: 140px;
+            height: 140px;
         }
         
-        .kiosko-wrapper {
-            /* Vuelve a la posición absoluta en la parte inferior para desktop */
-            position: absolute; 
-            bottom: 40px; 
-            left: 0;
-        }
-
         .button-group {
-            flex-direction: row; /* Colocar botones horizontalmente */
-            gap: 30px;
-            width: 80%;
-            max-width: 600px;
+            flex-direction: column;
+            width: 100%;
         }
         
         .btn-kiosko {
-             min-width: 250px; 
-             padding: 18px 0;
+            max-width: 100%;
+            font-size: 16px;
+        }
+    }
+    
+    /* --- Media Query para móviles horizontales --- */
+    @media (max-width: 768px) and (orientation: landscape) {
+        .logo-wrapper {
+            margin-top: 10px;
+        }
+        
+        .logo-wrapper img {
+            width: 100px;
+            height: 100px;
+        }
+        
+        .qr-wrapper svg {
+            width: 120px;
+            height: 120px;
+        }
+        
+        .qr-text {
+            font-size: 12px;
+        }
+        
+        .btn-kiosko {
+            padding: 12px 20px;
+            font-size: 16px;
         }
     }
 </style>
@@ -154,7 +157,7 @@
     <div class="kiosko-body">
 
         <!-- Botones de Administración -->
-        <div style="position:fixed; top:18px; right:18px; z-index:1100; display: flex; gap: 10px;">
+        <div style="position:fixed; top:10px; right:10px; z-index:1100; display: flex; gap: 8px;">
             <a href="{{ route('admin.panel') }}" 
                style="background:#333; color:#fff; padding:10px 14px; border-radius:8px; text-decoration:none; font-weight:700; box-shadow:0 4px 10px rgba(0,0,0,0.15);">
                 Admin
