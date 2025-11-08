@@ -70,7 +70,7 @@
                                 </button>
                             </form>
                             
-                            <button onclick="imprimirTicket({{ $pedido->id }})" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition">
+                            <button onclick="imprimirTicket({{ $pedido->id }}, '{{ $pedido->numero_mesa }}', '{{ $pedido->nombre_cliente }}', {{ $pedido->total }}, {{ json_encode($pedido->detalles) }})" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition">
                                 🖨️
                             </button>
                         </div>
@@ -82,27 +82,110 @@
 </div>
 
 <script>
-function imprimirTicket(pedidoId) {
-    const pedidoCard = event.target.closest('.bg-white');
-    const contenido = pedidoCard.innerHTML;
+function imprimirTicket(pedidoId, mesa, cliente, total, detalles) {
+    const fecha = new Date().toLocaleString('es-PE', { 
+        day: '2-digit', 
+        month: '2-digit', 
+        year: 'numeric', 
+        hour: '2-digit', 
+        minute: '2-digit' 
+    });
+    
+    let itemsHTML = '';
+    detalles.forEach(item => {
+        itemsHTML += `
+            <tr>
+                <td>${item.cantidad}x</td>
+                <td>${item.nombre_producto}</td>
+                <td style="text-align: right;">S/ ${parseFloat(item.subtotal).toFixed(2)}</td>
+            </tr>
+        `;
+    });
     
     const ventana = window.open('', '_blank', 'width=300,height=600');
     ventana.document.write(`
+        <!DOCTYPE html>
         <html>
         <head>
-            <title>Ticket - Pedido #${pedidoId}</title>
+            <meta charset="UTF-8">
+            <title>Ticket #${pedidoId}</title>
             <style>
-                body { font-family: monospace; font-size: 12px; margin: 10px; }
-                h2 { text-align: center; margin: 5px 0; }
-                .total { font-size: 16px; font-weight: bold; margin-top: 10px; border-top: 2px solid #000; padding-top: 5px; }
+                @media print {
+                    @page { margin: 0; size: 80mm auto; }
+                    body { margin: 0; }
+                }
+                body {
+                    font-family: 'Courier New', monospace;
+                    font-size: 12px;
+                    width: 80mm;
+                    margin: 0 auto;
+                    padding: 5mm;
+                }
+                .center { text-align: center; }
+                .bold { font-weight: bold; }
+                .line { border-top: 1px dashed #000; margin: 5px 0; }
+                .double-line { border-top: 2px solid #000; margin: 5px 0; }
+                table { width: 100%; border-collapse: collapse; }
+                td { padding: 2px 0; }
+                .total-row { font-size: 14px; font-weight: bold; }
             </style>
         </head>
-        <body onload="window.print(); window.close();">
-            ${contenido}
+        <body>
+            <div class="center bold" style="font-size: 16px; margin-bottom: 5px;">
+                REBEL JUNGLE CAFE
+            </div>
+            <div class="center" style="font-size: 10px; margin-bottom: 10px;">
+                Kiosco Digital
+            </div>
+            <div class="line"></div>
+            
+            <table>
+                <tr>
+                    <td class="bold">Pedido:</td>
+                    <td style="text-align: right;">#${pedidoId}</td>
+                </tr>
+                ${mesa ? `<tr><td class="bold">Mesa:</td><td style="text-align: right;">${mesa}</td></tr>` : ''}
+                <tr>
+                    <td class="bold">Cliente:</td>
+                    <td style="text-align: right;">${cliente}</td>
+                </tr>
+                <tr>
+                    <td class="bold">Fecha:</td>
+                    <td style="text-align: right;">${fecha}</td>
+                </tr>
+            </table>
+            
+            <div class="double-line"></div>
+            
+            <table>
+                ${itemsHTML}
+            </table>
+            
+            <div class="double-line"></div>
+            
+            <table class="total-row">
+                <tr>
+                    <td>TOTAL:</td>
+                    <td style="text-align: right;">S/ ${parseFloat(total).toFixed(2)}</td>
+                </tr>
+            </table>
+            
+            <div class="line"></div>
+            <div class="center" style="margin-top: 10px; font-size: 10px;">
+                ¡Gracias por su compra!
+            </div>
+            <div class="center" style="font-size: 10px;">
+                @rebel_jungle_cafe
+            </div>
         </body>
         </html>
     `);
     ventana.document.close();
+    
+    // Esperar a que cargue y luego imprimir
+    setTimeout(() => {
+        ventana.print();
+    }, 250);
 }
 </script>
 @endsection
