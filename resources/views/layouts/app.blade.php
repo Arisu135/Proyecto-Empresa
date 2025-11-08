@@ -42,19 +42,13 @@
     {{-- Navegación del Admin (Solo si NO estamos en una ruta de Kiosco) --}}
     @unless($isKioscoView)
         <header class="admin-header shadow-md z-10">
-            <nav class="container mx-auto px-4 py-4 flex justify-between items-center">
-                {{-- Logotipo / Título como pastilla sin cubrir el menú --}}
-                <div class="font-bold">
-                    <span class="bg-white text-gray-800 px-3 py-2 rounded-md inline-block">Rebel Jungle Admin</span>
-                </div>
-                {{-- Menú --}}
-                <div>
-                    <ul class="flex space-x-8 text-lg gap-4 min-w-max">
-                        <li><a href="{{ route('admin.panel') }}" style="color: #ffffff; text-decoration: none;">Panel</a></li>
-                        <li><a href="{{ route('productos.index') }}" style="color: #ffffff; text-decoration: none;">Productos</a></li>
-                        <li><a href="{{ route('admin.gestion') }}" style="color: #ffffff; text-decoration: none;">Gestión de Pedidos</a></li>
-                    </ul>
-                </div>
+            <nav class="container mx-auto px-4 py-4 flex justify-center items-center gap-12">
+                {{-- Menú centrado --}}
+                <ul class="flex space-x-8 text-lg gap-4 min-w-max">
+                    <li><a href="{{ route('admin.panel') }}" style="color: #ffffff; text-decoration: none; font-weight: bold;">Panel</a></li>
+                    <li><a href="{{ route('productos.index') }}" style="color: #ffffff; text-decoration: none; font-weight: bold;">Productos</a></li>
+                    <li><a href="{{ route('admin.gestion') }}" style="color: #ffffff; text-decoration: none; font-weight: bold;">Gestión de Pedidos</a></li>
+                </ul>
             </nav>
         </header>
     @endunless
