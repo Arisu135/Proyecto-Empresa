@@ -4,6 +4,7 @@ use App\Http\Controllers\CatalogoController;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\CajaController;
 use App\Http\Controllers\MesaController;
+use App\Http\Controllers\AdminAuthController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -53,10 +54,22 @@ Route::get('/pedido/{id}/confirmacion', [CatalogoController::class, 'confirmacio
 | Estas rutas gestionan el panel de control, productos y pedidos para el personal.
 */
 
-// Panel de Administración (Vista principal)
-Route::get('/admin', function () {
-    return view('admin.panel');
-})->name('admin.panel');
+// Login de Admin
+Route::get('/admin/login', [AdminAuthController::class, 'showLogin'])->name('admin.login');
+Route::post('/admin/login', [AdminAuthController::class, 'login'])->name('admin.login.post');
+Route::get('/admin/logout', [AdminAuthController::class, 'logout'])->name('admin.logout');
+
+// Rutas protegidas de Admin
+Route::middleware(['admin.auth'])->group(function () {
+    Route::get('/admin', function () {
+        return view('admin.panel');
+    })->name('admin.panel');
+    
+    Route::get('/admin/pedidos', [CatalogoController::class, 'gestion'])->name('admin.gestion');
+    Route::put('/admin/pedidos/{pedido}/actualizar', [CatalogoController::class, 'actualizarEstado'])->name('pedido.actualizarEstado');
+    Route::get('/admin/ventas', [CatalogoController::class, 'ventas'])->name('admin.ventas');
+    Route::resource('productos', ProductoController::class);
+});
 
 // Vista de Caja
 Route::get('/caja', [CajaController::class, 'index'])->name('caja.index');
@@ -66,18 +79,7 @@ Route::patch('/caja/{pedido}/pagar', [CajaController::class, 'marcarPagado'])->n
 Route::get('/mesas', [MesaController::class, 'index'])->name('mesas.index');
 Route::patch('/mesas/{pedido}/entregar', [MesaController::class, 'marcarEntregado'])->name('mesas.marcarEntregado');
 
-// Gestión de Pedidos (Cocina)
-Route::get('/admin/pedidos', [CatalogoController::class, 'gestion'])->name('admin.gestion'); 
 
-// Actualización de estado de pedidos
-Route::put('/admin/pedidos/{pedido}/actualizar', [CatalogoController::class, 'actualizarEstado'])->name('pedido.actualizarEstado'); 
-
-// Panel de Ventas (Historial)
-Route::get('/admin/ventas', [CatalogoController::class, 'ventas'])->name('admin.ventas');
-
-
-// CRUD de Productos 
-Route::resource('productos', ProductoController::class);
 
 // Temporary ops route: clear caches/view in environments where you cannot run artisan directly.
 // PROTECTION: set ADMIN_CLEAR_TOKEN in your environment (Render Dashboard) and call

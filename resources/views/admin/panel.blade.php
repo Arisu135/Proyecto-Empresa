@@ -13,9 +13,12 @@
 
 @section('content')
 <div class="container mx-auto px-4 py-8">
-    <div class="mb-4">
+    <div class="mb-4 flex justify-between items-center">
         <a href="{{ route('catalogo.index') }}" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
             ← Volver al Inicio
+        </a>
+        <a href="{{ route('admin.logout') }}" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
+            🚪 Cerrar Sesión
         </a>
     </div>
     
