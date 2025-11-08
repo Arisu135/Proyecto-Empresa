@@ -78,19 +78,17 @@
 
 <body class="{{ $bodyClass }}">
     
-    {{-- Navegación del Admin (Solo si NO estamos en una ruta de Kiosco) --}}
-    @unless($isKioscoView)
+    {{-- Navegación del Admin (Solo en rutas de admin) --}}
+    @if(Request::is('admin*') || Request::is('productos*'))
         <div class="admin-header-custom">
             <ul>
-                <li><a href="{{ route('admin.panel') }}">🏠 Panel</a></li>
+                <li><a href="{{ route('admin.panel') }}">🏠 Inicio</a></li>
                 <li><a href="{{ route('admin.gestion') }}">🍳 Cocina</a></li>
-                <li><a href="{{ route('mesas.index') }}">🍽️ Mesas</a></li>
-                <li><a href="{{ route('caja.index') }}">💰 Caja</a></li>
-                <li><a href="{{ route('admin.ventas') }}">📊 Historial</a></li>
-                <li><a href="{{ route('productos.index') }}">📝 Menú</a></li>
+                <li><a href="{{ route('admin.ventas') }}">📊 Historial Ventas</a></li>
+                <li><a href="{{ route('productos.index') }}">📝 Productos</a></li>
             </ul>
         </div>
-    @endunless
+    @endif
 
     {{-- Aquí se inyecta el contenido de la vista hija (index, menu, etc.) --}}
     @yield('content')
