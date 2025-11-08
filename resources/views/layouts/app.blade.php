@@ -41,7 +41,7 @@
     
     {{-- Navegación del Admin (Solo si NO estamos en una ruta de Kiosco) --}}
     @unless($isKioscoView)
-        <header class="bg-green-600 text-white shadow-md">
+        <header class="bg-green-600 text-white shadow-md z-10">
             <nav class="container mx-auto px-4 py-4 flex justify-around items-center">
                 {{-- Contenedor para el logo o título --}}
                 <div class="bg-white p-2 rounded-md text-gray-800 font-bold">
@@ -49,10 +49,10 @@
                 </div>
                 {{-- Contenedor para el menú --}}
                 <div>
-                    <ul class="flex space-x-8 text-lg gap-4">
-                        <li><a href="{{ route('admin.panel') }}" class="hover:text-yellow-400 transition-colors duration-300">Panel</a></li>
-                        <li><a href="{{ route('productos.index') }}" class="hover:text-yellow-400 transition-colors duration-300">Productos</a></li>
-                        <li><a href="{{ route('admin.gestion') }}" class="hover:text-yellow-400 transition-colors duration-300">Gestión de Pedidos</a></li>
+                    <ul class="flex space-x-8 text-lg gap-4 min-w-max">
+                        <li><a href="{{ route('admin.panel') }}" class="hover:text-yellow-400 transition-colors duration-300 text-white !important">Panel</a></li>
+                        <li><a href="{{ route('productos.index') }}" class="hover:text-yellow-400 transition-colors duration-300 text-white !important">Productos</a></li>
+                        <li><a href="{{ route('admin.gestion') }}" class="hover:text-yellow-400 transition-colors duration-300 text-white !important">Gestión de Pedidos</a></li>
                     </ul>
                 </div>
             </nav>
