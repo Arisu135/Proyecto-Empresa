@@ -11,7 +11,7 @@
 
 /* Estilo para navegación dentro del admin (color visible por defecto) */
 header.admin-header nav a {
-    color: #ffffff;
+    color: #ffffff !important;
     margin: 0 15px;
     text-decoration: none;
     font-weight: bold;
@@ -20,7 +20,7 @@ header.admin-header nav a {
     transition: color 0.2s ease, background-color 0.3s;
 }
 header.admin-header nav a:hover {
-    color: #facc15; /* amarillo */
+    color: #facc15 !important; /* amarillo */
 }
 
 /* Contenedor de contenido */
