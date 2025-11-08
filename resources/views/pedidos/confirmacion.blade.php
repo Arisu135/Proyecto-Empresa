@@ -87,5 +87,124 @@
 
     </div>
 
+    <script>
+    // Imprimir ticket automáticamente al cargar la página
+    window.addEventListener('load', function() {
+        setTimeout(function() {
+            imprimirTicketAutomatico();
+        }, 500);
+    });
+
+    function imprimirTicketAutomatico() {
+        const pedidoId = {{ $pedido->id }};
+        const mesa = '{{ $pedido->numero_mesa ?? "" }}';
+        const cliente = '{{ $pedido->nombre_cliente }}';
+        const total = {{ $pedido->total }};
+        const fecha = new Date('{{ $pedido->created_at }}').toLocaleString('es-PE', { 
+            day: '2-digit', 
+            month: '2-digit', 
+            year: 'numeric', 
+            hour: '2-digit', 
+            minute: '2-digit' 
+        });
+        
+        let itemsHTML = '';
+        @foreach($pedido->detalles as $item)
+            itemsHTML += `
+                <tr>
+                    <td>{{ $item->cantidad }}x</td>
+                    <td>{{ $item->nombre_producto }}</td>
+                    <td style="text-align: right;">S/ {{ number_format($item->subtotal, 2) }}</td>
+                </tr>
+            `;
+        @endforeach
+        
+        const ventana = window.open('', '_blank', 'width=300,height=600');
+        ventana.document.write(`
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <meta charset="UTF-8">
+                <title>Ticket #${pedidoId}</title>
+                <style>
+                    @media print {
+                        @page { margin: 0; size: 80mm auto; }
+                        body { margin: 0; }
+                    }
+                    body {
+                        font-family: 'Courier New', monospace;
+                        font-size: 12px;
+                        width: 80mm;
+                        margin: 0 auto;
+                        padding: 5mm;
+                    }
+                    .center { text-align: center; }
+                    .bold { font-weight: bold; }
+                    .line { border-top: 1px dashed #000; margin: 5px 0; }
+                    .double-line { border-top: 2px solid #000; margin: 5px 0; }
+                    table { width: 100%; border-collapse: collapse; }
+                    td { padding: 2px 0; }
+                    .total-row { font-size: 14px; font-weight: bold; }
+                </style>
+            </head>
+            <body>
+                <div class="center bold" style="font-size: 16px; margin-bottom: 5px;">
+                    REBEL JUNGLE CAFE
+                </div>
+                <div class="center" style="font-size: 10px; margin-bottom: 10px;">
+                    Kiosco Digital
+                </div>
+                <div class="line"></div>
+                
+                <table>
+                    <tr>
+                        <td class="bold">Pedido:</td>
+                        <td style="text-align: right;">#${pedidoId}</td>
+                    </tr>
+                    ${mesa ? `<tr><td class="bold">Mesa:</td><td style="text-align: right;">${mesa}</td></tr>` : ''}
+                    <tr>
+                        <td class="bold">Cliente:</td>
+                        <td style="text-align: right;">${cliente}</td>
+                    </tr>
+                    <tr>
+                        <td class="bold">Fecha:</td>
+                        <td style="text-align: right;">${fecha}</td>
+                    </tr>
+                </table>
+                
+                <div class="double-line"></div>
+                
+                <table>
+                    ${itemsHTML}
+                </table>
+                
+                <div class="double-line"></div>
+                
+                <table class="total-row">
+                    <tr>
+                        <td>TOTAL:</td>
+                        <td style="text-align: right;">S/ ${parseFloat(total).toFixed(2)}</td>
+                    </tr>
+                </table>
+                
+                <div class="line"></div>
+                <div class="center" style="margin-top: 10px; font-size: 10px;">
+                    ¡Gracias por su compra!
+                </div>
+                <div class="center" style="font-size: 10px;">
+                    @rebel_jungle_cafe
+                </div>
+            </body>
+            </html>
+        `);
+        ventana.document.close();
+        
+        // Esperar a que cargue y luego imprimir
+        setTimeout(() => {
+            ventana.print();
+        }, 250);
+    }
+    </script>
+
 </body>
 </html>
