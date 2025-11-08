@@ -9,18 +9,18 @@
 /* Color para la cabecera - Permitir que Tailwind controle el header principal */
 /* Solo aplicar estilos específicos cuando sea necesario */
 
-/* Estilo para navegación dentro del admin */
-nav a { 
-    color: white !important; 
-    margin: 0 15px; 
-    text-decoration: none; 
-    font-weight: bold; 
-    padding: 5px 10px; 
+/* Estilo para navegación dentro del admin: limitar al header del layout */
+header nav a {
+    color: #ffffff; /* dejar que Tailwind gestione variantes */
+    margin: 0 15px;
+    text-decoration: none;
+    font-weight: bold;
+    padding: 5px 10px;
     border-radius: 4px;
     transition: background-color 0.3s;
 }
-nav a:hover {
-    background-color: rgba(255, 255, 255, 0.1) !important; 
+header nav a:hover {
+    background-color: rgba(255, 255, 255, 0.1);
 }
 
 /* Contenedor de contenido */
@@ -76,6 +76,14 @@ nav a:hover {
 .btn-gestion:hover {
     background-color: #0056b3;
 }
+
+/* Estilos del header admin con contraste asegurado */
+.admin-header {
+    background-color: #166534; /* verde oscuro */
+    color: #ffffff;
+}
+.admin-header a { color: #ffffff; }
+.admin-header a:hover { color: #facc15; }
 
 /* --- ESTILOS ESPECÍFICOS DEL KIÓSCO (Fondo, etc.) --- */
 
