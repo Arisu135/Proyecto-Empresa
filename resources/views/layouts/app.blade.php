@@ -50,9 +50,9 @@
                 {{-- Menú --}}
                 <div>
                     <ul class="flex space-x-8 text-lg gap-4 min-w-max">
-                        <li><a href="{{ route('admin.panel') }}">Panel</a></li>
-                        <li><a href="{{ route('productos.index') }}">Productos</a></li>
-                        <li><a href="{{ route('admin.gestion') }}">Gestión de Pedidos</a></li>
+                        <li><a href="{{ route('admin.panel') }}" style="color: #ffffff; text-decoration: none;">Panel</a></li>
+                        <li><a href="{{ route('productos.index') }}" style="color: #ffffff; text-decoration: none;">Productos</a></li>
+                        <li><a href="{{ route('admin.gestion') }}" style="color: #ffffff; text-decoration: none;">Gestión de Pedidos</a></li>
                     </ul>
                 </div>
             </nav>
