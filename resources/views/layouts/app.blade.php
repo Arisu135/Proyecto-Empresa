@@ -42,14 +42,14 @@
     {{-- Navegación del Admin (Solo si NO estamos en una ruta de Kiosco) --}}
     @unless($isKioscoView)
         <header class="bg-green-600 text-white shadow-md">
-            <nav class="container mx-auto px-4 py-4 flex justify-between items-center">
+            <nav class="container mx-auto px-4 py-4 flex justify-around items-center">
                 {{-- Contenedor para el logo o título --}}
                 <div class="bg-white p-2 rounded-md text-gray-800 font-bold">
                     Rebel Jungle Admin
                 </div>
-                {{-- Contenedor Flex para centrar el menú --}}
-                <div class="flex justify-center">
-                    <ul class="flex space-x-8 text-lg">
+                {{-- Contenedor para el menú --}}
+                <div>
+                    <ul class="flex space-x-8 text-lg gap-4">
                         <li><a href="{{ route('admin.panel') }}" class="hover:text-yellow-400 transition-colors duration-300">Panel</a></li>
                         <li><a href="{{ route('productos.index') }}" class="hover:text-yellow-400 transition-colors duration-300">Productos</a></li>
                         <li><a href="{{ route('admin.gestion') }}" class="hover:text-yellow-400 transition-colors duration-300">Gestión de Pedidos</a></li>
