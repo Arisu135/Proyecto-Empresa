@@ -215,7 +215,7 @@
     <script>
         // (Tu script JS se mantiene igual)
 
-        const basePrice = {{ $producto->precio }};
+        const basePrice = @json($producto->precio);
         let currentQuantity = 1;
 
         // Elementos del DOM
@@ -250,7 +250,7 @@
                 // 3. Manejo visual de la selección (solo para radio)
                 if (input.type === 'radio') {
                     // Desmarcar visualmente todos los radios del mismo grupo
-                    document.querySelectorAll(`input[name="${input.name}"]`).forEach(radio => {
+                    document.querySelectorAll('input[name="' + input.name + '"]').forEach(radio => {
                         radio.closest('label').classList.remove('option-selected');
                     });
                     label.classList.add('option-selected');

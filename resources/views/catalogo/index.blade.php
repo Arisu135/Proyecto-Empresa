@@ -36,8 +36,8 @@
     }
 
     .logo-wrapper img {
-        width: 180px;
-        height: 180px;
+        width: 220px;
+        height: 220px;
         border-radius: 50%;
         object-fit: cover;
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
@@ -111,8 +111,8 @@
     /* --- Media Query para móviles verticales --- */
     @media (max-width: 768px) and (orientation: portrait) {
         .logo-wrapper img {
-            width: 140px;
-            height: 140px;
+            width: 170px;
+            height: 170px;
         }
         
         .qr-wrapper svg {
@@ -139,8 +139,8 @@
         }
         
         .logo-wrapper img {
-            width: 110px;
-            height: 110px;
+            width: 130px;
+            height: 130px;
         }
         
         .qr-wrapper {
