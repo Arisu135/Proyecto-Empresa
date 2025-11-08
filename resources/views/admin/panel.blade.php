@@ -12,54 +12,10 @@
 @endpush
 
 @section('content')
-    <style>
-        /* Panel admin limpio y responsive */
-        .admin-wrapper { max-width: 1100px; margin: 30px auto; padding: 20px; }
-        .admin-grid { display: flex; gap: 40px; align-items: center; justify-content: center; }
-
-        /* Note: the global nav is provided by the layout; avoid duplicating it here */
-
-        .admin-main { flex: 1; }
-        .admin-title { font-size: 28px; color: #222; margin: 0 0 10px 0; }
-        .admin-sub { color: #666; margin-bottom: 24px; }
-
-        .admin-actions { display: flex; gap: 24px; flex-wrap: wrap; }
-        .admin-btn {
-            display: inline-block;
-            padding: 14px 34px;
-            border-radius: 10px;
-            color: #fff;
-            text-decoration: none;
-            font-weight: 700;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
-            transition: transform .08s ease, box-shadow .12s ease;
-        }
-        .admin-btn:hover { transform: translateY(-3px); }
-        .admin-btn--primary { background: linear-gradient(#2DA1F7,#1B82D8); }
-        .admin-btn--accent { background: linear-gradient(#FFB04A,#FF9800); }
-
-        @media (max-width: 780px) {
-            .admin-grid { flex-direction: column; align-items: stretch; }
-            .admin-nav { width: 100%; }
-            .admin-actions { justify-content: center; }
-        }
-    </style>
-
-    <div class="admin-wrapper">
-        <div class="admin-grid">
-            <section class="admin-main">
-                <h1 class="admin-title">Panel Central de Administración</h1>
-                <p class="admin-sub">Usa este panel para llevar el control de las órdenes y actualizar el menú del café.</p>
-
-                <div class="admin-actions">
-                    <a class="admin-btn admin-btn--primary" href="{{ route('admin.gestion') }}">🍳 Cocina</a>
-                    <a class="admin-btn admin-btn--accent" href="{{ route('mesas.index') }}">🍽️ Mesas</a>
-                    <a class="admin-btn admin-btn--primary" href="{{ route('caja.index') }}">💰 Caja</a>
-                    <a class="admin-btn admin-btn--accent" href="{{ route('admin.ventas') }}">📊 Historial</a>
-                    <a class="admin-btn admin-btn--primary" href="{{ route('productos.index') }}">📝 Menú</a>
-                </div>
-            </section>
-        </div>
+<div class="container mx-auto px-4 py-8">
+    <div class="text-center py-12">
+        <h1 class="text-4xl font-bold text-gray-800 mb-4">Bienvenido al Panel de Administración</h1>
+        <p class="text-xl text-gray-600">Usa el menú superior para navegar entre las secciones</p>
     </div>
-
+</div>
 @endsection
