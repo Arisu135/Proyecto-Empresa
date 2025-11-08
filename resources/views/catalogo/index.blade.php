@@ -32,12 +32,12 @@
     /* --- Logo circular --- */
     .logo-wrapper {
         flex-shrink: 0;
-        margin-top: 20px;
+        margin-top: 10px;
     }
 
     .logo-wrapper img {
-        width: 150px;
-        height: 150px;
+        width: 180px;
+        height: 180px;
         border-radius: 50%;
         object-fit: cover;
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
@@ -48,13 +48,14 @@
         flex: 1;
         display: flex;
         flex-direction: column;
-        justify-content: center;
+        justify-content: flex-start;
         align-items: center;
+        padding-top: 20px;
     }
 
     .qr-wrapper svg {
-        width: 160px;
-        height: 160px;
+        width: 180px;
+        height: 180px;
         border: 5px solid #fff;
         border-radius: 10px;
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
@@ -96,7 +97,11 @@
         transition: transform 0.15s ease;
         text-align: center;
         text-decoration: none;
+        min-width: 200px;
         max-width: 250px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 
     .btn-kiosko:active {
@@ -106,13 +111,13 @@
     /* --- Media Query para móviles verticales --- */
     @media (max-width: 768px) and (orientation: portrait) {
         .logo-wrapper img {
-            width: 120px;
-            height: 120px;
+            width: 140px;
+            height: 140px;
         }
         
         .qr-wrapper svg {
-            width: 140px;
-            height: 140px;
+            width: 160px;
+            height: 160px;
         }
         
         .button-group {
@@ -121,6 +126,7 @@
         }
         
         .btn-kiosko {
+            min-width: 100%;
             max-width: 100%;
             font-size: 16px;
         }
@@ -129,17 +135,21 @@
     /* --- Media Query para móviles horizontales --- */
     @media (max-width: 768px) and (orientation: landscape) {
         .logo-wrapper {
-            margin-top: 10px;
+            margin-top: 5px;
         }
         
         .logo-wrapper img {
-            width: 100px;
-            height: 100px;
+            width: 110px;
+            height: 110px;
+        }
+        
+        .qr-wrapper {
+            padding-top: 10px;
         }
         
         .qr-wrapper svg {
-            width: 120px;
-            height: 120px;
+            width: 130px;
+            height: 130px;
         }
         
         .qr-text {
@@ -149,6 +159,7 @@
         .btn-kiosko {
             padding: 12px 20px;
             font-size: 16px;
+            min-width: 180px;
         }
     }
 </style>
