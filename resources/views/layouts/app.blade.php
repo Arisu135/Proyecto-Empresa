@@ -20,6 +20,15 @@
             height: 100%; /* Importante para vistas full-screen */
             width: 100%;
         }
+        
+        /* Forzar color blanco en enlaces del header admin */
+        header.admin-header a {
+            color: #ffffff !important;
+            text-decoration: none !important;
+        }
+        header.admin-header a:hover {
+            color: #facc15 !important;
+        }
     </style>
 </head>
 
