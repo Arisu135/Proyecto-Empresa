@@ -68,8 +68,22 @@ class CatalogoController extends Controller
     {
         $cantidadAñadir = (int) $request->input('cantidad', 1);
         // Asegúrate de obtener el precio unitario del producto o el precio final calculado si hay opciones.
-        $precioUnitarioFinal = (float) $request->input('precio_final', $producto->precio); 
+        $precioUnitarioFinal = (float) $request->input('precio_final');
+        
+        // Si precio_final está vacío o es 0, usar el precio base del producto
+        if (empty($precioUnitarioFinal) || $precioUnitarioFinal <= 0) {
+            $precioUnitarioFinal = (float) $producto->precio;
+        }
+        
         $opcionesSeleccionadasJson = $request->input('opciones_seleccionadas');
+        
+        Log::info('Agregando al carrito', [
+            'producto_id' => $producto->id,
+            'precio_producto' => $producto->precio,
+            'precio_final_recibido' => $request->input('precio_final'),
+            'precio_usado' => $precioUnitarioFinal,
+            'cantidad' => $cantidadAñadir
+        ]);
         
         if ($cantidadAñadir <= 0) {
             return back()->with('error', 'La cantidad debe ser al menos 1.');
