@@ -161,6 +161,35 @@
         <h2 style="font-size:20px; font-weight:bold; margin-bottom:15px; color:#ef4444; text-align:center;">⚠️ Eliminar Venta</h2>
         <p style="margin-bottom:20px; color:#4b5563; text-align:center;">Indica el motivo de eliminación:</p>
         
+        <form id="formEliminarVenta" method="POST" action="">
+            @csrf
+            @method('DELETE')
+            <textarea name="motivo" rows="3" placeholder="Motivo de eliminación..." required style="width:100%; padding:10px; border:2px solid #d1d5db; border-radius:8px; margin-bottom:15px;"></textarea>
+            
+            <div style="display:flex; gap:10px;">
+                <button type="button" onclick="cerrarModalEliminar()" style="flex:1; padding:12px; background:#6b7280; color:white; border:none; border-radius:8px; font-weight:bold; cursor:pointer;">
+                    Cancelar
+                </button>
+                <button type="submit" style="flex:1; padding:12px; background:#ef4444; color:white; border:none; border-radius:8px; font-weight:bold; cursor:pointer;">
+                    Eliminar
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+function eliminarVenta(id) {
+    document.getElementById('formEliminarVenta').action = '/admin/ventas/' + id + '/eliminar';
+    document.getElementById('modalEliminar').style.display = 'flex';
+}
+
+function cerrarModalEliminar() {
+    document.getElementById('modalEliminar').style.display = 'none';
+}
+</script>
+@endsectionttom:20px; color:#4b5563; text-align:center;">Indica el motivo de eliminación:</p>
+        
         <form id="formEliminar" method="POST" action="">
             @csrf
             @method('DELETE')

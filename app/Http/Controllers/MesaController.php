@@ -9,13 +9,14 @@ class MesaController extends Controller
 {
     public function index()
     {
-        // Mostrar todos los pedidos que NO estén entregados, pagados o eliminados
+        // Mostrar todos los pedidos que NO estén entregados, listos, pagados o eliminados
         $pedidos = Pedido::with('detalles')
             ->where('estado', '!=', 'Entregado')
+            ->where('estado', '!=', 'Listo')
             ->where('estado', '!=', 'Cancelado')
             ->where('pagado', false)
             ->where('eliminado', false)
-            ->orderByRaw("CASE estado WHEN 'Pendiente' THEN 1 WHEN 'En Preparación' THEN 2 WHEN 'Listo' THEN 3 ELSE 4 END")
+            ->orderByRaw("CASE estado WHEN 'Pendiente' THEN 1 WHEN 'En Preparación' THEN 2 ELSE 3 END")
             ->orderBy('created_at', 'asc')
             ->get();
 
@@ -52,7 +53,11 @@ class MesaController extends Controller
 
     public function eliminarTodo()
     {
-        $pedidos = Pedido::where('estado', '!=', 'Entregado')->where('pagado', false)->get();
+        $pedidos = Pedido::where('estado', '!=', 'Entregado')
+            ->where('estado', '!=', 'Listo')
+            ->where('pagado', false)
+            ->where('eliminado', false)
+            ->get();
         $count = $pedidos->count();
         
         foreach ($pedidos as $pedido) {
@@ -64,5 +69,33 @@ class MesaController extends Controller
         }
 
         return redirect()->route('mesas.index')->with('success', "Se eliminaron {$count} pedidos.");
+    }
+
+    public function historial()
+    {
+        $pedidos = Pedido::with('detalles')
+            ->where('eliminado', true)
+            ->where('motivo_eliminacion', 'LIKE', '%cocina%')
+            ->orderBy('eliminado_at', 'desc')
+            ->get();
+        
+        $totalPerdido = $pedidos->sum('total');
+
+        return view('mesas.historial_eliminadas', compact('pedidos', 'totalPerdido'));
+    }
+
+    public function limpiarHistorial($tipo)
+    {
+        $query = Pedido::where('eliminado', true)
+            ->where('motivo_eliminacion', 'LIKE', '%cocina%');
+        
+        if ($tipo === 'hoy') {
+            $query->whereDate('eliminado_at', now()->toDateString());
+        }
+        
+        $count = $query->count();
+        $query->forceDelete();
+
+        return redirect()->route('mesas.historial')->with('success', "Se eliminaron {$count} registros del historial.");
     }
 }

@@ -40,6 +40,12 @@
             <p class="text-sm mt-2">Historial de eliminaciones</p>
         </a>
 
+        <a href="{{ route('admin.ventas.eliminadas.cocina') }}" class="bg-yellow-500 hover:bg-yellow-600 text-white p-6 rounded-lg shadow-lg text-center transition">
+            <div class="text-4xl mb-2">🍳</div>
+            <h3 class="text-xl font-bold">Eliminadas Cocina</h3>
+            <p class="text-sm mt-2">Solo desde cocina</p>
+        </a>
+
         <a href="{{ route('productos.index') }}" class="bg-orange-500 hover:bg-orange-600 text-white p-6 rounded-lg shadow-lg text-center transition">
             <div class="text-4xl mb-2">📝</div>
             <h3 class="text-xl font-bold">Productos</h3>

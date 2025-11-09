@@ -448,6 +448,46 @@ class CatalogoController extends Controller
             'filter' => $filter,
         ]);
     }
+
+    public function ventasEliminadasCocina(Request $request)
+    {
+        $filter = $request->query('filter', 'todos');
+        
+        $query = Pedido::with('detalles')
+            ->where('eliminado', true)
+            ->where('motivo_eliminacion', 'LIKE', '%cocina%');
+        
+        if ($filter === 'hoy') {
+            $query->whereDate('eliminado_at', now()->toDateString());
+            $titulo = 'Ventas Eliminadas desde Cocina - Hoy';
+        } else {
+            $titulo = 'Historial de Ventas Eliminadas desde Cocina';
+        }
+        
+        $pedidos = $query->orderBy('eliminado_at', 'desc')->get();
+        $totalPerdido = $pedidos->sum('total');
+
+        return view('admin.ventas_eliminadas', [
+            'pedidos' => $pedidos,
+            'titulo' => $titulo,
+            'totalPerdido' => $totalPerdido,
+            'filter' => $filter,
+        ]);
+    }
+
+    public function limpiarHistorialVentas($tipo)
+    {
+        $query = Pedido::where('eliminado', true);
+        
+        if ($tipo === 'hoy') {
+            $query->whereDate('eliminado_at', now()->toDateString());
+        }
+        
+        $count = $query->count();
+        $query->forceDelete();
+
+        return redirect()->route('admin.ventas.eliminadas')->with('success', "Se eliminaron {$count} registros del historial.");
+    }
 }
 
 

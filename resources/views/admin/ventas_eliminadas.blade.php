@@ -6,9 +6,20 @@
 <div class="container mx-auto px-4 py-8">
     <h1 class="text-3xl font-bold text-red-600 mb-6">🗑️ {{ $titulo }}</h1>
 
-    <div class="bg-red-100 p-4 rounded-lg shadow mb-6">
-        <p class="text-sm text-gray-600">Total Perdido</p>
-        <p class="text-2xl font-bold text-red-700">S/. {{ number_format($totalPerdido ?? 0, 2) }}</p>
+    <!-- Filtros y Acciones -->
+    <div class="bg-white p-4 rounded-lg shadow mb-6 flex justify-between items-center">
+        <div>
+            <p class="text-sm text-gray-600">Total Perdido</p>
+            <p class="text-2xl font-bold text-red-700">S/. {{ number_format($totalPerdido ?? 0, 2) }}</p>
+        </div>
+        <div class="flex gap-2">
+            <button onclick="confirmarEliminarHistorial('hoy')" class="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded font-bold">
+                🗑️ Eliminar Hoy
+            </button>
+            <button onclick="confirmarEliminarHistorial('todo')" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded font-bold">
+                🗑️ Eliminar Todo
+            </button>
+        </div>
     </div>
 
     <div class="bg-white rounded-lg shadow-md overflow-hidden">
@@ -77,4 +88,16 @@
         </a>
     </div>
 </div>
+
+<script>
+function confirmarEliminarHistorial(tipo) {
+    const mensaje = tipo === 'todo' 
+        ? '⚠️ ¿Estás seguro de eliminar TODO el historial de ventas eliminadas?\n\nEsta acción no se puede deshacer.'
+        : '⚠️ ¿Estás seguro de eliminar el historial de ventas eliminadas de HOY?\n\nEsta acción no se puede deshacer.';
+    
+    if (confirm(mensaje)) {
+        window.location.href = '/admin/ventas-eliminadas/limpiar/' + tipo;
+    }
+}
+</script>
 @endsection
