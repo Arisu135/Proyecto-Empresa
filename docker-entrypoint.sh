@@ -50,12 +50,8 @@ echo "--------------------------------"
 # Ejecuta migraciones
 echo "🔄 Ejecutando migraciones..."
 php artisan migrate --force --no-interaction || {
-    echo "⚠️  Error en migraciones, pero continuando...
+    echo "⚠️  Error en migraciones, pero continuando..."
 }
-
-# Ejecuta migraciones pendientes específicamente
-echo "🔄 Verificando migraciones pendientes..."
-php artisan migrate --force --no-interaction 2>&1 | tee /tmp/migrate.log || true
 
 # Ejecuta seeders (carga categorías y productos iniciales)
 echo "🌱 Ejecutando seeders..."
