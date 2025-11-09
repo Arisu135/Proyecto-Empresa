@@ -27,9 +27,7 @@
     <header class="bg-white sticky top-0 z-10 mb-2 shadow-sm">
         <div class="max-w-7xl mx-auto px-4 py-4">
             <div class="flex justify-between items-center">
-                <button onclick="confirmarEliminarTodo()" class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-bold rounded-lg">
-                    🗑️ Eliminar Todo
-                </button>
+                <div></div>
                 <h1 class="text-3xl font-bold text-brand-dark">🍳 COCINA</h1>
                 <a href="{{ route('productos.menu', ['tipo_pedido' => 'Para Aqui']) }}" class="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white font-bold rounded-lg">
                     ← Volver
@@ -40,7 +38,7 @@
 
     <main class="max-w-7xl mx-auto py-4 px-4">
         @if(session('pedido_confirmado'))
-            <div class="bg-green-50 border-2 border-green-500 rounded-xl p-6 mb-6 shadow-lg">
+            <div id="mensajeConfirmacion" class="bg-green-50 border-2 border-green-500 rounded-xl p-6 mb-6 shadow-lg">
                 <h2 class="text-2xl font-bold text-green-700 mb-4 text-center">✅ ¡Gracias! Tu pedido ha sido enviado a cocina.</h2>
                 
                 <div class="bg-white rounded-lg p-4 mb-4">
@@ -66,7 +64,23 @@
                         @endforeach
                     </ul>
                 </div>
+                
+                <button onclick="cerrarMensaje()" class="mt-4 w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg">
+                    Cerrar
+                </button>
             </div>
+            <script>
+                setTimeout(function() {
+                    var mensaje = document.getElementById('mensajeConfirmacion');
+                    if (mensaje) {
+                        mensaje.style.display = 'none';
+                    }
+                }, 10000); // Se cierra automáticamente después de 10 segundos
+                
+                function cerrarMensaje() {
+                    document.getElementById('mensajeConfirmacion').style.display = 'none';
+                }
+            </script>
         @endif
 
         @if(session('success'))
@@ -102,7 +116,6 @@
                             @if($pedido->numero_mesa)
                                 <p class="text-blue-600 font-bold">Mesa {{ $pedido->numero_mesa }}</p>
                             @endif
-                            <p class="text-xs font-bold mt-1">{{ $minutos }} min</p>
                         </div>
 
                         <ul class="text-xs space-y-1 mb-3 flex-grow">
@@ -175,7 +188,7 @@
     function abrirModal(id, cliente, minutos) {
         pedidoIdActual = id;
         document.getElementById('modalTitulo').textContent = 'Pedido #' + id;
-        document.getElementById('modalInfo').textContent = cliente + ' - ' + minutos + ' minutos';
+        document.getElementById('modalInfo').textContent = cliente;
         document.getElementById('formListo').action = '/mesas/' + id + '/estado';
         document.getElementById('formEliminar').action = '/mesas/' + id + '/estado';
         document.getElementById('modalPedido').style.display = 'flex';
@@ -193,11 +206,7 @@
         document.getElementById('modalEliminar').style.display = 'none';
     }
 
-    function confirmarEliminarTodo() {
-        if (confirm('⚠️ ¿Estás seguro de eliminar TODOS los pedidos de cocina?\n\nEsta acción no se puede deshacer.')) {
-            window.location.href = '/mesas/eliminar-todo';
-        }
-    }
+
     </script>
 </body>
 </html>
