@@ -79,9 +79,11 @@ Route::delete('/caja/{pedido}/eliminar', [CajaController::class, 'eliminarVenta'
 // Vista de Mesas (ahora es Cocina completa)
 Route::get('/mesas', [MesaController::class, 'index'])->name('mesas.index');
 Route::patch('/mesas/{pedido}/estado', [MesaController::class, 'actualizarEstado'])->name('mesas.actualizarEstado');
+Route::get('/mesas/eliminar-todo', [MesaController::class, 'eliminarTodo'])->name('mesas.eliminarTodo');
 
 // Historial de ventas eliminadas
 Route::get('/admin/ventas-eliminadas', [CatalogoController::class, 'ventasEliminadas'])->name('admin.ventas.eliminadas');
+Route::delete('/admin/ventas/{pedido}/eliminar', [CatalogoController::class, 'eliminarVentaAdmin'])->name('admin.ventas.eliminar');
 
 
 

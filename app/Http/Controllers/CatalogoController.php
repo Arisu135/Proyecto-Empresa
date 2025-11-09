@@ -408,6 +408,19 @@ class CatalogoController extends Controller
         return back()->with('success', "Estado del pedido #{$pedido->id} actualizado a {$pedido->estado}.");
     }
     
+    public function eliminarVentaAdmin(Request $request, Pedido $pedido)
+    {
+        $request->validate(['motivo' => 'required|string|max:500']);
+        
+        $pedido->eliminado = true;
+        $pedido->eliminado_at = now();
+        $pedido->motivo_eliminacion = $request->motivo;
+        $pedido->estado = 'Cancelado';
+        $pedido->save();
+
+        return back()->with('success', "Venta #{$pedido->id} eliminada correctamente.");
+    }
+
     public function ventasEliminadas(Request $request)
     {
         $filter = $request->query('filter', 'todos');

@@ -46,4 +46,20 @@ class MesaController extends Controller
 
         return back()->with('success', "Pedido #{$pedido->id} marcado como entregado.");
     }
+
+    public function eliminarTodo()
+    {
+        $pedidos = Pedido::where('estado', '!=', 'Entregado')->where('pagado', false)->get();
+        $count = $pedidos->count();
+        
+        foreach ($pedidos as $pedido) {
+            $pedido->estado = 'Cancelado';
+            $pedido->eliminado = true;
+            $pedido->eliminado_at = now();
+            $pedido->motivo_eliminacion = 'Eliminación masiva desde cocina';
+            $pedido->save();
+        }
+
+        return redirect()->route('mesas.index')->with('success', "Se eliminaron {$count} pedidos.");
+    }
 }

@@ -88,6 +88,7 @@
                     <th class="px-4 py-3 text-left text-sm font-bold text-gray-700">Total</th>
                     <th class="px-4 py-3 text-left text-sm font-bold text-gray-700">Estado</th>
                     <th class="px-4 py-3 text-left text-sm font-bold text-gray-700">Fecha</th>
+                    <th class="px-4 py-3 text-left text-sm font-bold text-gray-700">Acción</th>
                     <th class="px-4 py-3 text-left text-sm font-bold text-gray-700">Detalles</th>
                 </tr>
             </thead>
@@ -114,6 +115,11 @@
                         </td>
                         <td class="px-4 py-3 text-sm text-gray-600">{{ $pedido->created_at->format('d/m/Y H:i') }}</td>
                         <td class="px-4 py-3 text-sm">
+                            <button onclick="eliminarVenta({{ $pedido->id }})" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-xs font-bold">
+                                🗑️ Eliminar
+                            </button>
+                        </td>
+                        <td class="px-4 py-3 text-sm">
                             @if($pedido->detalles && $pedido->detalles->count())
                                 <ul class="text-xs space-y-1">
                                     @foreach($pedido->detalles as $d)
@@ -133,7 +139,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="7" class="px-4 py-8 text-center text-gray-500">
+                        <td colspan="8" class="px-4 py-8 text-center text-gray-500">
                             No se encontraron ventas para el filtro seleccionado.
                         </td>
                     </tr>
@@ -148,4 +154,38 @@
         </a>
     </div>
 </div>
+
+<!-- Modal Eliminar -->
+<div id="modalEliminar" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:9999; align-items:center; justify-content:center;">
+    <div style="background:white; padding:30px; border-radius:12px; max-width:400px; width:90%;">
+        <h2 style="font-size:20px; font-weight:bold; margin-bottom:15px; color:#ef4444; text-align:center;">⚠️ Eliminar Venta</h2>
+        <p style="margin-bottom:20px; color:#4b5563; text-align:center;">Indica el motivo de eliminación:</p>
+        
+        <form id="formEliminar" method="POST" action="">
+            @csrf
+            @method('DELETE')
+            <textarea name="motivo" rows="3" placeholder="Motivo..." required style="width:100%; padding:10px; border:2px solid #d1d5db; border-radius:8px; margin-bottom:15px;"></textarea>
+            
+            <div style="display:flex; gap:10px;">
+                <button type="button" onclick="cerrarModal()" style="flex:1; padding:12px; background:#6b7280; color:white; border:none; border-radius:8px; font-weight:bold; cursor:pointer;">
+                    Cancelar
+                </button>
+                <button type="submit" style="flex:1; padding:12px; background:#ef4444; color:white; border:none; border-radius:8px; font-weight:bold; cursor:pointer;">
+                    Eliminar
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+function eliminarVenta(id) {
+    document.getElementById('formEliminar').action = '/admin/ventas/' + id + '/eliminar';
+    document.getElementById('modalEliminar').style.display = 'flex';
+}
+
+function cerrarModal() {
+    document.getElementById('modalEliminar').style.display = 'none';
+}
+</script>
 @endsection

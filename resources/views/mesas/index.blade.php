@@ -27,6 +27,9 @@
     <header class="bg-white sticky top-0 z-10 mb-2 shadow-sm">
         <div class="max-w-7xl mx-auto px-4 py-4">
             <div class="flex justify-between items-center">
+                <button onclick="confirmarEliminarTodo()" class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-bold rounded-lg">
+                    🗑️ Eliminar Todo
+                </button>
                 <h1 class="text-3xl font-bold text-brand-dark">🍳 COCINA</h1>
                 <a href="{{ route('catalogo.index') }}" class="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white font-bold rounded-lg">
                     ← Volver
@@ -158,6 +161,12 @@
 
     function cerrarModalEliminar() {
         document.getElementById('modalEliminar').style.display = 'none';
+    }
+
+    function confirmarEliminarTodo() {
+        if (confirm('⚠️ ¿Estás seguro de eliminar TODOS los pedidos de cocina?\n\nEsta acción no se puede deshacer.')) {
+            window.location.href = '/mesas/eliminar-todo';
+        }
     }
     </script>
 </body>
