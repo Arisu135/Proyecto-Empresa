@@ -18,6 +18,13 @@
         .admin-title p {
             color: #6b7280 !important;
         }
+        .admin-btn {
+            background: #1f2937 !important;
+            color: white !important;
+        }
+        .admin-btn:hover {
+            background: #111827 !important;
+        }
     </style>
 </head>
 <body style="background: #ffffff !important;">
