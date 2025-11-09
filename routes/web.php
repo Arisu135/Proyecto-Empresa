@@ -6,7 +6,6 @@ use App\Http\Controllers\CajaController;
 use App\Http\Controllers\MesaController;
 use App\Http\Controllers\AdminAuthController;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Schema;
 
 /*
 |--------------------------------------------------------------------------
@@ -108,7 +107,7 @@ Route::get('/ops/clear-cache', function () {
 });
 
 Route::get('/ops/check-db', function () {
-    $columns = Schema::getColumnListing('pedidos');
+    $columns = \Illuminate\Support\Facades\Schema::getColumnListing('pedidos');
     return response()->json([
         'columns' => $columns,
         'has_pagado' => in_array('pagado', $columns),
