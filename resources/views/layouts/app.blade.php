@@ -78,13 +78,11 @@
 
 <body class="{{ $bodyClass }}">
     
-    {{-- Navegación del Admin (Solo en rutas de admin) --}}
-    @if(Request::is('admin*') || Request::is('productos*'))
+    {{-- Navegación del Admin (Solo en rutas de admin, excepto panel) --}}
+    @if((Request::is('admin*') || Request::is('productos*')) && !Request::is('admin'))
         <div class="admin-header-custom">
             <ul>
-                <li><a href="{{ route('admin.panel') }}">🏠 Inicio</a></li>
-                <li><a href="{{ route('admin.ventas') }}">📊 Historial Ventas</a></li>
-                <li><a href="{{ route('productos.index') }}">📝 Productos</a></li>
+                <li><a href="{{ route('catalogo.index') }}">🏠 Volver al Inicio</a></li>
             </ul>
         </div>
     @endif
