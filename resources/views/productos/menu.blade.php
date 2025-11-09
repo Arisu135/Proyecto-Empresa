@@ -67,8 +67,8 @@
             </div>
 
             <div class="absolute top-6 right-4 flex space-x-3">
-                <a href="{{ route('carrito.limpiar') }}" class="btn-restart px-4 py-2 bg-brand-red text-white font-bold rounded-full shadow-lg hover:shadow-xl transition duration-150 text-sm">
-                    Empezar de nuevo
+                <a href="{{ route('catalogo.index') }}" class="btn-restart px-4 py-2 bg-gray-600 text-white font-bold rounded-full shadow-lg hover:bg-gray-700 transition duration-150 text-sm">
+                    ← Volver
                 </a>
             </div>
             
