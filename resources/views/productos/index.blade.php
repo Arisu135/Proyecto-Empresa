@@ -1,34 +1,59 @@
-@extends('layouts.app')
-
-@section('title', 'Menú de Productos')
-
-@section('content')
-
-    <h1>Listado de Productos</h1>
-    <a href="/productos/create">Crear Nuevo Producto</a>
-    <hr>
-    
-    <div class="products-grid" style="display:flex; flex-wrap:wrap; gap:18px;">
-    @foreach ($productos as $producto)
-        <div class="producto" style="flex: 1 1 300px; background:#ecf9f0; padding:18px; border-radius:8px; border:1px solid #d8e9dd;">
-            <h2 style="margin-top:0;">{{ $producto->nombre }}</h2>
-            @if(!empty($producto->imagen_nombre))
-                <img src="{{ asset('img/productos/' . $producto->imagen_nombre) }}" alt="{{ $producto->nombre }}" style="max-width:100%; height:auto; border-radius:6px; margin-bottom:10px;">
-            @endif
-            <p style="margin:6px 0;">Precio: <strong>S/. {{ number_format($producto->precio, 2) }}</strong></p>
-            <p style="margin:6px 0;">Categoría: <strong>{{ optional($producto->categoria)->nombre ?? 'Sin categoría' }}</strong></p>
-
-            <div class="acciones" style="margin-top:12px;">
-                <a href="/productos/{{ $producto->id }}/edit" style="display:inline-block; background:#f0ad4e; color:#000; padding:6px 10px; border-radius:6px; text-decoration:none; margin-right:8px;">Editar</a>
-
-                <form action="/productos/{{ $producto->id }}" method="POST" style="display:inline;">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit" onclick="return confirm('¿Estás seguro de que quieres eliminar este producto?')" style="background:#d9534f; color:#fff; border:none; padding:6px 10px; border-radius:6px;">Eliminar</button>
-                </form>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Productos</title>
+    <link rel="stylesheet" href="{{ asset('css/productos.css') }}">
+</head>
+<body>
+    <div class="productos-container">
+        <div class="productos-header">
+            <h1 class="productos-title">📝 Productos</h1>
+            <div style="display: flex; gap: 1rem;">
+                <a href="{{ route('productos.create') }}" class="btn btn-green">➕ Nuevo Producto</a>
+                <a href="{{ route('admin.panel') }}" class="btn btn-green">← Volver al Panel</a>
             </div>
         </div>
-    @endforeach
-    </div>
 
-@endsection
+        @if($productos->isEmpty())
+            <div class="empty-state">
+                <div class="empty-state-icon">📦</div>
+                <div class="empty-state-text">No hay productos registrados</div>
+            </div>
+        @else
+            <div class="productos-grid">
+                @foreach ($productos as $producto)
+                    <div class="producto-card">
+                        @if(!empty($producto->imagen_nombre))
+                            <img src="{{ asset('img/productos/' . $producto->imagen_nombre) }}" alt="{{ $producto->nombre }}" class="producto-imagen">
+                        @else
+                            <div class="producto-imagen" style="display: flex; align-items: center; justify-content: center; color: #9ca3af;">
+                                Sin imagen
+                            </div>
+                        @endif
+
+                        <div class="producto-body">
+                            <div class="producto-nombre">{{ $producto->nombre }}</div>
+                            <div class="producto-categoria">{{ optional($producto->categoria)->nombre ?? 'Sin categoría' }}</div>
+                            <div class="producto-precio">S/. {{ number_format($producto->precio, 2) }}</div>
+
+                            <div class="producto-actions">
+                                <a href="/productos/{{ $producto->id }}/edit" class="btn-edit">✏️ Editar</a>
+                                
+                                <form action="/productos/{{ $producto->id }}" method="POST" style="display: inline;">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" onclick="return confirm('¿Eliminar este producto?')" class="btn-delete">
+                                        🗑️
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        @endif
+    </div>
+</body>
+</html>

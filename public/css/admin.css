@@ -5,7 +5,7 @@
 }
 
 html, body {
-    background: linear-gradient(135deg, #166534 0%, #15803d 50%, #16a34a 100%);
+    background: #ffffff;
     min-height: 100vh;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
@@ -26,19 +26,18 @@ html, body {
 }
 
 .admin-btn {
-    background: rgba(255, 255, 255, 0.2);
+    background: #16a34a;
     color: white;
     padding: 0.75rem 1.5rem;
     border-radius: 0.5rem;
     text-decoration: none;
     font-weight: bold;
-    backdrop-filter: blur(10px);
     transition: all 0.3s;
     white-space: nowrap;
 }
 
 .admin-btn:hover {
-    background: rgba(255, 255, 255, 0.3);
+    background: #15803d;
 }
 
 .admin-btn.logout {
@@ -56,14 +55,13 @@ html, body {
 
 .admin-title h1 {
     font-size: 2.5rem;
-    color: white;
+    color: #1f2937;
     margin-bottom: 0.5rem;
-    text-shadow: 0 2px 10px rgba(0,0,0,0.2);
 }
 
 .admin-title p {
     font-size: 1.125rem;
-    color: rgba(255, 255, 255, 0.9);
+    color: #6b7280;
 }
 
 .admin-grid {
