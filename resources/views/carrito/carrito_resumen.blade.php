@@ -99,13 +99,6 @@
             <form action="{{ route('pedido.finalizar') }}" method="POST">
                 @csrf
                 
-                @if($tipoPedido === 'Para Aqui')
-                    <div style="margin-bottom:15px;">
-                        <label style="display:block; font-weight:600; margin-bottom:5px; color:#374151;">Número de Mesa: <span style="color:#ef4444;">*</span></label>
-                        <input type="text" name="numero_mesa" placeholder="Ej: 5" required style="width:100%; padding:12px; border:2px solid #d1d5db; border-radius:8px; font-size:16px;">
-                    </div>
-                @endif
-                
                 <div style="margin-bottom:20px;">
                     <label style="display:block; font-weight:600; margin-bottom:5px; color:#374151;">Nombre del Cliente: <span style="color:#ef4444;">*</span></label>
                     <input type="text" name="nombre_cliente" placeholder="Tu nombre" required style="width:100%; padding:12px; border:2px solid #d1d5db; border-radius:8px; font-size:16px;">

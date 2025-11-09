@@ -81,7 +81,7 @@
                                 <option value="En Preparación" @if($pedido->estado == 'En Preparación') selected @endif>En Preparación</option>
                                 <option value="Listo" @if($pedido->estado == 'Listo') selected @endif>Listo para Entregar</option>
                                 <option value="Entregado" @if($pedido->estado == 'Entregado') selected @endif>Entregado</option>
-                                <option value="Cancelado" @if($pedido->estado == 'Cancelado') selected @endif>Cancelar</option>
+                                <option value="Cancelado" @if($pedido->estado == 'Cancelado') selected @endif>Cancelado</option>
                             </select>
                         </form>
                     </div>
