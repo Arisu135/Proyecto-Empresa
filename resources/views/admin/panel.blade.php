@@ -27,11 +27,17 @@
         <p class="text-xl text-gray-600 mb-8">Gestiona tu negocio desde aquí</p>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-4xl mx-auto">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
         <a href="{{ route('admin.ventas') }}" class="bg-green-500 hover:bg-green-600 text-white p-6 rounded-lg shadow-lg text-center transition">
             <div class="text-4xl mb-2">📊</div>
             <h3 class="text-xl font-bold">Historial Ventas</h3>
             <p class="text-sm mt-2">Ver ventas realizadas</p>
+        </a>
+
+        <a href="{{ route('admin.ventas.eliminadas') }}" class="bg-red-500 hover:bg-red-600 text-white p-6 rounded-lg shadow-lg text-center transition">
+            <div class="text-4xl mb-2">🗑️</div>
+            <h3 class="text-xl font-bold">Ventas Eliminadas</h3>
+            <p class="text-sm mt-2">Historial de eliminaciones</p>
         </a>
 
         <a href="{{ route('productos.index') }}" class="bg-orange-500 hover:bg-orange-600 text-white p-6 rounded-lg shadow-lg text-center transition">
