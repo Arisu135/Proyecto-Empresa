@@ -5,8 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Panel de Administración</title>
     <link rel="stylesheet" href="{{ asset('css/admin.css') }}">
+    <style>
+        html, body {
+            background: #ffffff !important;
+        }
+        .admin-wrapper {
+            background: #ffffff !important;
+        }
+        .admin-title h1 {
+            color: #1f2937 !important;
+        }
+        .admin-title p {
+            color: #6b7280 !important;
+        }
+    </style>
 </head>
-<body>
+<body style="background: #ffffff !important;">
     <div class="admin-wrapper">
         <div class="admin-header">
             <a href="{{ route('catalogo.index') }}" class="admin-btn">← Volver al Inicio</a>
