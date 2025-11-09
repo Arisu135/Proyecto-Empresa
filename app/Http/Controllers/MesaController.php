@@ -83,19 +83,4 @@ class MesaController extends Controller
 
         return view('mesas.historial_eliminadas', compact('pedidos', 'totalPerdido'));
     }
-
-    public function limpiarHistorial($tipo)
-    {
-        $query = Pedido::where('eliminado', true)
-            ->where('motivo_eliminacion', 'LIKE', '%cocina%');
-        
-        if ($tipo === 'hoy') {
-            $query->whereDate('eliminado_at', now()->toDateString());
-        }
-        
-        $count = $query->count();
-        $query->forceDelete();
-
-        return redirect()->route('mesas.historial')->with('success', "Se eliminaron {$count} registros del historial.");
-    }
 }

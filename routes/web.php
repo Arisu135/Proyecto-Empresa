@@ -87,7 +87,6 @@ Route::get('/admin/ventas-eliminadas', [CatalogoController::class, 'ventasElimin
 Route::get('/admin/ventas-eliminadas/cocina', [CatalogoController::class, 'ventasEliminadasCocina'])->name('admin.ventas.eliminadas.cocina');
 Route::get('/admin/ventas-eliminadas/limpiar/{tipo}', [CatalogoController::class, 'limpiarHistorialVentas'])->name('admin.ventas.eliminadas.limpiar');
 Route::delete('/admin/ventas/{pedido}/eliminar', [CatalogoController::class, 'eliminarVentaAdmin'])->name('admin.ventas.eliminar');
-Route::get('/mesas/historial/limpiar/{tipo}', [MesaController::class, 'limpiarHistorial'])->name('mesas.historial.limpiar');
 
 
 

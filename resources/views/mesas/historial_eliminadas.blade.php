@@ -11,17 +11,9 @@
         <div class="max-w-7xl mx-auto px-4 py-4">
             <div class="flex justify-between items-center">
                 <h1 class="text-3xl font-bold text-red-600">🗑️ Historial Eliminadas - Cocina</h1>
-                <div class="flex gap-2">
-                    <button onclick="confirmarLimpiar('hoy')" class="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white font-bold rounded-lg">
-                        🗑️ Limpiar Hoy
-                    </button>
-                    <button onclick="confirmarLimpiar('todo')" class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-bold rounded-lg">
-                        🗑️ Limpiar Todo
-                    </button>
-                    <a href="{{ route('mesas.index') }}" class="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white font-bold rounded-lg">
-                        ← Volver
-                    </a>
-                </div>
+                <a href="{{ route('mesas.index') }}" class="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white font-bold rounded-lg">
+                    ← Volver
+                </a>
             </div>
         </div>
     </header>
@@ -93,16 +85,6 @@
         </div>
     </main>
 
-    <script>
-    function confirmarLimpiar(tipo) {
-        const mensaje = tipo === 'todo' 
-            ? '⚠️ ¿Estás seguro de eliminar TODO el historial de cocina?\n\nEsta acción no se puede deshacer.'
-            : '⚠️ ¿Estás seguro de eliminar el historial de cocina de HOY?\n\nEsta acción no se puede deshacer.';
-        
-        if (confirm(mensaje)) {
-            window.location.href = '/mesas/historial/limpiar/' + tipo;
-        }
-    }
-    </script>
+
 </body>
 </html>
