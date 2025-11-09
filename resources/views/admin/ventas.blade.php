@@ -9,7 +9,6 @@
     <!-- Filtros -->
     <form method="GET" action="{{ route('admin.ventas') }}" class="bg-white p-6 rounded-lg shadow-md mb-6">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <!-- Filtro de Fecha -->
             <div>
                 <label class="block text-sm font-bold text-gray-700 mb-2">Filtrar por Fecha:</label>
                 <select name="filter" class="w-full p-2 border border-gray-300 rounded" onchange="this.form.submit()">
@@ -18,13 +17,11 @@
                 </select>
             </div>
             
-            <!-- Fecha específica -->
             <div>
                 <label class="block text-sm font-bold text-gray-700 mb-2">Fecha Específica:</label>
                 <input type="date" name="filter" value="{{ $filter !== 'hoy' && $filter !== 'todos' ? $filter : '' }}" class="w-full p-2 border border-gray-300 rounded" onchange="this.form.submit()">
             </div>
 
-            <!-- Filtro de Categoría -->
             <div>
                 <label class="block text-sm font-bold text-gray-700 mb-2">Filtrar por Categoría:</label>
                 <select name="categoria" class="w-full p-2 border border-gray-300 rounded" onchange="this.form.submit()">
@@ -104,7 +101,7 @@
                                 <span class="text-gray-400">—</span>
                             @endif
                         </td>
-                        <td class="px-4 py-3 text-sm font-bold text-green-600">S/. {{ number_format($pedido->total, 2) }}</td>
+                        <td class="px-4 py-3 text-sm font-bold text-green-600">S/. {{ number_format($pedido->total, 2) }}</pd>
                         <td class="px-4 py-3 text-sm">
                             <span class="px-2 py-1 rounded text-xs font-semibold
                                 @if($pedido->estado == 'Entregado') bg-green-100 text-green-800
@@ -155,7 +152,6 @@
     </div>
 </div>
 
-<!-- Modal Eliminar -->
 <div id="modalEliminar" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:9999; align-items:center; justify-content:center;">
     <div style="background:white; padding:30px; border-radius:12px; max-width:400px; width:90%;">
         <h2 style="font-size:20px; font-weight:bold; margin-bottom:15px; color:#ef4444; text-align:center;">⚠️ Eliminar Venta</h2>
@@ -185,35 +181,6 @@ function eliminarVenta(id) {
 }
 
 function cerrarModalEliminar() {
-    document.getElementById('modalEliminar').style.display = 'none';
-}
-</script>
-@endsectionttom:20px; color:#4b5563; text-align:center;">Indica el motivo de eliminación:</p>
-        
-        <form id="formEliminar" method="POST" action="">
-            @csrf
-            @method('DELETE')
-            <textarea name="motivo" rows="3" placeholder="Motivo..." required style="width:100%; padding:10px; border:2px solid #d1d5db; border-radius:8px; margin-bottom:15px;"></textarea>
-            
-            <div style="display:flex; gap:10px;">
-                <button type="button" onclick="cerrarModal()" style="flex:1; padding:12px; background:#6b7280; color:white; border:none; border-radius:8px; font-weight:bold; cursor:pointer;">
-                    Cancelar
-                </button>
-                <button type="submit" style="flex:1; padding:12px; background:#ef4444; color:white; border:none; border-radius:8px; font-weight:bold; cursor:pointer;">
-                    Eliminar
-                </button>
-            </div>
-        </form>
-    </div>
-</div>
-
-<script>
-function eliminarVenta(id) {
-    document.getElementById('formEliminar').action = '/admin/ventas/' + id + '/eliminar';
-    document.getElementById('modalEliminar').style.display = 'flex';
-}
-
-function cerrarModal() {
     document.getElementById('modalEliminar').style.display = 'none';
 }
 </script>
