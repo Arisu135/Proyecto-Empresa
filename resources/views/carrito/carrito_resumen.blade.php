@@ -68,12 +68,21 @@
                 <form action="{{ route('pedido.finalizar') }}" method="POST" class="space-y-4">
                     @csrf
                     
-                    @if($tipoPedido === 'Para Llevar')
+                    <div class="bg-gray-50 p-4 rounded-lg border-2 border-gray-200 space-y-3">
+                        <h3 class="font-bold text-lg text-brand-dark">Información del Pedido</h3>
+                        
+                        @if($tipoPedido === 'Para Aqui')
+                            <div class="space-y-2">
+                                <label class="block text-gray-700 font-semibold">Número de Mesa: <span class="text-red-500">*</span></label>
+                                <input type="text" name="numero_mesa" class="w-full p-3 border-2 border-gray-300 rounded-lg focus:border-brand-accent focus:outline-none text-lg" placeholder="Ej: 5" required>
+                            </div>
+                        @endif
+                        
                         <div class="space-y-2">
-                            <label class="block text-gray-700">Nombre para el Pedido:</label>
-                            <input type="text" name="nombre_cliente" class="w-full p-2 border rounded" placeholder="Tu nombre">
+                            <label class="block text-gray-700 font-semibold">Nombre del Cliente: <span class="text-red-500">*</span></label>
+                            <input type="text" name="nombre_cliente" class="w-full p-3 border-2 border-gray-300 rounded-lg focus:border-brand-accent focus:outline-none text-lg" placeholder="Tu nombre" required>
                         </div>
-                    @endif
+                    </div>
 
                     <div class="flex flex-col space-y-3">
                         <button type="submit" class="w-full py-3 bg-btn-green text-white font-bold rounded-xl shadow-lg hover:bg-btn-green/90 transition duration-150 text-lg">
