@@ -23,9 +23,10 @@
         height: 100vh;
         display: flex;
         flex-direction: column;
-        justify-content: space-between;
+        justify-content: center;
         align-items: center;
         padding: 1rem;
+        gap: 1.5rem;
     }
 
     .admin-link {
@@ -104,7 +105,7 @@
     @media (max-width: 768px) {
         .kiosko-container {
             padding: 0.5rem;
-            gap: 0.5rem;
+            gap: 1rem;
         }
 
         .logo-section img {
@@ -113,7 +114,7 @@
         }
         
         .qr-section {
-            gap: 0.5rem;
+            gap: 0.25rem;
         }
 
         .qr-section svg {
