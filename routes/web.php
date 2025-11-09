@@ -6,6 +6,7 @@ use App\Http\Controllers\CajaController;
 use App\Http\Controllers\MesaController;
 use App\Http\Controllers\AdminAuthController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Schema;
 
 /*
 |--------------------------------------------------------------------------
@@ -89,6 +90,7 @@ Route::get('/admin/ventas-eliminadas', [CatalogoController::class, 'ventasElimin
 // PROTECTION: set ADMIN_CLEAR_TOKEN in your environment (Render Dashboard) and call
 // /ops/clear-cache?token=YOUR_TOKEN once. Remove this route after use.
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Schema;
 Route::get('/ops/clear-cache', function () {
     $provided = request()->query('token');
     $secret = env('ADMIN_CLEAR_TOKEN');
@@ -102,5 +104,15 @@ Route::get('/ops/clear-cache', function () {
     return response()->json([
         'view' => trim(Artisan::output()),
         'status' => 'ok',
+    ]);
+});
+
+Route::get('/ops/check-db', function () {
+    $columns = Schema::getColumnListing('pedidos');
+    return response()->json([
+        'columns' => $columns,
+        'has_pagado' => in_array('pagado', $columns),
+        'has_metodo_pago' => in_array('metodo_pago', $columns),
+        'has_eliminado' => in_array('eliminado', $columns),
     ]);
 });

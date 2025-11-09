@@ -72,16 +72,13 @@
                 </a>
             </div>
             
-            <!-- Botones de Caja, Cocina y Ventas -->
+            <!-- Botones de Caja y Cocina -->
             <div class="absolute top-20 right-4 flex flex-col gap-2">
                 <a href="{{ route('caja.index') }}" class="px-4 py-2 bg-green-600 text-white font-bold rounded-lg shadow-lg hover:bg-green-700 transition text-sm text-center">
                     💰 Caja
                 </a>
                 <a href="{{ route('mesas.index') }}" class="px-4 py-2 bg-blue-600 text-white font-bold rounded-lg shadow-lg hover:bg-blue-700 transition text-sm text-center">
                     🍳 Cocina
-                </a>
-                <a href="{{ route('admin.ventas') }}" class="px-4 py-2 bg-purple-600 text-white font-bold rounded-lg shadow-lg hover:bg-purple-700 transition text-sm text-center">
-                    📊 Ventas
                 </a>
             </div>
         </div>
