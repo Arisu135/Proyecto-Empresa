@@ -5,16 +5,15 @@
 @push('styles')
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { 
+  html, body { 
     background: linear-gradient(135deg, #166534 0%, #15803d 50%, #16a34a 100%); 
     min-height: 100vh;
-    overflow-x: hidden;
   }
   .admin-container {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
-    padding: 1rem;
+    padding: 2rem 1rem;
   }
   .admin-card { 
     background: white;
@@ -23,10 +22,10 @@
     text-align: center;
     transition: all 0.3s ease;
     box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    height: 100%;
     display: flex;
     flex-direction: column;
     justify-content: center;
+    align-items: center;
   }
   .admin-card:hover { 
     transform: translateY(-5px); 
@@ -37,34 +36,33 @@
   .admin-card p { font-size: 0.875rem; color: #6b7280; }
   
   @media (max-width: 768px) {
+    .admin-container { padding: 1rem; }
     .admin-card { padding: 1.5rem; }
     .admin-card .icon { font-size: 2.5rem; }
-    .admin-card h3 { font-size: 1.1rem; }
+    .admin-card h3 { font-size: 1rem; }
+    .admin-card p { font-size: 0.75rem; }
   }
 </style>
 @endpush
 
 @section('content')
 <div class="admin-container">
-    <div class="max-w-7xl mx-auto w-full">
-        <!-- Header -->
-        <div class="flex justify-between items-center mb-8 gap-2">
-            <a href="{{ route('catalogo.index') }}" class="bg-white/20 hover:bg-white/30 text-white font-bold py-2 px-4 rounded-lg backdrop-blur-sm transition text-sm md:text-base">
-                ← Inicio
+    <div class="max-w-6xl mx-auto w-full">
+        <div class="flex justify-between items-center mb-8">
+            <a href="{{ route('catalogo.index') }}" class="bg-white/20 hover:bg-white/30 text-white font-bold py-2 px-5 rounded-lg backdrop-blur-sm transition">
+                ← Volver al Inicio
             </a>
-            <a href="{{ route('admin.logout') }}" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg transition text-sm md:text-base">
-                🚪 Salir
+            <a href="{{ route('admin.logout') }}" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-5 rounded-lg transition">
+                🚪 Cerrar Sesión
             </a>
         </div>
         
-        <!-- Título -->
-        <div class="text-center mb-8">
-            <h1 class="text-3xl md:text-4xl font-bold text-white mb-2 drop-shadow-lg">Panel de Administración</h1>
-            <p class="text-base md:text-lg text-white/90">Rebel Jungle</p>
+        <div class="text-center mb-10">
+            <h1 class="text-4xl font-bold text-white mb-2 drop-shadow-lg">Panel de Administración</h1>
+            <p class="text-lg text-white/90">Rebel Jungle</p>
         </div>
 
-        <!-- Cards Grid -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             <a href="{{ route('admin.ventas') }}" class="admin-card">
                 <div class="icon">📊</div>
                 <h3>Historial Ventas</h3>

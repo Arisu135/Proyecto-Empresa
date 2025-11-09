@@ -20,14 +20,9 @@
         height: 100vh;
         display: flex;
         flex-direction: column;
-        justify-content: space-between;
+        justify-content: space-evenly;
         align-items: center;
         padding: 1rem;
-    }
-
-    .logo-wrapper {
-        flex-shrink: 0;
-        margin-top: 1rem;
     }
 
     .logo-wrapper img {
@@ -39,10 +34,8 @@
     }
 
     .qr-wrapper {
-        flex: 1;
         display: flex;
         flex-direction: column;
-        justify-content: center;
         align-items: center;
     }
 
@@ -61,27 +54,19 @@
         font-weight: 600;
     }
 
-    .kiosko-wrapper {
-        width: 100%;
-        flex-shrink: 0;
-        margin-bottom: 1rem;
-    }
-
     .button-group {
         display: flex;
-        flex-direction: row;
         gap: 1rem;
         justify-content: center;
-        align-items: center;
+        width: 100%;
         max-width: 600px;
-        margin: 0 auto;
     }
     
     .btn-kiosko {
-        flex: 1;
+        width: 250px;
         border: none;
         color: white;
-        padding: 1rem 1.5rem;
+        padding: 1rem;
         border-radius: 0.75rem;
         font-size: 1.125rem;
         font-weight: bold;
@@ -93,7 +78,6 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        min-height: 60px;
     }
 
     .btn-kiosko:active {
@@ -115,8 +99,12 @@
         font-size: 0.875rem;
     }
 
-    /* Responsive */
     @media (max-width: 768px) {
+        .kiosko-body {
+            justify-content: space-between;
+            padding: 1.5rem 1rem;
+        }
+
         .logo-wrapper img {
             width: 160px;
             height: 160px;
@@ -129,16 +117,12 @@
         
         .button-group {
             flex-direction: column;
-            width: 100%;
             max-width: 100%;
-            padding: 0 1rem;
         }
         
         .btn-kiosko {
             width: 100%;
-            max-width: 100%;
             font-size: 1rem;
-            padding: 1rem;
         }
 
         .qr-text {
@@ -147,24 +131,19 @@
     }
     
     @media (max-width: 768px) and (orientation: landscape) {
-        .logo-wrapper {
-            margin-top: 0.5rem;
-        }
-        
         .logo-wrapper img {
-            width: 120px;
-            height: 120px;
+            width: 100px;
+            height: 100px;
         }
         
         .qr-wrapper svg {
-            width: 120px;
-            height: 120px;
+            width: 100px;
+            height: 100px;
         }
         
         .btn-kiosko {
-            padding: 0.75rem 1rem;
+            padding: 0.75rem;
             font-size: 0.875rem;
-            min-height: 50px;
         }
     }
 </style>
@@ -182,20 +161,18 @@
             <p class="qr-text">@REBEL_JUNGLE_CAFE_PLANTAS_</p>
         </div>
 
-        <div class="kiosko-wrapper">
-            <div class="button-group">
-                <a href="{{ route('productos.menu', ['tipo_pedido' => 'Para Aqui']) }}" 
-                   class="btn-kiosko" 
-                   style="background-color: #388e3c;">
-                    PARA AQUÍ
-                </a>
+        <div class="button-group">
+            <a href="{{ route('productos.menu', ['tipo_pedido' => 'Para Aqui']) }}" 
+               class="btn-kiosko" 
+               style="background-color: #388e3c;">
+                PARA AQUÍ
+            </a>
 
-                <a href="{{ route('productos.menu', ['tipo_pedido' => 'Para Llevar']) }}" 
-                   class="btn-kiosko" 
-                   style="background-color: #e65100;">
-                    PARA LLEVAR
-                </a>
-            </div>
+            <a href="{{ route('productos.menu', ['tipo_pedido' => 'Para Llevar']) }}" 
+               class="btn-kiosko" 
+               style="background-color: #e65100;">
+                PARA LLEVAR
+            </a>
         </div>
     </div>
 </body>
