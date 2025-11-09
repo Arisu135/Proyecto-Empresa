@@ -31,7 +31,7 @@
                     🗑️ Eliminar Todo
                 </button>
                 <h1 class="text-3xl font-bold text-brand-dark">🍳 COCINA</h1>
-                <a href="{{ route('catalogo.index') }}" class="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white font-bold rounded-lg">
+                <a href="{{ route('productos.menu', ['tipo_pedido' => 'Para Aqui']) }}" class="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white font-bold rounded-lg">
                     ← Volver
                 </a>
             </div>
