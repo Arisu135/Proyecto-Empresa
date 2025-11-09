@@ -35,7 +35,7 @@ class MesaController extends Controller
         if ($request->estado === 'Cancelado') {
             $pedido->eliminado = true;
             $pedido->eliminado_at = now();
-            $pedido->motivo_eliminacion = $request->motivo_cancelacion;
+            $pedido->motivo_eliminacion = 'Eliminado desde cocina: ' . $request->motivo_cancelacion;
         }
         
         $pedido->save();
