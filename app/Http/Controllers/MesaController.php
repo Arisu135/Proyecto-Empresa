@@ -23,9 +23,17 @@ class MesaController extends Controller
     {
         $request->validate([
             'estado' => 'required|in:Pendiente,En Preparación,Listo,Entregado,Cancelado',
+            'motivo_cancelacion' => 'required_if:estado,Cancelado|string|max:500',
         ]);
         
         $pedido->estado = $request->estado;
+        
+        if ($request->estado === 'Cancelado') {
+            $pedido->eliminado = true;
+            $pedido->eliminado_at = now();
+            $pedido->motivo_eliminacion = $request->motivo_cancelacion;
+        }
+        
         $pedido->save();
 
         return back()->with('success', "Estado del pedido #{$pedido->id} actualizado a {$pedido->estado}.");
