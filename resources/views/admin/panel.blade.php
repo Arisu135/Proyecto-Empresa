@@ -63,12 +63,6 @@
                 <div class="admin-card-title">Productos</div>
                 <div class="admin-card-desc">Editar menú y precios</div>
             </a>
-
-            <a href="{{ route('productos.create') }}" class="admin-card">
-                <div class="admin-card-icon">➕</div>
-                <div class="admin-card-title">Nuevo Producto</div>
-                <div class="admin-card-desc">Añadir al menú</div>
-            </a>
         </div>
     </div>
 </body>

@@ -10,7 +10,10 @@
     <div class="caja-container">
         <div class="caja-header">
             <h1 class="caja-title">💰 Caja - Pedidos Pendientes</h1>
-            <a href="{{ route('catalogo.index') }}" class="btn btn-gray">← Volver al Inicio</a>
+            <div style="display: flex; gap: 0.75rem;">
+                <a href="{{ route('productos.menu', ['tipo_pedido' => 'Para Aqui']) }}" class="btn btn-green">➕ Nuevo Pedido</a>
+                <a href="{{ route('catalogo.index') }}" class="btn btn-gray">← Volver al Inicio</a>
+            </div>
         </div>
 
         @if(session('success'))

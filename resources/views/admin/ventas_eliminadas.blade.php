@@ -13,19 +13,9 @@
         </div>
 
         <div class="filtros-card">
-            <div class="actions-bar">
-                <div>
-                    <div class="stat-label">Total Perdido</div>
-                    <div class="stat-value red">S/. {{ number_format($totalPerdido ?? 0, 2) }}</div>
-                </div>
-                <div style="display: flex; gap: 0.75rem;">
-                    <button onclick="confirmarEliminarHistorial('hoy')" class="btn btn-orange">
-                        🗑️ Eliminar Hoy
-                    </button>
-                    <button onclick="confirmarEliminarHistorial('todo')" class="btn btn-red">
-                        🗑️ Eliminar Todo
-                    </button>
-                </div>
+            <div>
+                <div class="stat-label">Total Perdido</div>
+                <div class="stat-value red">S/. {{ number_format($totalPerdido ?? 0, 2) }}</div>
             </div>
         </div>
 
@@ -96,16 +86,6 @@
         </div>
     </div>
 
-    <script>
-    function confirmarEliminarHistorial(tipo) {
-        const mensaje = tipo === 'todo' 
-            ? '⚠️ ¿Estás seguro de eliminar TODO el historial de ventas eliminadas?\n\nEsta acción no se puede deshacer.'
-            : '⚠️ ¿Estás seguro de eliminar el historial de ventas eliminadas de HOY?\n\nEsta acción no se puede deshacer.';
-        
-        if (confirm(mensaje)) {
-            window.location.href = '/admin/ventas-eliminadas/limpiar/' + tipo;
-        }
-    }
-    </script>
+
 </body>
 </html>

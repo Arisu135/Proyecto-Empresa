@@ -267,8 +267,15 @@ class CatalogoController extends Controller
             // 2. Limpiar la sesión
             Session::forget(['carrito', 'tipo_pedido']); 
 
-            // 3. Redirección de Éxito
-            return redirect()->route('pedido.confirmacion', $pedido->id)->with('success', '¡Tu pedido ha sido enviado con éxito!');
+            // 3. Redirección de Éxito - Redirigir a cocina con mensaje
+            return redirect()->route('mesas.index')->with([
+                'pedido_confirmado' => true,
+                'pedido_id' => $pedido->id,
+                'pedido_cliente' => $pedido->nombre_cliente,
+                'pedido_total' => $pedido->total,
+                'pedido_fecha' => $pedido->created_at->format('d/m/Y H:i'),
+                'pedido_detalles' => $pedido->detalles
+            ]);
 
         } catch (\Exception $e) {
             DB::rollBack();

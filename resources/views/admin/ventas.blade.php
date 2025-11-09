@@ -38,6 +38,15 @@
                         @endforeach
                     </select>
                 </div>
+
+                <div class="filtro-group">
+                    <label>Buscar Producto:</label>
+                    <input type="text" name="producto" value="{{ request('producto') }}" placeholder="Nombre del producto..." class="w-full p-2 border border-gray-300 rounded">
+                </div>
+
+                <div class="filtro-group" style="display: flex; align-items: flex-end;">
+                    <button type="submit" class="btn btn-green" style="width: 100%;">Buscar</button>
+                </div>
             </div>
             
             <a href="{{ route('admin.ventas') }}" class="btn-link">← Limpiar filtros</a>
@@ -84,7 +93,6 @@
                             <th>Total</th>
                             <th>Estado</th>
                             <th>Fecha</th>
-                            <th>Acción</th>
                             <th>Detalles</th>
                         </tr>
                     </thead>
@@ -111,11 +119,6 @@
                                 </td>
                                 <td>{{ $pedido->created_at->format('d/m/Y H:i') }}</td>
                                 <td>
-                                    <button onclick="eliminarVenta({{ $pedido->id }})" class="btn btn-red">
-                                        🗑️ Eliminar
-                                    </button>
-                                </td>
-                                <td>
                                     @if($pedido->detalles && $pedido->detalles->count())
                                         <ul style="list-style: none; padding: 0; margin: 0; font-size: 0.75rem;">
                                             @foreach($pedido->detalles as $d)
@@ -135,7 +138,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="8" style="text-align: center; padding: 2rem; color: #6b7280;">
+                                <td colspan="7" style="text-align: center; padding: 2rem; color: #6b7280;">
                                     No se encontraron ventas para el filtro seleccionado.
                                 </td>
                             </tr>
@@ -150,37 +153,6 @@
         </div>
     </div>
 
-    <div id="modalEliminar" class="modal">
-        <div class="modal-content">
-            <h2 class="modal-title">⚠️ Eliminar Venta</h2>
-            <p class="modal-text">Indica el motivo de eliminación:</p>
-            
-            <form id="formEliminarVenta" method="POST" action="">
-                @csrf
-                @method('DELETE')
-                <textarea name="motivo" rows="3" placeholder="Motivo de eliminación..." required></textarea>
-                
-                <div class="modal-buttons">
-                    <button type="button" onclick="cerrarModalEliminar()" class="btn btn-gray">
-                        Cancelar
-                    </button>
-                    <button type="submit" class="btn btn-red">
-                        Eliminar
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
 
-    <script>
-    function eliminarVenta(id) {
-        document.getElementById('formEliminarVenta').action = '/admin/ventas/' + id + '/eliminar';
-        document.getElementById('modalEliminar').style.display = 'flex';
-    }
-
-    function cerrarModalEliminar() {
-        document.getElementById('modalEliminar').style.display = 'none';
-    }
-    </script>
 </body>
 </html>

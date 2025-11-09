@@ -39,6 +39,36 @@
     </header>
 
     <main class="max-w-7xl mx-auto py-4 px-4">
+        @if(session('pedido_confirmado'))
+            <div class="bg-green-50 border-2 border-green-500 rounded-xl p-6 mb-6 shadow-lg">
+                <h2 class="text-2xl font-bold text-green-700 mb-4 text-center">✅ ¡Gracias! Tu pedido ha sido enviado a cocina.</h2>
+                
+                <div class="bg-white rounded-lg p-4 mb-4">
+                    <h3 class="text-lg font-bold text-gray-800 mb-3">Detalles del Pedido:</h3>
+                    <div class="space-y-2 text-sm">
+                        <p><strong>Número de Pedido:</strong> <span class="text-green-600 font-bold text-xl">#{{ session('pedido_id') }}</span></p>
+                        <p><strong>Cliente:</strong> {{ session('pedido_cliente') }}</p>
+                        <p><strong>Fecha y Hora:</strong> {{ session('pedido_fecha') }}</p>
+                        <p><strong>Estado:</strong> <span class="text-red-600 font-bold">Pendiente</span></p>
+                    </div>
+                    
+                    <div class="border-t mt-3 pt-3">
+                        <p class="text-lg font-bold text-gray-800">TOTAL PAGADO:</p>
+                        <p class="text-2xl font-bold text-green-600">S/. {{ number_format(session('pedido_total'), 2) }}</p>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-lg p-4">
+                    <h4 class="font-bold text-gray-700 mb-2">Productos Incluidos:</h4>
+                    <ul class="space-y-1 text-sm">
+                        @foreach(session('pedido_detalles') as $detalle)
+                            <li>{{ $detalle->cantidad }}x {{ $detalle->nombre_producto }} - S/. {{ number_format($detalle->subtotal, 2) }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            </div>
+        @endif
+
         @if(session('success'))
             <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
                 {{ session('success') }}
