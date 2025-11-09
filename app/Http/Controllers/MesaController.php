@@ -9,9 +9,12 @@ class MesaController extends Controller
 {
     public function index()
     {
-        // Mostrar todos los pedidos que NO estén entregados (Cocina completa)
+        // Mostrar todos los pedidos que NO estén entregados, pagados o eliminados
         $pedidos = Pedido::with('detalles')
             ->where('estado', '!=', 'Entregado')
+            ->where('estado', '!=', 'Cancelado')
+            ->where('pagado', false)
+            ->where('eliminado', false)
             ->orderByRaw("CASE estado WHEN 'Pendiente' THEN 1 WHEN 'En Preparación' THEN 2 WHEN 'Listo' THEN 3 ELSE 4 END")
             ->orderBy('created_at', 'asc')
             ->get();
