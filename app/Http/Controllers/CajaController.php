@@ -10,7 +10,7 @@ class CajaController extends Controller
     public function index()
     {
         $pedidos = Pedido::with('detalles')
-            ->where('estado', 'Entregado')
+            ->whereIn('estado', ['Listo', 'Entregado'])
             ->where('pagado', false)
             ->where('eliminado', false)
             ->orderBy('created_at', 'asc')
