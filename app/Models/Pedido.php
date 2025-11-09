@@ -21,10 +21,16 @@ class Pedido extends Model
         'tipo_pedido',
         'numero_mesa',
         'pagado',
+        'metodo_pago',
+        'eliminado',
+        'eliminado_at',
+        'motivo_eliminacion',
     ];
 
     protected $casts = [
         'pagado' => 'boolean',
+        'eliminado' => 'boolean',
+        'eliminado_at' => 'datetime',
     ];
 
     /**

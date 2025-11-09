@@ -27,13 +27,7 @@
         <p class="text-xl text-gray-600 mb-8">Gestiona tu negocio desde aquí</p>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
-        <a href="{{ route('admin.gestion') }}" class="bg-blue-500 hover:bg-blue-600 text-white p-6 rounded-lg shadow-lg text-center transition">
-            <div class="text-4xl mb-2">🍳</div>
-            <h3 class="text-xl font-bold">Cocina</h3>
-            <p class="text-sm mt-2">Gestionar pedidos</p>
-        </a>
-
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-4xl mx-auto">
         <a href="{{ route('admin.ventas') }}" class="bg-green-500 hover:bg-green-600 text-white p-6 rounded-lg shadow-lg text-center transition">
             <div class="text-4xl mb-2">📊</div>
             <h3 class="text-xl font-bold">Historial Ventas</h3>

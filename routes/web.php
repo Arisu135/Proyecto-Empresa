@@ -74,10 +74,14 @@ Route::middleware(['admin.auth'])->group(function () {
 // Vista de Caja
 Route::get('/caja', [CajaController::class, 'index'])->name('caja.index');
 Route::patch('/caja/{pedido}/pagar', [CajaController::class, 'marcarPagado'])->name('caja.marcarPagado');
+Route::delete('/caja/{pedido}/eliminar', [CajaController::class, 'eliminarVenta'])->name('caja.eliminarVenta');
 
-// Vista de Mesas
+// Vista de Mesas (ahora es Cocina completa)
 Route::get('/mesas', [MesaController::class, 'index'])->name('mesas.index');
-Route::patch('/mesas/{pedido}/entregar', [MesaController::class, 'marcarEntregado'])->name('mesas.marcarEntregado');
+Route::patch('/mesas/{pedido}/estado', [MesaController::class, 'actualizarEstado'])->name('mesas.actualizarEstado');
+
+// Historial de ventas eliminadas
+Route::get('/admin/ventas-eliminadas', [CatalogoController::class, 'ventasEliminadas'])->name('admin.ventas.eliminadas');
 
 
 

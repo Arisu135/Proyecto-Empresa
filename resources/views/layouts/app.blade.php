@@ -83,7 +83,6 @@
         <div class="admin-header-custom">
             <ul>
                 <li><a href="{{ route('admin.panel') }}">🏠 Inicio</a></li>
-                <li><a href="{{ route('admin.gestion') }}">🍳 Cocina</a></li>
                 <li><a href="{{ route('admin.ventas') }}">📊 Historial Ventas</a></li>
                 <li><a href="{{ route('productos.index') }}">📝 Productos</a></li>
             </ul>

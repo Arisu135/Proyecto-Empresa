@@ -65,39 +65,19 @@
                     </div>
                 </div>
 
-                <form action="{{ route('pedido.finalizar') }}" method="POST" class="space-y-4">
-                    @csrf
+                <div class="flex flex-col space-y-3">
+                    <button onclick="mostrarModalConfirmar()" class="w-full py-3 bg-btn-green text-white font-bold rounded-xl shadow-lg hover:bg-btn-green/90 transition duration-150 text-lg">
+                        Confirmar Pedido
+                    </button>
                     
-                    <div class="bg-gray-50 p-4 rounded-lg border-2 border-gray-200 space-y-3">
-                        <h3 class="font-bold text-lg text-brand-dark">Información del Pedido</h3>
-                        
-                        @if($tipoPedido === 'Para Aqui')
-                            <div class="space-y-2">
-                                <label class="block text-gray-700 font-semibold">Número de Mesa: <span class="text-red-500">*</span></label>
-                                <input type="text" name="numero_mesa" class="w-full p-3 border-2 border-gray-300 rounded-lg focus:border-brand-accent focus:outline-none text-lg" placeholder="Ej: 5" required>
-                            </div>
-                        @endif
-                        
-                        <div class="space-y-2">
-                            <label class="block text-gray-700 font-semibold">Nombre del Cliente: <span class="text-red-500">*</span></label>
-                            <input type="text" name="nombre_cliente" class="w-full p-3 border-2 border-gray-300 rounded-lg focus:border-brand-accent focus:outline-none text-lg" placeholder="Tu nombre" required>
-                        </div>
-                    </div>
-
-                    <div class="flex flex-col space-y-3">
-                        <button type="submit" class="w-full py-3 bg-btn-green text-white font-bold rounded-xl shadow-lg hover:bg-btn-green/90 transition duration-150 text-lg">
-                            Confirmar Pedido
-                        </button>
-                        
-                        <a href="{{ route('productos.menu') }}" class="w-full text-center py-3 bg-brand-dark text-white font-bold rounded-xl shadow-lg hover:bg-brand-dark/90 transition duration-150 text-lg">
-                            Seguir Comprando
-                        </a>
-                        
-                        <a href="{{ route('carrito.limpiar') }}" class="w-full text-center py-3 border border-red-500 text-red-500 font-bold rounded-xl hover:bg-red-50 transition duration-150 text-lg">
-                            Empezar de Nuevo
-                        </a>
-                    </div>
-                </form>
+                    <a href="{{ route('productos.menu') }}" class="w-full text-center py-3 bg-brand-dark text-white font-bold rounded-xl shadow-lg hover:bg-brand-dark/90 transition duration-150 text-lg">
+                        Seguir Comprando
+                    </a>
+                    
+                    <a href="{{ route('carrito.limpiar') }}" class="w-full text-center py-3 border border-red-500 text-red-500 font-bold rounded-xl hover:bg-red-50 transition duration-150 text-lg">
+                        Empezar de Nuevo
+                    </a>
+                </div>
 
             @else
                 <div class="text-center py-8">
@@ -109,6 +89,49 @@
             @endif
         </div>
     </div>
+
+    <!-- Modal para Confirmar Pedido -->
+    <div id="modalConfirmar" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:9999; align-items:center; justify-content:center;">
+        <div style="background:white; padding:30px; border-radius:12px; max-width:500px; width:90%;">
+            <h2 style="font-size:24px; font-weight:bold; margin-bottom:15px; color:#4d2925;">✅ Confirmar Pedido</h2>
+            <p style="margin-bottom:20px; color:#4b5563;">Por favor ingresa los siguientes datos:</p>
+            
+            <form action="{{ route('pedido.finalizar') }}" method="POST">
+                @csrf
+                
+                @if($tipoPedido === 'Para Aqui')
+                    <div style="margin-bottom:15px;">
+                        <label style="display:block; font-weight:600; margin-bottom:5px; color:#374151;">Número de Mesa: <span style="color:#ef4444;">*</span></label>
+                        <input type="text" name="numero_mesa" placeholder="Ej: 5" required style="width:100%; padding:12px; border:2px solid #d1d5db; border-radius:8px; font-size:16px;">
+                    </div>
+                @endif
+                
+                <div style="margin-bottom:20px;">
+                    <label style="display:block; font-weight:600; margin-bottom:5px; color:#374151;">Nombre del Cliente: <span style="color:#ef4444;">*</span></label>
+                    <input type="text" name="nombre_cliente" placeholder="Tu nombre" required style="width:100%; padding:12px; border:2px solid #d1d5db; border-radius:8px; font-size:16px;">
+                </div>
+                
+                <div style="display:flex; gap:10px;">
+                    <button type="button" onclick="cerrarModalConfirmar()" style="flex:1; padding:12px; background:#6b7280; color:white; border:none; border-radius:8px; font-weight:bold; cursor:pointer; font-size:16px;">
+                        Cancelar
+                    </button>
+                    <button type="submit" style="flex:1; padding:12px; background:#4CAF50; color:white; border:none; border-radius:8px; font-weight:bold; cursor:pointer; font-size:16px;">
+                        Confirmar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+    function mostrarModalConfirmar() {
+        document.getElementById('modalConfirmar').style.display = 'flex';
+    }
+
+    function cerrarModalConfirmar() {
+        document.getElementById('modalConfirmar').style.display = 'none';
+    }
+    </script>
 
 </body>
 </html>

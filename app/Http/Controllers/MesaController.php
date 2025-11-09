@@ -9,12 +9,26 @@ class MesaController extends Controller
 {
     public function index()
     {
+        // Mostrar todos los pedidos que NO estén entregados (Cocina completa)
         $pedidos = Pedido::with('detalles')
-            ->where('estado', 'Listo')
+            ->where('estado', '!=', 'Entregado')
+            ->orderByRaw("CASE estado WHEN 'Pendiente' THEN 1 WHEN 'En Preparación' THEN 2 WHEN 'Listo' THEN 3 ELSE 4 END")
             ->orderBy('created_at', 'asc')
             ->get();
 
         return view('mesas.index', compact('pedidos'));
+    }
+    
+    public function actualizarEstado(Request $request, Pedido $pedido)
+    {
+        $request->validate([
+            'estado' => 'required|in:Pendiente,En Preparación,Listo,Entregado,Cancelado',
+        ]);
+        
+        $pedido->estado = $request->estado;
+        $pedido->save();
+
+        return back()->with('success', "Estado del pedido #{$pedido->id} actualizado a {$pedido->estado}.");
     }
 
     public function marcarEntregado(Request $request, Pedido $pedido)

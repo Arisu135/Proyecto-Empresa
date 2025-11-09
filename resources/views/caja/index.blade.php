@@ -18,6 +18,50 @@
         </div>
     @endif
 
+    @if(session('imprimir_ticket'))
+        @php
+            $pedidoImprimir = \App\Models\Pedido::with('detalles')->find(session('imprimir_ticket'));
+        @endphp
+        @if($pedidoImprimir)
+            <script>
+                window.addEventListener('load', function() {
+                    setTimeout(function() {
+                        imprimirTicketPago(
+                            {{ $pedidoImprimir->id }},
+                            '{{ $pedidoImprimir->numero_mesa ?? "" }}',
+                            '{{ $pedidoImprimir->nombre_cliente }}',
+                            {{ $pedidoImprimir->total }},
+                            '{{ ucfirst($pedidoImprimir->metodo_pago) }}',
+                            @json($pedidoImprimir->detalles)
+                        );
+                    }, 300);
+                });
+            </script>
+        @endif
+    @endif
+
+    @if(session('imprimir_ticket_eliminado'))
+        @php
+            $pedidoEliminado = \App\Models\Pedido::with('detalles')->find(session('imprimir_ticket_eliminado'));
+        @endphp
+        @if($pedidoEliminado)
+            <script>
+                window.addEventListener('load', function() {
+                    setTimeout(function() {
+                        imprimirTicketEliminado(
+                            {{ $pedidoEliminado->id }},
+                            '{{ $pedidoEliminado->numero_mesa ?? "" }}',
+                            '{{ $pedidoEliminado->nombre_cliente }}',
+                            {{ $pedidoEliminado->total }},
+                            '{{ $pedidoEliminado->motivo_eliminacion }}',
+                            @json($pedidoEliminado->detalles)
+                        );
+                    }, 300);
+                });
+            </script>
+        @endif
+    @endif
+
     @if($pedidos->isEmpty())
         <div class="text-center py-12 bg-gray-50 rounded-lg shadow-inner">
             <p class="text-2xl text-gray-500">✅ ¡No hay pedidos pendientes de pago!</p>
@@ -61,17 +105,35 @@
                             </div>
                         </div>
 
-                        <div class="flex gap-2">
-                            <form action="{{ route('caja.marcarPagado', $pedido) }}" method="POST" class="flex-1">
+                        <!-- Botones de Pago -->
+                        <div class="space-y-2 mb-3">
+                            <form action="{{ route('caja.marcarPagado', $pedido) }}" method="POST">
                                 @csrf
                                 @method('PATCH')
-                                <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-lg transition">
-                                    ✓ Marcar como Pagado
+                                <input type="hidden" name="metodo_pago" value="efectivo">
+                                <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg transition">
+                                    💵 Pagar en Efectivo
                                 </button>
                             </form>
                             
-                            <button onclick="imprimirTicket({{ $pedido->id }}, '{{ $pedido->numero_mesa }}', '{{ $pedido->nombre_cliente }}', {{ $pedido->total }}, {{ json_encode($pedido->detalles) }})" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition">
-                                🖨️
+                            <form action="{{ route('caja.marcarPagado', $pedido) }}" method="POST">
+                                @csrf
+                                @method('PATCH')
+                                <input type="hidden" name="metodo_pago" value="yape">
+                                <button type="submit" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-lg transition">
+                                    📱 Pagar con Yape
+                                </button>
+                            </form>
+                        </div>
+                        
+                        <!-- Botones de Acción -->
+                        <div class="flex gap-2">
+                            <button onclick="imprimirTicket({{ $pedido->id }}, '{{ $pedido->numero_mesa }}', '{{ $pedido->nombre_cliente }}', {{ $pedido->total }}, {{ json_encode($pedido->detalles) }})" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition">
+                                🖨️ Imprimir
+                            </button>
+                            
+                            <button onclick="mostrarModalEliminar({{ $pedido->id }})" class="flex-1 bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg transition">
+                                🗑️ Eliminar
                             </button>
                         </div>
                     </div>
@@ -81,7 +143,259 @@
     @endif
 </div>
 
+<!-- Modal para Eliminar Venta -->
+<div id="modalEliminar" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:9999; align-items:center; justify-content:center;">
+    <div style="background:white; padding:30px; border-radius:12px; max-width:500px; width:90%;">
+        <h2 style="font-size:24px; font-weight:bold; margin-bottom:15px; color:#dc2626;">⚠️ Eliminar Venta</h2>
+        <p style="margin-bottom:20px; color:#4b5563;">Esta acción eliminará la venta del sistema. Por favor indica el motivo:</p>
+        
+        <form id="formEliminar" method="POST" action="">
+            <input type="hidden" name="_token" value="{{ csrf_token() }}">
+            <input type="hidden" name="_method" value="DELETE">
+            
+            <textarea name="motivo" rows="3" placeholder="Motivo de eliminación..." required style="width:100%; padding:10px; border:2px solid #d1d5db; border-radius:8px; margin-bottom:15px; font-size:14px;"></textarea>
+            
+            <div style="display:flex; gap:10px;">
+                <button type="button" onclick="cerrarModal()" style="flex:1; padding:10px; background:#6b7280; color:white; border:none; border-radius:8px; font-weight:bold; cursor:pointer;">
+                    Cancelar
+                </button>
+                <button type="submit" style="flex:1; padding:10px; background:#dc2626; color:white; border:none; border-radius:8px; font-weight:bold; cursor:pointer;">
+                    Eliminar Venta
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
 <script>
+function imprimirTicketPago(pedidoId, mesa, cliente, total, metodoPago, detalles) {
+    const fecha = new Date().toLocaleString('es-PE', { 
+        day: '2-digit', 
+        month: '2-digit', 
+        year: 'numeric', 
+        hour: '2-digit', 
+        minute: '2-digit' 
+    });
+    
+    let itemsHTML = '';
+    detalles.forEach(item => {
+        itemsHTML += `
+            <tr>
+                <td>${item.cantidad}x</td>
+                <td>${item.nombre_producto}</td>
+                <td style="text-align: right;">S/ ${parseFloat(item.subtotal).toFixed(2)}</td>
+            </tr>
+        `;
+    });
+    
+    const ventana = window.open('', '_blank', 'width=300,height=600');
+    ventana.document.write(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>Ticket #${pedidoId}</title>
+            <style>
+                @media print {
+                    @page { margin: 0; size: 80mm auto; }
+                    body { margin: 0; }
+                }
+                body {
+                    font-family: 'Courier New', monospace;
+                    font-size: 12px;
+                    width: 80mm;
+                    margin: 0 auto;
+                    padding: 5mm;
+                }
+                .center { text-align: center; }
+                .bold { font-weight: bold; }
+                .line { border-top: 1px dashed #000; margin: 5px 0; }
+                .double-line { border-top: 2px solid #000; margin: 5px 0; }
+                table { width: 100%; border-collapse: collapse; }
+                td { padding: 2px 0; }
+                .total-row { font-size: 14px; font-weight: bold; }
+            </style>
+        </head>
+        <body>
+            <div class="center bold" style="font-size: 16px; margin-bottom: 5px;">
+                REBEL JUNGLE CAFE
+            </div>
+            <div class="center" style="font-size: 10px; margin-bottom: 10px;">
+                Kiosco Digital
+            </div>
+            <div class="line"></div>
+            
+            <table>
+                <tr>
+                    <td class="bold">Pedido:</td>
+                    <td style="text-align: right;">#${pedidoId}</td>
+                </tr>
+                ${mesa ? `<tr><td class="bold">Mesa:</td><td style="text-align: right;">${mesa}</td></tr>` : ''}
+                <tr>
+                    <td class="bold">Cliente:</td>
+                    <td style="text-align: right;">${cliente}</td>
+                </tr>
+                <tr>
+                    <td class="bold">Fecha:</td>
+                    <td style="text-align: right;">${fecha}</td>
+                </tr>
+                <tr>
+                    <td class="bold">Método Pago:</td>
+                    <td style="text-align: right;">${metodoPago}</td>
+                </tr>
+            </table>
+            
+            <div class="double-line"></div>
+            
+            <table>
+                ${itemsHTML}
+            </table>
+            
+            <div class="double-line"></div>
+            
+            <table class="total-row">
+                <tr>
+                    <td>TOTAL PAGADO:</td>
+                    <td style="text-align: right;">S/ ${parseFloat(total).toFixed(2)}</td>
+                </tr>
+            </table>
+            
+            <div class="line"></div>
+            <div class="center" style="margin-top: 10px; font-size: 10px;">
+                ¡Gracias por su compra!
+            </div>
+            <div class="center" style="font-size: 10px;">
+                @rebel_jungle_cafe
+            </div>
+        </body>
+        </html>
+    `);
+    ventana.document.close();
+    
+    setTimeout(() => {
+        ventana.print();
+    }, 250);
+}
+
+function imprimirTicketEliminado(pedidoId, mesa, cliente, total, motivo, detalles) {
+    const fecha = new Date().toLocaleString('es-PE', { 
+        day: '2-digit', 
+        month: '2-digit', 
+        year: 'numeric', 
+        hour: '2-digit', 
+        minute: '2-digit' 
+    });
+    
+    let itemsHTML = '';
+    detalles.forEach(item => {
+        itemsHTML += `
+            <tr>
+                <td>${item.cantidad}x</td>
+                <td>${item.nombre_producto}</td>
+                <td style="text-align: right;">S/ ${parseFloat(item.subtotal).toFixed(2)}</td>
+            </tr>
+        `;
+    });
+    
+    const ventana = window.open('', '_blank', 'width=300,height=600');
+    ventana.document.write(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>Venta Eliminada #${pedidoId}</title>
+            <style>
+                @media print {
+                    @page { margin: 0; size: 80mm auto; }
+                    body { margin: 0; }
+                }
+                body {
+                    font-family: 'Courier New', monospace;
+                    font-size: 12px;
+                    width: 80mm;
+                    margin: 0 auto;
+                    padding: 5mm;
+                }
+                .center { text-align: center; }
+                .bold { font-weight: bold; }
+                .line { border-top: 1px dashed #000; margin: 5px 0; }
+                .double-line { border-top: 2px solid #000; margin: 5px 0; }
+                table { width: 100%; border-collapse: collapse; }
+                td { padding: 2px 0; }
+                .total-row { font-size: 14px; font-weight: bold; }
+                .eliminado { color: #dc2626; }
+            </style>
+        </head>
+        <body>
+            <div class="center bold" style="font-size: 16px; margin-bottom: 5px;">
+                REBEL JUNGLE CAFE
+            </div>
+            <div class="center" style="font-size: 10px; margin-bottom: 10px;">
+                Kiosco Digital
+            </div>
+            <div class="line"></div>
+            
+            <div class="center bold eliminado" style="font-size: 18px; margin: 10px 0;">
+                *** VENTA ELIMINADA ***
+            </div>
+            
+            <div class="line"></div>
+            
+            <table>
+                <tr>
+                    <td class="bold">Pedido:</td>
+                    <td style="text-align: right;">#${pedidoId}</td>
+                </tr>
+                ${mesa ? `<tr><td class="bold">Mesa:</td><td style="text-align: right;">${mesa}</td></tr>` : ''}
+                <tr>
+                    <td class="bold">Cliente:</td>
+                    <td style="text-align: right;">${cliente}</td>
+                </tr>
+                <tr>
+                    <td class="bold">Fecha:</td>
+                    <td style="text-align: right;">${fecha}</td>
+                </tr>
+            </table>
+            
+            <div class="double-line"></div>
+            
+            <table>
+                ${itemsHTML}
+            </table>
+            
+            <div class="double-line"></div>
+            
+            <table class="total-row">
+                <tr>
+                    <td>TOTAL:</td>
+                    <td style="text-align: right;">S/ ${parseFloat(total).toFixed(2)}</td>
+                </tr>
+            </table>
+            
+            <div class="line"></div>
+            
+            <div style="margin: 10px 0;">
+                <div class="bold" style="font-size: 11px;">MOTIVO DE ELIMINACIÓN:</div>
+                <div style="font-size: 10px; margin-top: 5px;">${motivo}</div>
+            </div>
+            
+            <div class="line"></div>
+            <div class="center" style="margin-top: 10px; font-size: 10px;">
+                Documento de Control Interno
+            </div>
+            <div class="center" style="font-size: 10px;">
+                @rebel_jungle_cafe
+            </div>
+        </body>
+        </html>
+    `);
+    ventana.document.close();
+    
+    setTimeout(() => {
+        ventana.print();
+    }, 250);
+}
+
 function imprimirTicket(pedidoId, mesa, cliente, total, detalles) {
     const fecha = new Date().toLocaleString('es-PE', { 
         day: '2-digit', 
@@ -186,6 +500,17 @@ function imprimirTicket(pedidoId, mesa, cliente, total, detalles) {
     setTimeout(() => {
         ventana.print();
     }, 250);
+}
+
+function mostrarModalEliminar(pedidoId) {
+    const modal = document.getElementById('modalEliminar');
+    const form = document.getElementById('formEliminar');
+    form.action = `/caja/${pedidoId}/eliminar`;
+    modal.style.display = 'flex';
+}
+
+function cerrarModal() {
+    document.getElementById('modalEliminar').style.display = 'none';
 }
 </script>
 @endsection

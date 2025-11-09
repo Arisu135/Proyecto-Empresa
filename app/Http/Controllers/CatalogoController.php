@@ -317,42 +317,79 @@ class CatalogoController extends Controller
      */
     public function ventas(Request $request)
     {
-        // Si se solicita 'todos' mostramos todo el historial
-        $filter = $request->query('filter', 'hoy'); // 'hoy' o 'todos' o fecha YYYY-MM-DD
-
+        $filter = $request->query('filter', 'hoy');
+        $categoriaId = $request->query('categoria');
+        
+        // Base query
+        $query = Pedido::with(['detalles.producto.categoria']);
+        
+        // Filtro de fecha
         if ($filter === 'todos') {
-            $pedidos = Pedido::with('detalles')->orderBy('created_at', 'desc')->get();
             $titulo = 'Historial de Ventas - Todas las Fechas';
         } elseif ($filter === 'hoy') {
-            $pedidos = Pedido::with('detalles')
-                        ->whereDate('created_at', now()->toDateString())
-                        ->orderBy('created_at', 'desc')
-                        ->get();
+            $query->whereDate('created_at', now()->toDateString());
             $titulo = 'Ventas de Hoy (' . now()->format('d/m/Y') . ')';
         } else {
-            // Intentamos parsear la fecha enviada en formato YYYY-MM-DD
             try {
                 $date = Carbon::createFromFormat('Y-m-d', $filter)->startOfDay();
-                $pedidos = Pedido::with('detalles')
-                            ->whereDate('created_at', $date->toDateString())
-                            ->orderBy('created_at', 'desc')
-                            ->get();
+                $query->whereDate('created_at', $date->toDateString());
                 $titulo = 'Ventas del ' . $date->format('d/m/Y');
             } catch (\Exception $e) {
-                // Si la fecha no es válida, por seguridad mostramos vacío y mensaje
-                $pedidos = collect();
+                $query->whereRaw('1 = 0'); // No results
                 $titulo = 'Ventas - Fecha inválida';
             }
         }
-
-        // Total de ventas sumando los totales de pedidos (solo pedidos entregados o todos?)
+        
+        $pedidos = $query->orderBy('created_at', 'desc')->get();
+        
+        // Filtrar por categoría si se especifica
+        if ($categoriaId) {
+            $pedidos = $pedidos->filter(function($pedido) use ($categoriaId) {
+                return $pedido->detalles->contains(function($detalle) use ($categoriaId) {
+                    return $detalle->producto && $detalle->producto->categoria_id == $categoriaId;
+                });
+            });
+            
+            $categoria = Categoria::find($categoriaId);
+            if ($categoria) {
+                $titulo .= ' - Categoría: ' . $categoria->nombre;
+            }
+        }
+        
+        // Calcular estadísticas
         $totalVentas = $pedidos->sum('total');
+        $totalPedidos = $pedidos->count();
+        
+        // Estadísticas por categoría
+        $ventasPorCategoria = [];
+        foreach ($pedidos as $pedido) {
+            foreach ($pedido->detalles as $detalle) {
+                if ($detalle->producto && $detalle->producto->categoria) {
+                    $catNombre = $detalle->producto->categoria->nombre;
+                    if (!isset($ventasPorCategoria[$catNombre])) {
+                        $ventasPorCategoria[$catNombre] = [
+                            'cantidad' => 0,
+                            'total' => 0
+                        ];
+                    }
+                    $ventasPorCategoria[$catNombre]['cantidad'] += $detalle->cantidad;
+                    $ventasPorCategoria[$catNombre]['total'] += $detalle->subtotal;
+                }
+            }
+        }
+        
+        // Obtener todas las categorías para el filtro
+        $categorias = Categoria::orderBy('nombre')->get();
 
         return view('admin.ventas', [
             'pedidos' => $pedidos,
             'titulo' => $titulo,
             'totalVentas' => $totalVentas,
+            'totalPedidos' => $totalPedidos,
+            'ventasPorCategoria' => $ventasPorCategoria,
+            'categorias' => $categorias,
             'filter' => $filter,
+            'categoriaId' => $categoriaId,
         ]);
     }
 
@@ -369,6 +406,34 @@ class CatalogoController extends Controller
         $pedido->save();
 
         return back()->with('success', "Estado del pedido #{$pedido->id} actualizado a {$pedido->estado}.");
+    }
+    
+    public function ventasEliminadas(Request $request)
+    {
+        $filter = $request->query('filter', 'todos');
+        
+        $query = Pedido::with('detalles')
+            ->where(function($q) {
+                $q->where('eliminado', true)
+                  ->orWhere('estado', 'Cancelado');
+            });
+        
+        if ($filter === 'hoy') {
+            $query->whereDate('created_at', now()->toDateString());
+            $titulo = 'Ventas Eliminadas/Canceladas - Hoy';
+        } else {
+            $titulo = 'Historial de Ventas Eliminadas/Canceladas';
+        }
+        
+        $pedidos = $query->orderBy('created_at', 'desc')->get();
+        $totalPerdido = $pedidos->sum('total');
+
+        return view('admin.ventas_eliminadas', [
+            'pedidos' => $pedidos,
+            'titulo' => $titulo,
+            'totalPerdido' => $totalPerdido,
+            'filter' => $filter,
+        ]);
     }
 }
 

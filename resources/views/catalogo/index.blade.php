@@ -167,19 +167,23 @@
 <body>
     <div class="kiosko-body">
 
-        <!-- Botones de Administración -->
-        <div style="position:fixed; top:10px; right:10px; z-index:1100; display: flex; gap: 8px;">
+        <!-- Botón de Administración -->
+        <div style="position:fixed; top:10px; right:10px; z-index:1100;">
             <a href="{{ route('admin.panel') }}" 
                style="background:#333; color:#fff; padding:10px 14px; border-radius:8px; text-decoration:none; font-weight:700; box-shadow:0 4px 10px rgba(0,0,0,0.15);">
                 Admin
             </a>
+        </div>
+        
+        <!-- Botones de Caja y Mesas -->
+        <div style="position:fixed; bottom:20px; left:20px; z-index:1100; display: flex; flex-direction: column; gap: 10px;">
             <a href="{{ route('caja.index') }}" 
-               style="background:#333; color:#fff; padding:10px 14px; border-radius:8px; text-decoration:none; font-weight:700; box-shadow:0 4px 10px rgba(0,0,0,0.15);">
-                Caja
+               style="background:#10b981; color:#fff; padding:12px 20px; border-radius:8px; text-decoration:none; font-weight:700; box-shadow:0 4px 10px rgba(0,0,0,0.2); text-align:center;">
+                💰 Caja
             </a>
             <a href="{{ route('mesas.index') }}" 
-               style="background:#333; color:#fff; padding:10px 14px; border-radius:8px; text-decoration:none; font-weight:700; box-shadow:0 4px 10px rgba(0,0,0,0.15);">
-                Mesas
+               style="background:#3b82f6; color:#fff; padding:12px 20px; border-radius:8px; text-decoration:none; font-weight:700; box-shadow:0 4px 10px rgba(0,0,0,0.2); text-align:center;">
+                🍳 Cocina
             </a>
         </div>
         
