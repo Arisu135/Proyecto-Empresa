@@ -4,17 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bienvenido al Kiosco</title>
-
-    {{-- Usar solo estilos internos y el CSS de Kiosco si es necesario --}}
     <link rel="stylesheet" href="{{ asset('css/kiosco.css') }}">
     
     <style>
-    /* --- Contenedor general del kiosco --- */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
     html, body {
-        margin: 0;
-        padding: 0;
         height: 100vh;
         overflow: hidden;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     }
     
     .kiosko-body {
@@ -24,62 +22,57 @@
         flex-direction: column;
         justify-content: space-between;
         align-items: center;
-        text-align: center;
-        padding: 20px;
-        box-sizing: border-box;
+        padding: 1rem;
     }
 
-    /* --- Logo circular --- */
     .logo-wrapper {
         flex-shrink: 0;
-        margin-top: 10px;
+        margin-top: 1rem;
     }
 
     .logo-wrapper img {
-        width: 220px;
-        height: 220px;
+        width: 200px;
+        height: 200px;
         border-radius: 50%;
         object-fit: cover;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
     }
 
-    /* --- QR --- */
     .qr-wrapper {
         flex: 1;
         display: flex;
         flex-direction: column;
-        justify-content: flex-start;
+        justify-content: center;
         align-items: center;
-        padding-top: 20px;
     }
 
     .qr-wrapper svg {
         width: 180px;
         height: 180px;
-        border: 5px solid #fff;
+        border: 4px solid #fff;
         border-radius: 10px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
     }
 
     .qr-text {
-        margin-top: 10px;
-        font-size: 14px;
+        margin-top: 0.75rem;
+        font-size: 0.875rem;
         color: #3e2723;
-        font-weight: bold;
+        font-weight: 600;
     }
 
-    /* --- Botones --- */
     .kiosko-wrapper {
         width: 100%;
         flex-shrink: 0;
-        margin-bottom: 20px;
+        margin-bottom: 1rem;
     }
 
     .button-group {
         display: flex;
         flex-direction: row;
-        gap: 15px;
+        gap: 1rem;
         justify-content: center;
+        align-items: center;
         max-width: 600px;
         margin: 0 auto;
     }
@@ -88,127 +81,120 @@
         flex: 1;
         border: none;
         color: white;
-        padding: 15px 20px;
-        border-radius: 10px;
-        font-size: 18px;
+        padding: 1rem 1.5rem;
+        border-radius: 0.75rem;
+        font-size: 1.125rem;
         font-weight: bold;
         cursor: pointer;
         box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-        transition: transform 0.15s ease;
+        transition: all 0.2s ease;
         text-align: center;
         text-decoration: none;
-        min-width: 200px;
-        max-width: 250px;
         display: flex;
         align-items: center;
         justify-content: center;
+        min-height: 60px;
     }
 
     .btn-kiosko:active {
         transform: scale(0.98);
     }
 
-    /* --- Media Query para móviles verticales --- */
-    @media (max-width: 768px) and (orientation: portrait) {
+    .admin-btn {
+        position: fixed;
+        top: 1rem;
+        right: 1rem;
+        background: #333;
+        color: #fff;
+        padding: 0.625rem 1rem;
+        border-radius: 0.5rem;
+        text-decoration: none;
+        font-weight: 700;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+        z-index: 1100;
+        font-size: 0.875rem;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
         .logo-wrapper img {
-            width: 170px;
-            height: 170px;
+            width: 160px;
+            height: 160px;
         }
         
         .qr-wrapper svg {
-            width: 160px;
-            height: 160px;
+            width: 150px;
+            height: 150px;
         }
         
         .button-group {
             flex-direction: column;
             width: 100%;
+            max-width: 100%;
+            padding: 0 1rem;
         }
         
         .btn-kiosko {
-            min-width: 100%;
+            width: 100%;
             max-width: 100%;
-            font-size: 16px;
+            font-size: 1rem;
+            padding: 1rem;
+        }
+
+        .qr-text {
+            font-size: 0.75rem;
         }
     }
     
-    /* --- Media Query para móviles horizontales --- */
     @media (max-width: 768px) and (orientation: landscape) {
         .logo-wrapper {
-            margin-top: 5px;
+            margin-top: 0.5rem;
         }
         
         .logo-wrapper img {
-            width: 130px;
-            height: 130px;
-        }
-        
-        .qr-wrapper {
-            padding-top: 10px;
+            width: 120px;
+            height: 120px;
         }
         
         .qr-wrapper svg {
-            width: 130px;
-            height: 130px;
-        }
-        
-        .qr-text {
-            font-size: 12px;
+            width: 120px;
+            height: 120px;
         }
         
         .btn-kiosko {
-            padding: 12px 20px;
-            font-size: 16px;
-            min-width: 180px;
+            padding: 0.75rem 1rem;
+            font-size: 0.875rem;
+            min-height: 50px;
         }
     }
 </style>
 </head>
 <body>
     <div class="kiosko-body">
-
-        <!-- Botón de Administración -->
-        <div style="position:fixed; top:10px; right:10px; z-index:1100;">
-            <a href="{{ route('admin.panel') }}" 
-               style="background:#333; color:#fff; padding:10px 14px; border-radius:8px; text-decoration:none; font-weight:700; box-shadow:0 4px 10px rgba(0,0,0,0.15);">
-                Admin
-            </a>
-        </div>
+        <a href="{{ route('admin.panel') }}" class="admin-btn">Admin</a>
         
-        {{-- Aquí puedes agregar el mensaje de bienvenida "¡Bienvenido!" si quieres --}}
-
-        {{-- LOGO REDONDO ENCIMA DEL QR --}}
         <div class="logo-wrapper">
             <img src="{{ asset('img/logo.png') }}" alt="Rebel Jungle Logo">
         </div>
 
-        {{-- CONTENEDOR DEL CÓDIGO QR --}}
         <div class="qr-wrapper">
-            {{-- Mantengo el uso de la librería QrCode --}}
             {!! QrCode::size(230)->generate('https://www.instagram.com/rebel_jungle_cafe_plantas_?igsh=NG8xZzJ2bTBpam5t') !!}
             <p class="qr-text">@REBEL_JUNGLE_CAFE_PLANTAS_</p>
         </div>
 
-        {{-- BOTONES DE OPCIÓN (AHORA SON ENLACES PARA EVITAR FALLOS DE FORMULARIOS) --}}
         <div class="kiosko-wrapper">
             <div class="button-group">
-                
-                {{-- BOTÓN 1: PARA AQUÍ --}}
-                {{-- Envía 'tipo_pedido=Para Aqui' a la ruta del menú --}}
                 <a href="{{ route('productos.menu', ['tipo_pedido' => 'Para Aqui']) }}" 
                    class="btn-kiosko" 
                    style="background-color: #388e3c;">
                     PARA AQUÍ
                 </a>
 
-                {{-- BOTÓN 2: PARA LLEVAR --}}
-                {{-- Envía 'tipo_pedido=Para Llevar' a la ruta del menú --}}
                 <a href="{{ route('productos.menu', ['tipo_pedido' => 'Para Llevar']) }}" 
                    class="btn-kiosko" 
                    style="background-color: #e65100;">
                     PARA LLEVAR
                 </a>
-                
             </div>
         </div>
     </div>
