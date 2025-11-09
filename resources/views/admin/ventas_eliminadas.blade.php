@@ -1,103 +1,111 @@
-@extends('layouts.app')
-
-@section('title', 'Ventas Eliminadas')
-
-@section('content')
-<div class="container mx-auto px-4 py-8">
-    <h1 class="text-3xl font-bold text-red-600 mb-6">🗑️ {{ $titulo }}</h1>
-
-    <!-- Filtros y Acciones -->
-    <div class="bg-white p-4 rounded-lg shadow mb-6 flex justify-between items-center">
-        <div>
-            <p class="text-sm text-gray-600">Total Perdido</p>
-            <p class="text-2xl font-bold text-red-700">S/. {{ number_format($totalPerdido ?? 0, 2) }}</p>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ventas Eliminadas</title>
+    <link rel="stylesheet" href="{{ asset('css/admin-ventas.css') }}">
+</head>
+<body>
+    <div class="ventas-container">
+        <div class="ventas-header">
+            <h1 class="ventas-title">🗑️ {{ $titulo }}</h1>
         </div>
-        <div class="flex gap-2">
-            <button onclick="confirmarEliminarHistorial('hoy')" class="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded font-bold">
-                🗑️ Eliminar Hoy
-            </button>
-            <button onclick="confirmarEliminarHistorial('todo')" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded font-bold">
-                🗑️ Eliminar Todo
-            </button>
+
+        <div class="filtros-card">
+            <div class="actions-bar">
+                <div>
+                    <div class="stat-label">Total Perdido</div>
+                    <div class="stat-value red">S/. {{ number_format($totalPerdido ?? 0, 2) }}</div>
+                </div>
+                <div style="display: flex; gap: 0.75rem;">
+                    <button onclick="confirmarEliminarHistorial('hoy')" class="btn btn-orange">
+                        🗑️ Eliminar Hoy
+                    </button>
+                    <button onclick="confirmarEliminarHistorial('todo')" class="btn btn-red">
+                        🗑️ Eliminar Todo
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="table-card">
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Cliente</th>
+                            <th>Mesa</th>
+                            <th>Total</th>
+                            <th>Motivo</th>
+                            <th>Fecha Eliminación</th>
+                            <th>Detalles</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse($pedidos as $pedido)
+                            <tr>
+                                <td>#{{ $pedido->id }}</td>
+                                <td>{{ $pedido->nombre_cliente ?? 'Cliente' }}</td>
+                                <td>
+                                    @if($pedido->numero_mesa)
+                                        <span class="badge badge-blue">Mesa {{ $pedido->numero_mesa }}</span>
+                                    @else
+                                        —
+                                    @endif
+                                </td>
+                                <td style="font-weight: bold; color: #dc2626;">S/. {{ number_format($pedido->total, 2) }}</td>
+                                <td>
+                                    <span class="badge badge-red">
+                                        {{ $pedido->motivo_eliminacion ?? 'Sin motivo' }}
+                                    </span>
+                                </td>
+                                <td>
+                                    {{ $pedido->eliminado_at ? $pedido->eliminado_at->format('d/m/Y H:i') : 'N/A' }}
+                                </td>
+                                <td>
+                                    @if($pedido->detalles && $pedido->detalles->count())
+                                        <ul style="list-style: none; padding: 0; margin: 0; font-size: 0.75rem;">
+                                            @foreach($pedido->detalles as $d)
+                                                <li style="margin-bottom: 0.25rem;">
+                                                    <strong>{{ $d->cantidad }}x</strong> {{ $d->nombre_producto }}
+                                                    <span style="color: #6b7280;">— S/. {{ number_format($d->subtotal, 2) }}</span>
+                                                </li>
+                                            @endforeach
+                                        </ul>
+                                    @else
+                                        —
+                                    @endif
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="7" style="text-align: center; padding: 2rem; color: #6b7280;">
+                                    No hay ventas eliminadas.
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div style="margin-top: 2rem;">
+            <a href="{{ route('admin.panel') }}" class="btn-link">← Volver al Panel</a>
         </div>
     </div>
 
-    <div class="bg-white rounded-lg shadow-md overflow-hidden">
-        <table class="w-full">
-            <thead class="bg-gray-100">
-                <tr>
-                    <th class="px-4 py-3 text-left text-sm font-bold text-gray-700">ID</th>
-                    <th class="px-4 py-3 text-left text-sm font-bold text-gray-700">Cliente</th>
-                    <th class="px-4 py-3 text-left text-sm font-bold text-gray-700">Mesa</th>
-                    <th class="px-4 py-3 text-left text-sm font-bold text-gray-700">Total</th>
-                    <th class="px-4 py-3 text-left text-sm font-bold text-gray-700">Motivo</th>
-                    <th class="px-4 py-3 text-left text-sm font-bold text-gray-700">Fecha Eliminación</th>
-                    <th class="px-4 py-3 text-left text-sm font-bold text-gray-700">Detalles</th>
-                </tr>
-            </thead>
-            <tbody class="divide-y divide-gray-200">
-                @forelse($pedidos as $pedido)
-                    <tr class="hover:bg-gray-50">
-                        <td class="px-4 py-3 text-sm">#{{ $pedido->id }}</td>
-                        <td class="px-4 py-3 text-sm">{{ $pedido->nombre_cliente ?? 'Cliente' }}</td>
-                        <td class="px-4 py-3 text-sm">
-                            @if($pedido->numero_mesa)
-                                <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs font-bold">Mesa {{ $pedido->numero_mesa }}</span>
-                            @else
-                                <span class="text-gray-400">—</span>
-                            @endif
-                        </td>
-                        <td class="px-4 py-3 text-sm font-bold text-red-600">S/. {{ number_format($pedido->total, 2) }}</td>
-                        <td class="px-4 py-3 text-sm">
-                            <span class="text-xs bg-red-100 text-red-800 px-2 py-1 rounded">
-                                {{ $pedido->motivo_eliminacion ?? 'Sin motivo' }}
-                            </span>
-                        </td>
-                        <td class="px-4 py-3 text-sm text-gray-600">
-                            {{ $pedido->eliminado_at ? $pedido->eliminado_at->format('d/m/Y H:i') : 'N/A' }}
-                        </td>
-                        <td class="px-4 py-3 text-sm">
-                            @if($pedido->detalles && $pedido->detalles->count())
-                                <ul class="text-xs space-y-1">
-                                    @foreach($pedido->detalles as $d)
-                                        <li>
-                                            <span class="font-bold">{{ $d->cantidad }}x</span> {{ $d->nombre_producto }}
-                                            <span class="text-gray-600">— S/. {{ number_format($d->subtotal, 2) }}</span>
-                                        </li>
-                                    @endforeach
-                                </ul>
-                            @else
-                                <span class="text-gray-400">—</span>
-                            @endif
-                        </td>
-                    </tr>
-                @empty
-                    <tr>
-                        <td colspan="7" class="px-4 py-8 text-center text-gray-500">
-                            No hay ventas eliminadas.
-                        </td>
-                    </tr>
-                @endforelse
-            </tbody>
-        </table>
-    </div>
-
-    <div class="mt-6">
-        <a href="{{ route('admin.panel') }}" class="text-blue-600 hover:text-blue-800 font-semibold">
-            ← Volver al Panel
-        </a>
-    </div>
-</div>
-
-<script>
-function confirmarEliminarHistorial(tipo) {
-    const mensaje = tipo === 'todo' 
-        ? '⚠️ ¿Estás seguro de eliminar TODO el historial de ventas eliminadas?\n\nEsta acción no se puede deshacer.'
-        : '⚠️ ¿Estás seguro de eliminar el historial de ventas eliminadas de HOY?\n\nEsta acción no se puede deshacer.';
-    
-    if (confirm(mensaje)) {
-        window.location.href = '/admin/ventas-eliminadas/limpiar/' + tipo;
+    <script>
+    function confirmarEliminarHistorial(tipo) {
+        const mensaje = tipo === 'todo' 
+            ? '⚠️ ¿Estás seguro de eliminar TODO el historial de ventas eliminadas?\n\nEsta acción no se puede deshacer.'
+            : '⚠️ ¿Estás seguro de eliminar el historial de ventas eliminadas de HOY?\n\nEsta acción no se puede deshacer.';
+        
+        if (confirm(mensaje)) {
+            window.location.href = '/admin/ventas-eliminadas/limpiar/' + tipo;
+        }
     }
-}
-</script>
-@endsection
+    </script>
+</body>
+</html>

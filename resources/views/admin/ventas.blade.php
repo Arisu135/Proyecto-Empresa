@@ -1,187 +1,186 @@
-@extends('layouts.app')
-
-@section('title', 'Historial de Ventas')
-
-@section('content')
-<div class="container mx-auto px-4 py-8">
-    <h1 class="text-3xl font-bold text-gray-800 mb-6">{{ $titulo }}</h1>
-
-    <!-- Filtros -->
-    <form method="GET" action="{{ route('admin.ventas') }}" class="bg-white p-6 rounded-lg shadow-md mb-6">
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div>
-                <label class="block text-sm font-bold text-gray-700 mb-2">Filtrar por Fecha:</label>
-                <select name="filter" class="w-full p-2 border border-gray-300 rounded" onchange="this.form.submit()">
-                    <option value="hoy" {{ $filter === 'hoy' ? 'selected' : '' }}>Hoy</option>
-                    <option value="todos" {{ $filter === 'todos' ? 'selected' : '' }}>Todos</option>
-                </select>
-            </div>
-            
-            <div>
-                <label class="block text-sm font-bold text-gray-700 mb-2">Fecha Específica:</label>
-                <input type="date" name="filter" value="{{ $filter !== 'hoy' && $filter !== 'todos' ? $filter : '' }}" class="w-full p-2 border border-gray-300 rounded" onchange="this.form.submit()">
-            </div>
-
-            <div>
-                <label class="block text-sm font-bold text-gray-700 mb-2">Filtrar por Categoría:</label>
-                <select name="categoria" class="w-full p-2 border border-gray-300 rounded" onchange="this.form.submit()">
-                    <option value="">Todas las categorías</option>
-                    @foreach($categorias as $cat)
-                        <option value="{{ $cat->id }}" {{ $categoriaId == $cat->id ? 'selected' : '' }}>
-                            {{ $cat->nombre }}
-                        </option>
-                    @endforeach
-                </select>
-            </div>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Historial de Ventas</title>
+    <link rel="stylesheet" href="{{ asset('css/admin-ventas.css') }}">
+</head>
+<body>
+    <div class="ventas-container">
+        <div class="ventas-header">
+            <h1 class="ventas-title">{{ $titulo }}</h1>
         </div>
-        
-        <div class="mt-4">
-            <a href="{{ route('admin.ventas') }}" class="text-blue-600 hover:text-blue-800 text-sm">
-                ← Limpiar filtros
-            </a>
-        </div>
-    </form>
 
-    <!-- Estadísticas -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-        <div class="bg-green-100 p-4 rounded-lg shadow">
-            <p class="text-sm text-gray-600">Total Ventas</p>
-            <p class="text-2xl font-bold text-green-700">S/. {{ number_format($totalVentas ?? 0, 2) }}</p>
-        </div>
-        <div class="bg-blue-100 p-4 rounded-lg shadow">
-            <p class="text-sm text-gray-600">Total Pedidos</p>
-            <p class="text-2xl font-bold text-blue-700">{{ $totalPedidos ?? 0 }}</p>
-        </div>
-        <div class="bg-purple-100 p-4 rounded-lg shadow">
-            <p class="text-sm text-gray-600">Promedio por Pedido</p>
-            <p class="text-2xl font-bold text-purple-700">S/. {{ $totalPedidos > 0 ? number_format($totalVentas / $totalPedidos, 2) : '0.00' }}</p>
-        </div>
-    </div>
-
-    <!-- Ventas por Categoría -->
-    @if(!empty($ventasPorCategoria))
-    <div class="bg-white p-6 rounded-lg shadow-md mb-6">
-        <h2 class="text-xl font-bold text-gray-800 mb-4">📊 Ventas por Categoría</h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            @foreach($ventasPorCategoria as $catNombre => $datos)
-                <div class="border border-gray-200 p-4 rounded-lg">
-                    <p class="font-bold text-gray-700">{{ $catNombre }}</p>
-                    <p class="text-sm text-gray-600">Cantidad: {{ $datos['cantidad'] }} unidades</p>
-                    <p class="text-lg font-bold text-green-600">S/. {{ number_format($datos['total'], 2) }}</p>
+        <form method="GET" action="{{ route('admin.ventas') }}" class="filtros-card">
+            <div class="filtros-grid">
+                <div class="filtro-group">
+                    <label>Filtrar por Fecha:</label>
+                    <select name="filter" onchange="this.form.submit()">
+                        <option value="hoy" {{ $filter === 'hoy' ? 'selected' : '' }}>Hoy</option>
+                        <option value="todos" {{ $filter === 'todos' ? 'selected' : '' }}>Todos</option>
+                    </select>
                 </div>
-            @endforeach
+                
+                <div class="filtro-group">
+                    <label>Fecha Específica:</label>
+                    <input type="date" name="filter" value="{{ $filter !== 'hoy' && $filter !== 'todos' ? $filter : '' }}" onchange="this.form.submit()">
+                </div>
+
+                <div class="filtro-group">
+                    <label>Filtrar por Categoría:</label>
+                    <select name="categoria" onchange="this.form.submit()">
+                        <option value="">Todas las categorías</option>
+                        @foreach($categorias as $cat)
+                            <option value="{{ $cat->id }}" {{ $categoriaId == $cat->id ? 'selected' : '' }}>
+                                {{ $cat->nombre }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
+            
+            <a href="{{ route('admin.ventas') }}" class="btn-link">← Limpiar filtros</a>
+        </form>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-label">Total Ventas</div>
+                <div class="stat-value green">S/. {{ number_format($totalVentas ?? 0, 2) }}</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Total Pedidos</div>
+                <div class="stat-value blue">{{ $totalPedidos ?? 0 }}</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Promedio por Pedido</div>
+                <div class="stat-value purple">S/. {{ $totalPedidos > 0 ? number_format($totalVentas / $totalPedidos, 2) : '0.00' }}</div>
+            </div>
+        </div>
+
+        @if(!empty($ventasPorCategoria))
+        <div class="filtros-card">
+            <h2 style="font-size: 1.25rem; font-weight: bold; margin-bottom: 1rem;">📊 Ventas por Categoría</h2>
+            <div class="categoria-grid">
+                @foreach($ventasPorCategoria as $catNombre => $datos)
+                    <div class="categoria-card">
+                        <div class="categoria-nombre">{{ $catNombre }}</div>
+                        <div class="categoria-cantidad">Cantidad: {{ $datos['cantidad'] }} unidades</div>
+                        <div class="categoria-total">S/. {{ number_format($datos['total'], 2) }}</div>
+                    </div>
+                @endforeach
+            </div>
+        </div>
+        @endif
+
+        <div class="table-card">
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Cliente</th>
+                            <th>Mesa</th>
+                            <th>Total</th>
+                            <th>Estado</th>
+                            <th>Fecha</th>
+                            <th>Acción</th>
+                            <th>Detalles</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse($pedidos as $pedido)
+                            <tr>
+                                <td>#{{ $pedido->id }}</td>
+                                <td>{{ $pedido->nombre_cliente ?? 'Cliente' }}</td>
+                                <td>
+                                    @if($pedido->numero_mesa)
+                                        <span class="badge badge-blue">Mesa {{ $pedido->numero_mesa }}</span>
+                                    @else
+                                        —
+                                    @endif
+                                </td>
+                                <td style="font-weight: bold; color: #16a34a;">S/. {{ number_format($pedido->total, 2) }}</td>
+                                <td>
+                                    <span class="badge 
+                                        @if($pedido->estado == 'Entregado') badge-green
+                                        @elseif($pedido->estado == 'Cancelado') badge-red
+                                        @else badge-yellow
+                                        @endif
+                                    ">{{ $pedido->estado }}</span>
+                                </td>
+                                <td>{{ $pedido->created_at->format('d/m/Y H:i') }}</td>
+                                <td>
+                                    <button onclick="eliminarVenta({{ $pedido->id }})" class="btn btn-red">
+                                        🗑️ Eliminar
+                                    </button>
+                                </td>
+                                <td>
+                                    @if($pedido->detalles && $pedido->detalles->count())
+                                        <ul style="list-style: none; padding: 0; margin: 0; font-size: 0.75rem;">
+                                            @foreach($pedido->detalles as $d)
+                                                <li style="margin-bottom: 0.25rem;">
+                                                    <strong>{{ $d->cantidad }}x</strong> {{ $d->nombre_producto }}
+                                                    @if($d->producto && $d->producto->categoria)
+                                                        <span style="color: #9ca3af;">({{ $d->producto->categoria->nombre }})</span>
+                                                    @endif
+                                                    <span style="color: #16a34a;">— S/. {{ number_format($d->subtotal, 2) }}</span>
+                                                </li>
+                                            @endforeach
+                                        </ul>
+                                    @else
+                                        —
+                                    @endif
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="8" style="text-align: center; padding: 2rem; color: #6b7280;">
+                                    No se encontraron ventas para el filtro seleccionado.
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div style="margin-top: 2rem;">
+            <a href="{{ route('admin.panel') }}" class="btn-link">← Volver al Panel</a>
         </div>
     </div>
-    @endif
 
-    <!-- Tabla de Pedidos -->
-    <div class="bg-white rounded-lg shadow-md overflow-hidden">
-        <table class="w-full">
-            <thead class="bg-gray-100">
-                <tr>
-                    <th class="px-4 py-3 text-left text-sm font-bold text-gray-700">ID</th>
-                    <th class="px-4 py-3 text-left text-sm font-bold text-gray-700">Cliente</th>
-                    <th class="px-4 py-3 text-left text-sm font-bold text-gray-700">Mesa</th>
-                    <th class="px-4 py-3 text-left text-sm font-bold text-gray-700">Total</th>
-                    <th class="px-4 py-3 text-left text-sm font-bold text-gray-700">Estado</th>
-                    <th class="px-4 py-3 text-left text-sm font-bold text-gray-700">Fecha</th>
-                    <th class="px-4 py-3 text-left text-sm font-bold text-gray-700">Acción</th>
-                    <th class="px-4 py-3 text-left text-sm font-bold text-gray-700">Detalles</th>
-                </tr>
-            </thead>
-            <tbody class="divide-y divide-gray-200">
-                @forelse($pedidos as $pedido)
-                    <tr class="hover:bg-gray-50">
-                        <td class="px-4 py-3 text-sm">#{{ $pedido->id }}</td>
-                        <td class="px-4 py-3 text-sm">{{ $pedido->nombre_cliente ?? 'Cliente' }}</td>
-                        <td class="px-4 py-3 text-sm">
-                            @if($pedido->numero_mesa)
-                                <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs font-bold">Mesa {{ $pedido->numero_mesa }}</span>
-                            @else
-                                <span class="text-gray-400">—</span>
-                            @endif
-                        </td>
-                        <td class="px-4 py-3 text-sm font-bold text-green-600">S/. {{ number_format($pedido->total, 2) }}</pd>
-                        <td class="px-4 py-3 text-sm">
-                            <span class="px-2 py-1 rounded text-xs font-semibold
-                                @if($pedido->estado == 'Entregado') bg-green-100 text-green-800
-                                @elseif($pedido->estado == 'Cancelado') bg-red-100 text-red-800
-                                @else bg-yellow-100 text-yellow-800
-                                @endif
-                            ">{{ $pedido->estado }}</span>
-                        </td>
-                        <td class="px-4 py-3 text-sm text-gray-600">{{ $pedido->created_at->format('d/m/Y H:i') }}</td>
-                        <td class="px-4 py-3 text-sm">
-                            <button onclick="eliminarVenta({{ $pedido->id }})" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-xs font-bold">
-                                🗑️ Eliminar
-                            </button>
-                        </td>
-                        <td class="px-4 py-3 text-sm">
-                            @if($pedido->detalles && $pedido->detalles->count())
-                                <ul class="text-xs space-y-1">
-                                    @foreach($pedido->detalles as $d)
-                                        <li>
-                                            <span class="font-bold">{{ $d->cantidad }}x</span> {{ $d->nombre_producto }}
-                                            @if($d->producto && $d->producto->categoria)
-                                                <span class="text-gray-400">({{ $d->producto->categoria->nombre }})</span>
-                                            @endif
-                                            <span class="text-green-600">— S/. {{ number_format($d->subtotal, 2) }}</span>
-                                        </li>
-                                    @endforeach
-                                </ul>
-                            @else
-                                <span class="text-gray-400">—</span>
-                            @endif
-                        </td>
-                    </tr>
-                @empty
-                    <tr>
-                        <td colspan="8" class="px-4 py-8 text-center text-gray-500">
-                            No se encontraron ventas para el filtro seleccionado.
-                        </td>
-                    </tr>
-                @endforelse
-            </tbody>
-        </table>
-    </div>
-
-    <div class="mt-6">
-        <a href="{{ route('admin.panel') }}" class="text-blue-600 hover:text-blue-800 font-semibold">
-            ← Volver al Panel
-        </a>
-    </div>
-</div>
-
-<div id="modalEliminar" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:9999; align-items:center; justify-content:center;">
-    <div style="background:white; padding:30px; border-radius:12px; max-width:400px; width:90%;">
-        <h2 style="font-size:20px; font-weight:bold; margin-bottom:15px; color:#ef4444; text-align:center;">⚠️ Eliminar Venta</h2>
-        <p style="margin-bottom:20px; color:#4b5563; text-align:center;">Indica el motivo de eliminación:</p>
-        
-        <form id="formEliminarVenta" method="POST" action="">
-            @csrf
-            @method('DELETE')
-            <textarea name="motivo" rows="3" placeholder="Motivo de eliminación..." required style="width:100%; padding:10px; border:2px solid #d1d5db; border-radius:8px; margin-bottom:15px;"></textarea>
+    <div id="modalEliminar" class="modal">
+        <div class="modal-content">
+            <h2 class="modal-title">⚠️ Eliminar Venta</h2>
+            <p class="modal-text">Indica el motivo de eliminación:</p>
             
-            <div style="display:flex; gap:10px;">
-                <button type="button" onclick="cerrarModalEliminar()" style="flex:1; padding:12px; background:#6b7280; color:white; border:none; border-radius:8px; font-weight:bold; cursor:pointer;">
-                    Cancelar
-                </button>
-                <button type="submit" style="flex:1; padding:12px; background:#ef4444; color:white; border:none; border-radius:8px; font-weight:bold; cursor:pointer;">
-                    Eliminar
-                </button>
-            </div>
-        </form>
+            <form id="formEliminarVenta" method="POST" action="">
+                @csrf
+                @method('DELETE')
+                <textarea name="motivo" rows="3" placeholder="Motivo de eliminación..." required></textarea>
+                
+                <div class="modal-buttons">
+                    <button type="button" onclick="cerrarModalEliminar()" class="btn btn-gray">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-red">
+                        Eliminar
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
-</div>
 
-<script>
-function eliminarVenta(id) {
-    document.getElementById('formEliminarVenta').action = '/admin/ventas/' + id + '/eliminar';
-    document.getElementById('modalEliminar').style.display = 'flex';
-}
+    <script>
+    function eliminarVenta(id) {
+        document.getElementById('formEliminarVenta').action = '/admin/ventas/' + id + '/eliminar';
+        document.getElementById('modalEliminar').style.display = 'flex';
+    }
 
-function cerrarModalEliminar() {
-    document.getElementById('modalEliminar').style.display = 'none';
-}
-</script>
-@endsection
+    function cerrarModalEliminar() {
+        document.getElementById('modalEliminar').style.display = 'none';
+    }
+    </script>
+</body>
+</html>

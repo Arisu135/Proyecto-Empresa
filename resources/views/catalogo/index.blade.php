@@ -23,9 +23,9 @@
         height: 100vh;
         display: flex;
         flex-direction: column;
-        justify-content: space-evenly;
+        justify-content: space-between;
         align-items: center;
-        padding: 2rem 1rem;
+        padding: 1rem;
     }
 
     .admin-link {
@@ -103,18 +103,17 @@
 
     @media (max-width: 768px) {
         .kiosko-container {
-            justify-content: space-between;
-            padding: 2rem 1rem;
+            padding: 1rem;
         }
 
         .logo-section img {
-            width: 180px;
-            height: 180px;
+            width: 140px;
+            height: 140px;
         }
         
         .qr-section svg {
-            width: 160px;
-            height: 160px;
+            width: 130px;
+            height: 130px;
         }
         
         .buttons-section {
