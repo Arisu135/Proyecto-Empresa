@@ -67,18 +67,21 @@
             </div>
 
             <div class="absolute top-6 right-4 flex space-x-3">
-                
-                {{-- ❌ CÓDIGO ELIMINADO: Se ha quitado el enlace "Volver al Inicio" para evitar la duplicidad con el botón "Empezar de nuevo".
-
-                <a href="{{ route('catalogo.index') }}" class="px-4 py-2 text-brand-dark rounded-full hover:bg-gray-100 transition duration-150 text-sm font-semibold">
-                    Volver al Inicio
-                </a>
-                
-                --}}
-
-                {{-- ✅ CÓDIGO MANTENIDO: Solo queda el botón de reinicio (limpia el carrito y vuelve al inicio). --}}
                 <a href="{{ route('carrito.limpiar') }}" class="btn-restart px-4 py-2 bg-brand-red text-white font-bold rounded-full shadow-lg hover:shadow-xl transition duration-150 text-sm">
                     Empezar de nuevo
+                </a>
+            </div>
+            
+            <!-- Botones de Caja, Cocina y Ventas -->
+            <div class="absolute top-20 right-4 flex flex-col gap-2">
+                <a href="{{ route('caja.index') }}" class="px-4 py-2 bg-green-600 text-white font-bold rounded-lg shadow-lg hover:bg-green-700 transition text-sm text-center">
+                    💰 Caja
+                </a>
+                <a href="{{ route('mesas.index') }}" class="px-4 py-2 bg-blue-600 text-white font-bold rounded-lg shadow-lg hover:bg-blue-700 transition text-sm text-center">
+                    🍳 Cocina
+                </a>
+                <a href="{{ route('admin.ventas') }}" class="px-4 py-2 bg-purple-600 text-white font-bold rounded-lg shadow-lg hover:bg-purple-700 transition text-sm text-center">
+                    📊 Ventas
                 </a>
             </div>
         </div>

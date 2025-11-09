@@ -175,18 +175,6 @@
             </a>
         </div>
         
-        <!-- Botones de Caja y Mesas -->
-        <div style="position:fixed; bottom:20px; left:20px; z-index:1100; display: flex; flex-direction: column; gap: 10px;">
-            <a href="{{ route('caja.index') }}" 
-               style="background:#10b981; color:#fff; padding:12px 20px; border-radius:8px; text-decoration:none; font-weight:700; box-shadow:0 4px 10px rgba(0,0,0,0.2); text-align:center;">
-                💰 Caja
-            </a>
-            <a href="{{ route('mesas.index') }}" 
-               style="background:#3b82f6; color:#fff; padding:12px 20px; border-radius:8px; text-decoration:none; font-weight:700; box-shadow:0 4px 10px rgba(0,0,0,0.2); text-align:center;">
-                🍳 Cocina
-            </a>
-        </div>
-        
         {{-- Aquí puedes agregar el mensaje de bienvenida "¡Bienvenido!" si quieres --}}
 
         {{-- LOGO REDONDO ENCIMA DEL QR --}}
