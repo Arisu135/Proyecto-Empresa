@@ -103,28 +103,34 @@
 
     @media (max-width: 768px) {
         .kiosko-container {
-            padding: 1rem;
+            padding: 0.5rem;
+            gap: 0.5rem;
         }
 
         .logo-section img {
-            width: 140px;
-            height: 140px;
+            width: 180px;
+            height: 180px;
         }
         
+        .qr-section {
+            gap: 0.5rem;
+        }
+
         .qr-section svg {
-            width: 130px;
-            height: 130px;
+            width: 140px;
+            height: 140px;
         }
         
         .buttons-section {
             flex-direction: column;
             max-width: 100%;
-            gap: 1rem;
+            gap: 0.75rem;
         }
         
         .btn-main {
             width: 100%;
             font-size: 1.125rem;
+            padding: 1rem;
         }
 
         .qr-text {
