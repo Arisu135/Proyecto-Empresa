@@ -25,12 +25,16 @@ class Pedido extends Model
         'eliminado',
         'eliminado_at',
         'motivo_eliminacion',
+        'impreso',
+        'impreso_at',
     ];
 
     protected $casts = [
         'pagado' => 'boolean',
         'eliminado' => 'boolean',
         'eliminado_at' => 'datetime',
+        'impreso' => 'boolean',
+        'impreso_at' => 'datetime',
     ];
 
     /**

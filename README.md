@@ -204,6 +204,23 @@ php artisan view:clear
 - ✅ Optimizaciones de producción aplicadas
 - ✅ Seguridad configurada
 
+## 🖨️ Sistema de Impresión Automática
+
+**Nuevo:** Impresión automática desde tablet
+
+```
+Tablet → Marca como pagado → PC imprime automáticamente
+```
+
+**Archivos:**
+- `auto_print.py` - Programa para la PC
+- `iniciar_impresora.bat` - Iniciador rápido
+- `INSTALACION_IMPRESORA.md` - Guía completa
+
+**Instalación:** Ver [INSTALACION_IMPRESORA.md](./INSTALACION_IMPRESORA.md)
+
+---
+
 ## 🚀 Próximos Pasos
 
 1. **Revisar y actualizar seeders** si necesitas datos específicos
@@ -211,6 +228,7 @@ php artisan view:clear
 3. **Ejecutar** `./deploy-prepare.sh` para verificar
 4. **Probar localmente** con `./local-test.sh`
 5. **Desplegar en Render** siguiendo [RENDER_GUIDE.md](./RENDER_GUIDE.md)
+6. **Instalar sistema de impresión** en la tienda siguiendo [INSTALACION_IMPRESORA.md](./INSTALACION_IMPRESORA.md)
 
 ## 📞 Soporte
 
