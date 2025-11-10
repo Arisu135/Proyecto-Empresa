@@ -145,11 +145,13 @@
             <html>
             <head>
                 <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
                 <title>Ticket #${pedidoId}</title>
                 <style>
                     @media print {
                         @page { margin: 0; size: 80mm auto; }
                         body { margin: 0; }
+                        .btn-imprimir { display: none !important; }
                     }
                     body {
                         font-family: 'Courier New', monospace;
@@ -165,9 +167,28 @@
                     table { width: 100%; border-collapse: collapse; }
                     td { padding: 2px 0; }
                     .total-row { font-size: 14px; font-weight: bold; }
+                    .btn-imprimir {
+                        display: block;
+                        width: 100%;
+                        padding: 15px;
+                        margin: 20px 0;
+                        background: #10b981;
+                        color: white;
+                        border: none;
+                        border-radius: 8px;
+                        font-size: 18px;
+                        font-weight: bold;
+                        cursor: pointer;
+                        font-family: Arial, sans-serif;
+                    }
+                    .btn-imprimir:active {
+                        background: #059669;
+                    }
                 </style>
             </head>
             <body>
+                <button class="btn-imprimir" onclick="window.print()">🖨️ IMPRIMIR TICKET</button>
+                
                 <div class="center bold" style="font-size: 16px; margin-bottom: 5px;">
                     REBEL JUNGLE CAFE
                 </div>
@@ -218,13 +239,20 @@
                 <div class="center" style="font-size: 10px;">
                     @rebel_jungle_cafe
                 </div>
+                
+                <button class="btn-imprimir" onclick="window.print()">🖨️ IMPRIMIR TICKET</button>
             </body>
             </html>
         `);
         ventana.document.close();
         
+        // Intenta imprimir automáticamente (funciona en PC, no en tablets)
         setTimeout(() => {
-            ventana.print();
+            try {
+                ventana.print();
+            } catch(e) {
+                console.log('Auto-print no disponible, usar botón manual');
+            }
         }, 250);
     }
 
