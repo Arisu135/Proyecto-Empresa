@@ -120,7 +120,3 @@ Route::get('/ops/check-db', function () {
         'has_eliminado' => in_array('eliminado', $columns),
     ]);
 });
-
-// API para impresión automática desde programa externo
-Route::get('/api/print/pending', [\App\Http\Controllers\Api\PrintController::class, 'getPendingPrints']);
-Route::post('/api/print/{id}/mark-printed', [\App\Http\Controllers\Api\PrintController::class, 'markAsPrinted']);
