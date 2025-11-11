@@ -120,3 +120,6 @@ Route::get('/ops/check-db', function () {
         'has_eliminado' => in_array('eliminado', $columns),
     ]);
 });
+
+// API para sistema local de impresión
+Route::get('/api/print/pending', [\App\Http\Controllers\Api\PrintController::class, 'getPendingPrints']);
