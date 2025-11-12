@@ -75,33 +75,56 @@ while (true) {
 }
 
 function generarTicket($pedido) {
-    $ticket = str_repeat("=", 32) . "\n";
-    $ticket .= "    REBEL JUNGLE CAFE\n";
-    $ticket .= "      Kiosco Digital\n";
+    // Comandos ESC/POS para formato
+    $ESC = chr(27);
+    $GS = chr(29);
+    $INIT = $ESC . "@"; // Inicializar impresora
+    $BOLD_ON = $ESC . "E" . chr(1); // Negrita ON
+    $BOLD_OFF = $ESC . "E" . chr(0); // Negrita OFF
+    $DOUBLE_ON = $GS . "!" . chr(17); // Doble tamaño (ancho y alto)
+    $DOUBLE_OFF = $GS . "!" . chr(0); // Tamaño normal
+    $CENTER = $ESC . "a" . chr(1); // Centrar
+    $LEFT = $ESC . "a" . chr(0); // Alinear izquierda
+    
+    $ticket = $INIT; // Inicializar
+    $ticket .= $CENTER . $BOLD_ON;
+    $ticket .= "REBEL JUNGLE CAFE\n";
+    $ticket .= "Kiosco Digital\n";
+    $ticket .= $BOLD_OFF . $LEFT;
     $ticket .= str_repeat("=", 32) . "\n\n";
-    $ticket .= "Pedido: #{$pedido['id']}\n";
+    
+    $ticket .= $BOLD_ON . "Pedido: #{$pedido['id']}\n" . $BOLD_OFF;
     
     if (!empty($pedido['numero_mesa'])) {
-        $ticket .= "Mesa: {$pedido['numero_mesa']}\n";
+        $ticket .= $BOLD_ON . "Mesa: {$pedido['numero_mesa']}\n" . $BOLD_OFF;
     }
     
     $ticket .= "Cliente: {$pedido['nombre_cliente']}\n";
     $ticket .= "Fecha: {$pedido['created_at']}\n";
     $ticket .= "Metodo Pago: " . strtoupper($pedido['metodo_pago']) . "\n\n";
-    $ticket .= str_repeat("-", 32) . "\n";
-    $ticket .= "PRODUCTOS:\n";
-    $ticket .= str_repeat("-", 32) . "\n";
     
+    $ticket .= str_repeat("-", 32) . "\n";
+    $ticket .= $BOLD_ON . "PRODUCTOS:\n" . $BOLD_OFF;
+    $ticket .= str_repeat("-", 32) . "\n\n";
+    
+    // PRODUCTOS EN GRANDE Y NEGRITA
     foreach ($pedido['detalles'] as $detalle) {
+        $ticket .= $DOUBLE_ON . $BOLD_ON;
         $ticket .= "{$detalle['cantidad']}x {$detalle['nombre_producto']}\n";
-        $ticket .= str_repeat(" ", 20) . "S/ " . number_format($detalle['subtotal'], 2) . "\n";
+        $ticket .= $DOUBLE_OFF . $BOLD_OFF;
+        $ticket .= "    S/ " . number_format($detalle['subtotal'], 2) . "\n\n";
     }
     
-    $ticket .= "\n" . str_repeat("=", 32) . "\n";
-    $ticket .= "TOTAL PAGADO: S/ " . number_format($pedido['total'], 2) . "\n";
+    $ticket .= str_repeat("=", 32) . "\n";
+    $ticket .= $BOLD_ON . $DOUBLE_ON;
+    $ticket .= "TOTAL: S/ " . number_format($pedido['total'], 2) . "\n";
+    $ticket .= $DOUBLE_OFF . $BOLD_OFF;
     $ticket .= str_repeat("=", 32) . "\n\n";
-    $ticket .= "  Gracias por su compra!\n";
-    $ticket .= "   @rebel_jungle_cafe\n\n\n";
+    
+    $ticket .= $CENTER;
+    $ticket .= "Gracias por su compra!\n";
+    $ticket .= "@rebel_jungle_cafe\n\n\n";
+    $ticket .= $LEFT;
     
     return $ticket;
 }
