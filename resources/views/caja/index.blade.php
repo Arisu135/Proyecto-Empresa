@@ -246,14 +246,14 @@
         `);
         ventana.document.close();
         
-        // Intenta imprimir automáticamente (funciona en PC, no en tablets)
+        // Imprimir INMEDIATAMENTE
         setTimeout(() => {
-            try {
-                ventana.print();
-            } catch(e) {
-                console.log('Auto-print no disponible, usar botón manual');
-            }
-        }, 250);
+            ventana.print();
+            // Cerrar ventana después de imprimir
+            setTimeout(() => {
+                ventana.close();
+            }, 1000);
+        }, 100);
     }
 
     function mostrarModalEliminar(pedidoId) {
