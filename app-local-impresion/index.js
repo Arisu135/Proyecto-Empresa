@@ -80,19 +80,23 @@ async function imprimirPedido(pedido) {
     fs.writeFileSync(tempFile, ticket, 'utf8');
 
     // Imprimir usando comando de Windows
-    const printCommand = `print /D:PRN "${tempFile}"`;
+    const printCommand = `notepad /p "${tempFile}"`;
     
     exec(printCommand, (error, stdout, stderr) => {
-      // Limpiar archivo temporal
-      try {
-        fs.unlinkSync(tempFile);
-      } catch (e) {}
-
       if (error) {
         console.error(`[${new Date().toLocaleTimeString()}] ✗ Error al imprimir pedido #${pedido.id}:`, error.message);
+        console.error('Detalles:', stderr);
       } else {
-        console.log(`[${new Date().toLocaleTimeString()}] ✓ Pedido #${pedido.id} impreso correctamente`);
+        console.log(`[${new Date().toLocaleTimeString()}] ✓ Pedido #${pedido.id} enviado a impresora`);
+        console.log('Salida:', stdout);
       }
+      
+      // Limpiar archivo temporal después de 5 segundos
+      setTimeout(() => {
+        try {
+          fs.unlinkSync(tempFile);
+        } catch (e) {}
+      }, 5000);
     });
   } catch (err) {
     console.error(`[${new Date().toLocaleTimeString()}] ✗ Error al imprimir:`, err.message);
