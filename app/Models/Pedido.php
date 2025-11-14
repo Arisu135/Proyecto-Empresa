@@ -22,6 +22,7 @@ class Pedido extends Model
         'numero_mesa',
         'pagado',
         'metodo_pago',
+        'impreso',
         'eliminado',
         'eliminado_at',
         'motivo_eliminacion',
@@ -29,6 +30,7 @@ class Pedido extends Model
 
     protected $casts = [
         'pagado' => 'boolean',
+        'impreso' => 'boolean',
         'eliminado' => 'boolean',
         'eliminado_at' => 'datetime',
     ];

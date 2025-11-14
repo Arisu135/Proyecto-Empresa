@@ -12,10 +12,16 @@ class PrintController extends Controller
     {
         $pedidos = Pedido::with('detalles')
             ->where('pagado', true)
+            ->where('impreso', false)
+            ->whereIn('metodo_pago', ['efectivo', 'yape'])
             ->whereDate('created_at', today())
-            ->orderBy('created_at', 'desc')
-            ->limit(50)
+            ->orderBy('created_at', 'asc')
             ->get();
+
+        foreach ($pedidos as $pedido) {
+            $pedido->impreso = true;
+            $pedido->save();
+        }
 
         return response()->json([
             'success' => true,

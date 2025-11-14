@@ -27,10 +27,10 @@ class CajaController extends Controller
         
         $pedido->pagado = true;
         $pedido->metodo_pago = $request->metodo_pago;
+        $pedido->impreso = false;
         $pedido->save();
 
-        return back()->with('success', "Pedido #{$pedido->id} pagado con " . ucfirst($request->metodo_pago) . ".")
-                     ->with('imprimir_ticket', $pedido->id);
+        return back()->with('success', "Pedido #{$pedido->id} pagado con " . ucfirst($request->metodo_pago) . ".");
     }
     
     public function eliminarVenta(Request $request, Pedido $pedido)
