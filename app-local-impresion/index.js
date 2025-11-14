@@ -6,7 +6,7 @@ const os = require('os');
 
 // Configuración
 const RENDER_URL = 'https://proyecto-empresa-web-eepa.onrender.com';
-const CHECK_INTERVAL = 3000; // 3 segundos
+const CHECK_INTERVAL = 500; // 0.5 segundos
 let pedidosImpresos = [];
 
 console.log('========================================');
