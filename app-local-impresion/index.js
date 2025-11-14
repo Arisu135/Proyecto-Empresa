@@ -1,13 +1,13 @@
-const ThermalPrinter = require('node-thermal-printer');
 const axios = require('axios');
+const { exec } = require('child_process');
+const fs = require('fs');
+const path = require('path');
+const os = require('os');
 
 // Configuración
 const RENDER_URL = 'https://proyecto-empresa-web-eepa.onrender.com';
 const CHECK_INTERVAL = 3000; // 3 segundos
 let pedidosImpresos = [];
-
-// Configurar impresora térmica (Xprinter)
-let printer;
 
 console.log('========================================');
 console.log('  SISTEMA DE IMPRESION TERMICA');
@@ -45,92 +45,55 @@ async function consultarPedidos() {
 
 async function imprimirPedido(pedido) {
   try {
-    // Inicializar impresora para cada impresión
-    printer = new ThermalPrinter.printer({
-      type: ThermalPrinter.types.EPSON,
-      interface: 'printer:XPrinter',  // Nombre de la impresora
-      width: 42,
-      characterSet: 'PC437_USA',
-      removeSpecialCharacters: false,
-    });
-    
-    let isConnected = await printer.isPrinterConnected();
-    if (!isConnected) {
-      console.log(`[${new Date().toLocaleTimeString()}] ⚠ Impresora no conectada, intentando con impresora predeterminada...`);
-      printer = new ThermalPrinter.printer({
-        type: ThermalPrinter.types.EPSON,
-        interface: 'printer',  // Impresora predeterminada
-        width: 42,
-        characterSet: 'PC437_USA',
-      });
-    }
-    
-    printer.clear();
-
-    printer.alignCenter();
-    printer.bold(true);
-    printer.setTextDoubleHeight();
-    printer.printLine("REBEL JUNGLE CAFE");
-    printer.setTextNormal();
-    printer.bold(false);
-    printer.printLine("Kiosco Digital");
-    printer.drawLine();
-
-    printer.alignLeft();
-    printer.bold(true);
-    printer.printLine(`Pedido: #${pedido.id}`);
-    printer.bold(false);
+    // Generar contenido del ticket
+    let ticket = '';
+    ticket += '================================\n';
+    ticket += '    REBEL JUNGLE CAFE\n';
+    ticket += '      Kiosco Digital\n';
+    ticket += '================================\n\n';
+    ticket += `Pedido: #${pedido.id}\n`;
     
     if (pedido.numero_mesa) {
-      printer.bold(true);
-      printer.printLine(`Mesa: ${pedido.numero_mesa}`);
-      printer.bold(false);
+      ticket += `Mesa: ${pedido.numero_mesa}\n`;
     }
     
-    printer.printLine(`Cliente: ${pedido.nombre_cliente}`);
-    printer.printLine(`Fecha: ${pedido.created_at}`);
-    printer.printLine(`Metodo Pago: ${pedido.metodo_pago.toUpperCase()}`);
-    printer.newLine();
-    
-    printer.drawLine();
-    printer.bold(true);
-    printer.printLine("PRODUCTOS:");
-    printer.bold(false);
-    printer.drawLine();
-    printer.newLine();
+    ticket += `Cliente: ${pedido.nombre_cliente}\n`;
+    ticket += `Fecha: ${pedido.created_at}\n`;
+    ticket += `Metodo Pago: ${pedido.metodo_pago.toUpperCase()}\n\n`;
+    ticket += '--------------------------------\n';
+    ticket += 'PRODUCTOS:\n';
+    ticket += '--------------------------------\n\n';
 
     pedido.detalles?.forEach(detalle => {
-      printer.bold(true);
-      printer.setTextDoubleHeight();
-      printer.printLine(`${detalle.cantidad}x ${detalle.nombre_producto}`);
-      printer.setTextNormal();
-      printer.bold(false);
-      printer.printLine(`    S/ ${parseFloat(detalle.subtotal).toFixed(2)}`);
-      printer.newLine();
+      ticket += `${detalle.cantidad}x ${detalle.nombre_producto}\n`;
+      ticket += `    S/ ${parseFloat(detalle.subtotal).toFixed(2)}\n\n`;
     });
 
-    printer.drawLine();
-    printer.bold(true);
-    printer.setTextDoubleHeight();
-    printer.printLine(`TOTAL: S/ ${parseFloat(pedido.total).toFixed(2)}`);
-    printer.setTextNormal();
-    printer.bold(false);
-    printer.drawLine();
-    printer.newLine();
-    
-    printer.alignCenter();
-    printer.printLine("Gracias por su compra!");
-    printer.printLine("@rebel_jungle_cafe");
-    printer.newLine();
-    printer.newLine();
-    printer.cut();
+    ticket += '================================\n';
+    ticket += `TOTAL: S/ ${parseFloat(pedido.total).toFixed(2)}\n`;
+    ticket += '================================\n\n';
+    ticket += '  Gracias por su compra!\n';
+    ticket += '   @rebel_jungle_cafe\n\n\n';
 
-    const success = await printer.execute();
-    if (success) {
-      console.log(`[${new Date().toLocaleTimeString()}] ✓ Pedido #${pedido.id} impreso correctamente`);
-    } else {
-      console.error(`[${new Date().toLocaleTimeString()}] ✗ Falló la impresión del pedido #${pedido.id}`);
-    }
+    // Guardar en archivo temporal
+    const tempFile = path.join(os.tmpdir(), `ticket_${pedido.id}.txt`);
+    fs.writeFileSync(tempFile, ticket, 'utf8');
+
+    // Imprimir usando comando de Windows
+    const printCommand = `print /D:PRN "${tempFile}"`;
+    
+    exec(printCommand, (error, stdout, stderr) => {
+      // Limpiar archivo temporal
+      try {
+        fs.unlinkSync(tempFile);
+      } catch (e) {}
+
+      if (error) {
+        console.error(`[${new Date().toLocaleTimeString()}] ✗ Error al imprimir pedido #${pedido.id}:`, error.message);
+      } else {
+        console.log(`[${new Date().toLocaleTimeString()}] ✓ Pedido #${pedido.id} impreso correctamente`);
+      }
+    });
   } catch (err) {
     console.error(`[${new Date().toLocaleTimeString()}] ✗ Error al imprimir:`, err.message);
   }

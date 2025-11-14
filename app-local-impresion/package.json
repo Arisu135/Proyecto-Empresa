@@ -6,7 +6,6 @@
     "start": "node index.js"
   },
   "dependencies": {
-    "node-thermal-printer": "4.5.0",
     "axios": "^1.6.0"
   }
 }
