@@ -7,14 +7,7 @@ const CHECK_INTERVAL = 3000; // 3 segundos
 let pedidosImpresos = [];
 
 // Configurar impresora térmica (Xprinter)
-const printer = new ThermalPrinter.printer({
-  type: 'epson',        // Tipo de impresora
-  interface: 'usb',     // Puerto de conexión
-  width: 42,            // Ancho de caracteres
-  characterSet: 'SLOVENIA',
-  removeSpecialCharacters: false,
-  lineCharacter: "-",
-});
+let printer;
 
 console.log('========================================');
 console.log('  SISTEMA DE IMPRESION TERMICA');
@@ -52,6 +45,26 @@ async function consultarPedidos() {
 
 async function imprimirPedido(pedido) {
   try {
+    // Inicializar impresora para cada impresión
+    printer = new ThermalPrinter.printer({
+      type: ThermalPrinter.types.EPSON,
+      interface: 'printer:XPrinter',  // Nombre de la impresora
+      width: 42,
+      characterSet: 'PC437_USA',
+      removeSpecialCharacters: false,
+    });
+    
+    let isConnected = await printer.isPrinterConnected();
+    if (!isConnected) {
+      console.log(`[${new Date().toLocaleTimeString()}] ⚠ Impresora no conectada, intentando con impresora predeterminada...`);
+      printer = new ThermalPrinter.printer({
+        type: ThermalPrinter.types.EPSON,
+        interface: 'printer',  // Impresora predeterminada
+        width: 42,
+        characterSet: 'PC437_USA',
+      });
+    }
+    
     printer.clear();
 
     printer.alignCenter();
