@@ -69,8 +69,8 @@ async function imprimirPedido(pedido) {
     const tempFile = path.join(os.tmpdir(), `ticket_${pedido.id}.txt`);
     fs.writeFileSync(tempFile, ticket, 'utf8');
 
-    // Imprimir usando comando de Windows
-    const printCommand = `notepad /p "${tempFile}"`;
+    // Imprimir usando comando de Windows (sin márgenes)
+    const printCommand = `print /D:PRN "${tempFile}"`;
     
     exec(printCommand, (error, stdout, stderr) => {
       if (error) {
