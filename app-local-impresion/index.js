@@ -47,28 +47,20 @@ async function imprimirPedido(pedido) {
   try {
     // Generar contenido del ticket
     let ticket = '';
-    ticket += '================================\n';
-    ticket += '   REBEL JUNGLE CAFE\n';
-    ticket += '================================\n';
-    ticket += `Pedido: #${pedido.id}\n`;
-    if (pedido.numero_mesa) {
-      ticket += `Mesa: ${pedido.numero_mesa}\n`;
-    }
-    ticket += `Cliente: ${pedido.nombre_cliente}\n`;
-    ticket += `Fecha: ${pedido.created_at}\n`;
-    ticket += `Pago: ${pedido.metodo_pago.toUpperCase()}\n`;
-    ticket += '--------------------------------\n';
+    ticket += 'REBEL JUNGLE CAFE\n';
+    ticket += `#${pedido.id}`;
+    if (pedido.numero_mesa) ticket += ` - Mesa ${pedido.numero_mesa}`;
+    ticket += `\n${pedido.nombre_cliente}\n`;
+    ticket += `${pedido.created_at} - ${pedido.metodo_pago.toUpperCase()}\n`;
+    ticket += '---\n';
 
     pedido.detalles?.forEach(detalle => {
-      ticket += `${detalle.cantidad}x ${detalle.nombre_producto}\n`;
-      ticket += `   S/ ${parseFloat(detalle.subtotal).toFixed(2)}\n`;
+      ticket += `${detalle.cantidad}x ${detalle.nombre_producto} S/${parseFloat(detalle.subtotal).toFixed(2)}\n`;
     });
 
-    ticket += '--------------------------------\n';
-    ticket += `TOTAL: S/ ${parseFloat(pedido.total).toFixed(2)}\n`;
-    ticket += '================================\n';
-    ticket += 'Gracias por su compra!\n';
-    ticket += '@rebel_jungle_cafe\n';
+    ticket += '---\n';
+    ticket += `TOTAL: S/${parseFloat(pedido.total).toFixed(2)}\n`;
+    ticket += 'Gracias! @rebel_jungle_cafe\n';
 
     // Guardar en archivo temporal
     const tempFile = path.join(os.tmpdir(), `ticket_${pedido.id}.txt`);
