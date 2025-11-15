@@ -69,24 +69,37 @@ async function imprimirPedido(pedido) {
     const tempFile = path.join(os.tmpdir(), `ticket_${pedido.id}.txt`);
     fs.writeFileSync(tempFile, ticket, 'utf8');
 
-    // Imprimir usando comando de Windows (sin márgenes)
-    const printCommand = `print /D:PRN "${tempFile}"`;
+    console.log(`[${new Date().toLocaleTimeString()}] Archivo creado: ${tempFile}`);
+    console.log(`[${new Date().toLocaleTimeString()}] Intentando imprimir...`);
+
+    // Método 1: Intentar con notepad /p
+    const printCommand1 = `notepad /p "${tempFile}"`;
     
-    exec(printCommand, (error, stdout, stderr) => {
+    exec(printCommand1, (error, stdout, stderr) => {
       if (error) {
-        console.error(`[${new Date().toLocaleTimeString()}] ✗ Error al imprimir pedido #${pedido.id}:`, error.message);
-        console.error('Detalles:', stderr);
+        console.error(`[${new Date().toLocaleTimeString()}] ✗ Método 1 falló, intentando método 2...`);
+        
+        // Método 2: Intentar con print directo
+        const printCommand2 = `print "${tempFile}"`;
+        exec(printCommand2, (error2, stdout2, stderr2) => {
+          if (error2) {
+            console.error(`[${new Date().toLocaleTimeString()}] ✗ Método 2 falló`);
+            console.error('Error:', error2.message);
+            console.log('SOLUCIÓN: Abrir manualmente:', tempFile);
+          } else {
+            console.log(`[${new Date().toLocaleTimeString()}] ✓ Pedido #${pedido.id} impreso (método 2)`);
+          }
+        });
       } else {
-        console.log(`[${new Date().toLocaleTimeString()}] ✓ Pedido #${pedido.id} enviado a impresora`);
-        console.log('Salida:', stdout);
+        console.log(`[${new Date().toLocaleTimeString()}] ✓ Pedido #${pedido.id} impreso (método 1)`);
       }
       
-      // Limpiar archivo temporal después de 5 segundos
+      // Limpiar archivo temporal después de 10 segundos
       setTimeout(() => {
         try {
           fs.unlinkSync(tempFile);
         } catch (e) {}
-      }, 5000);
+      }, 10000);
     });
   } catch (err) {
     console.error(`[${new Date().toLocaleTimeString()}] ✗ Error al imprimir:`, err.message);
