@@ -47,7 +47,8 @@ async function imprimirPedido(pedido) {
   try {
     // Generar contenido del ticket
     let ticket = '';
-    ticket += 'REBEL JUNGLE CAFE\n';
+    ticket += 'ReBel Jungle\n';
+    ticket += 'Cafe y Plantas\n';
     ticket += `#${pedido.id}`;
     if (pedido.numero_mesa) ticket += ` - Mesa ${pedido.numero_mesa}`;
     ticket += `\n${pedido.nombre_cliente}\n`;
