@@ -48,32 +48,27 @@ async function imprimirPedido(pedido) {
     // Generar contenido del ticket
     let ticket = '';
     ticket += '================================\n';
-    ticket += '    REBEL JUNGLE CAFE\n';
-    ticket += '      Kiosco Digital\n';
-    ticket += '================================\n\n';
+    ticket += '   REBEL JUNGLE CAFE\n';
+    ticket += '================================\n';
     ticket += `Pedido: #${pedido.id}\n`;
-    
     if (pedido.numero_mesa) {
       ticket += `Mesa: ${pedido.numero_mesa}\n`;
     }
-    
     ticket += `Cliente: ${pedido.nombre_cliente}\n`;
     ticket += `Fecha: ${pedido.created_at}\n`;
-    ticket += `Metodo Pago: ${pedido.metodo_pago.toUpperCase()}\n\n`;
+    ticket += `Pago: ${pedido.metodo_pago.toUpperCase()}\n`;
     ticket += '--------------------------------\n';
-    ticket += 'PRODUCTOS:\n';
-    ticket += '--------------------------------\n\n';
 
     pedido.detalles?.forEach(detalle => {
       ticket += `${detalle.cantidad}x ${detalle.nombre_producto}\n`;
-      ticket += `    S/ ${parseFloat(detalle.subtotal).toFixed(2)}\n\n`;
+      ticket += `   S/ ${parseFloat(detalle.subtotal).toFixed(2)}\n`;
     });
 
-    ticket += '================================\n';
+    ticket += '--------------------------------\n';
     ticket += `TOTAL: S/ ${parseFloat(pedido.total).toFixed(2)}\n`;
-    ticket += '================================\n\n';
-    ticket += '  Gracias por su compra!\n';
-    ticket += '   @rebel_jungle_cafe\n\n\n';
+    ticket += '================================\n';
+    ticket += 'Gracias por su compra!\n';
+    ticket += '@rebel_jungle_cafe\n';
 
     // Guardar en archivo temporal
     const tempFile = path.join(os.tmpdir(), `ticket_${pedido.id}.txt`);
