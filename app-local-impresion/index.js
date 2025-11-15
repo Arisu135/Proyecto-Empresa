@@ -52,7 +52,7 @@ async function imprimirPedido(pedido) {
     ticket += `${pedido.nombre_cliente}\n`;
     ticket += `${pedido.created_at}\n`;
     ticket += `${pedido.metodo_pago.toUpperCase()}\n`;
-    ticket += '________________________________\n';
+    ticket += '- - - - - - - - - - - - - - - -\n';
 
     pedido.detalles?.forEach(detalle => {
       ticket += `${detalle.cantidad}x ${detalle.nombre_producto}\n`;
