@@ -56,7 +56,7 @@ async function imprimirPedido(pedido) {
 
     pedido.detalles?.forEach(detalle => {
       ticket += `${detalle.cantidad}x ${detalle.nombre_producto}\n`;
-      ticket += `              S/${parseFloat(detalle.subtotal).toFixed(2)}\n`;
+      ticket += `   S/${parseFloat(detalle.subtotal).toFixed(2)}\n`;
     });
 
     ticket += '________________________________\n';
