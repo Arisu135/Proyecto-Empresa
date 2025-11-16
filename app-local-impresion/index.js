@@ -45,25 +45,25 @@ async function consultarPedidos() {
 
 async function imprimirPedido(pedido) {
   try {
-    // Generar contenido del ticket (32 caracteres)
+    // Generar contenido del ticket (Xprinter 80mm = 48 caracteres)
     let ticket = '';
-    ticket += 'REBEL JUNGLE CAFE Y PLANTAS\n';
-    ticket += '================================\n';
+    ticket += '   REBEL JUNGLE CAFE Y PLANTAS\n';
+    ticket += '================================================\n';
     ticket += `${pedido.nombre_cliente}\n`;
     ticket += `${pedido.created_at}\n`;
     ticket += `${pedido.metodo_pago.toUpperCase()}\n`;
-    ticket += '--------------------------------\n';
+    ticket += '------------------------------------------------\n';
 
     pedido.detalles?.forEach(detalle => {
       ticket += `${detalle.cantidad}x ${detalle.nombre_producto}\n`;
       ticket += `   S/${parseFloat(detalle.subtotal).toFixed(2)}\n`;
     });
 
-    ticket += '--------------------------------\n';
+    ticket += '------------------------------------------------\n';
     ticket += `TOTAL: S/${parseFloat(pedido.total).toFixed(2)}\n`;
-    ticket += '================================\n';
-    ticket += 'Gracias por su compra!\n';
-    ticket += '@rebel_jungle_cafe\n';
+    ticket += '================================================\n';
+    ticket += '      Gracias por su compra!\n';
+    ticket += '        @rebel_jungle_cafe\n';
 
     // Guardar en archivo temporal
     const tempFile = path.join(os.tmpdir(), `ticket_${pedido.id}.txt`);
