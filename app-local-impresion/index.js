@@ -45,64 +45,50 @@ async function consultarPedidos() {
 
 async function imprimirPedido(pedido) {
   try {
-    // Generar contenido del ticket (Xprinter 80mm = 48 caracteres)
+    // Generar ticket simple sin formato especial
     let ticket = '';
-    ticket += '   REBEL JUNGLE CAFE Y PLANTAS\n';
-    ticket += '================================================\n';
-    ticket += `${pedido.nombre_cliente}\n`;
-    ticket += `${pedido.created_at}\n`;
-    ticket += `${pedido.metodo_pago.toUpperCase()}\n`;
-    ticket += '------------------------------------------------\n';
+    ticket += 'REBEL JUNGLE CAFE Y PLANTAS\r\n';
+    ticket += '================================\r\n';
+    ticket += `${pedido.nombre_cliente}\r\n`;
+    ticket += `${pedido.created_at}\r\n`;
+    ticket += `${pedido.metodo_pago.toUpperCase()}\r\n`;
+    ticket += '--------------------------------\r\n';
 
     pedido.detalles?.forEach(detalle => {
-      ticket += `${detalle.cantidad}x ${detalle.nombre_producto}\n`;
-      ticket += `   S/${parseFloat(detalle.subtotal).toFixed(2)}\n`;
+      ticket += `${detalle.cantidad}x ${detalle.nombre_producto}\r\n`;
+      ticket += `   S/${parseFloat(detalle.subtotal).toFixed(2)}\r\n`;
     });
 
-    ticket += '------------------------------------------------\n';
-    ticket += `TOTAL: S/${parseFloat(pedido.total).toFixed(2)}\n`;
-    ticket += '================================================\n';
-    ticket += '      Gracias por su compra!\n';
-    ticket += '        @rebel_jungle_cafe\n';
+    ticket += '--------------------------------\r\n';
+    ticket += `TOTAL: S/${parseFloat(pedido.total).toFixed(2)}\r\n`;
+    ticket += '================================\r\n';
+    ticket += 'Gracias por su compra!\r\n';
+    ticket += '@rebel_jungle_cafe\r\n';
+    ticket += '\r\n\r\n\r\n'; // Saltos de línea para cortar
 
     // Guardar en archivo temporal
     const tempFile = path.join(os.tmpdir(), `ticket_${pedido.id}.txt`);
     fs.writeFileSync(tempFile, ticket, 'utf8');
 
-    console.log(`[${new Date().toLocaleTimeString()}] Archivo creado: ${tempFile}`);
-    console.log(`[${new Date().toLocaleTimeString()}] Intentando imprimir...`);
+    console.log(`[${new Date().toLocaleTimeString()}] Imprimiendo pedido #${pedido.id}...`);
 
-    // Método 1: Intentar con notepad /p
-    const printCommand1 = `notepad /p "${tempFile}"`;
+    // Imprimir directamente a la impresora predeterminada
+    const printCommand = `print /D:PRN "${tempFile}"`;
     
-    exec(printCommand1, (error, stdout, stderr) => {
+    exec(printCommand, (error, stdout, stderr) => {
       if (error) {
-        console.error(`[${new Date().toLocaleTimeString()}] ✗ Método 1 falló, intentando método 2...`);
-        
-        // Método 2: Intentar con print directo
-        const printCommand2 = `print "${tempFile}"`;
-        exec(printCommand2, (error2, stdout2, stderr2) => {
-          if (error2) {
-            console.error(`[${new Date().toLocaleTimeString()}] ✗ Método 2 falló`);
-            console.error('Error:', error2.message);
-            console.log('SOLUCIÓN: Abrir manualmente:', tempFile);
-          } else {
-            console.log(`[${new Date().toLocaleTimeString()}] ✓ Pedido #${pedido.id} impreso (método 2)`);
-          }
-        });
+        console.error(`[${new Date().toLocaleTimeString()}] ✗ Error:`, error.message);
+        console.log('Archivo guardado en:', tempFile);
       } else {
-        console.log(`[${new Date().toLocaleTimeString()}] ✓ Pedido #${pedido.id} impreso (método 1)`);
+        console.log(`[${new Date().toLocaleTimeString()}] ✓ Pedido #${pedido.id} impreso`);
+        // Limpiar archivo después de 5 segundos
+        setTimeout(() => {
+          try { fs.unlinkSync(tempFile); } catch (e) {}
+        }, 5000);
       }
-      
-      // Limpiar archivo temporal después de 10 segundos
-      setTimeout(() => {
-        try {
-          fs.unlinkSync(tempFile);
-        } catch (e) {}
-      }, 10000);
     });
   } catch (err) {
-    console.error(`[${new Date().toLocaleTimeString()}] ✗ Error al imprimir:`, err.message);
+    console.error(`[${new Date().toLocaleTimeString()}] ✗ Error:`, err.message);
   }
 }
 
