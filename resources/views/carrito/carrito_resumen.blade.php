@@ -70,7 +70,13 @@
                         Confirmar Pedido
                     </button>
                     
-                    <a href="{{ route('productos.menu') }}" class="w-full text-center py-3 bg-brand-dark text-white font-bold rounded-xl shadow-lg hover:bg-brand-dark/90 transition duration-150 text-lg">
+                    @php
+                        $ultimaCategoria = session('ultima_categoria');
+                        $urlSeguirComprando = $ultimaCategoria 
+                            ? route('productos.categoria', $ultimaCategoria)
+                            : route('productos.menu');
+                    @endphp
+                    <a href="{{ $urlSeguirComprando }}" class="w-full text-center py-3 bg-brand-dark text-white font-bold rounded-xl shadow-lg hover:bg-brand-dark/90 transition duration-150 text-lg">
                         Seguir Comprando
                     </a>
                     

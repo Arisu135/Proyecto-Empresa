@@ -48,6 +48,9 @@ class CatalogoController extends Controller
         $categoria = Categoria::where('slug', $categoria_slug)->firstOrFail();
         $productos = $categoria->productos()->orderBy('nombre')->get(); 
         
+        // Guardar última categoría visitada
+        Session::put('ultima_categoria', $categoria_slug);
+        
         return view('productos.categoria', compact('categoria', 'productos'));
     }
     
