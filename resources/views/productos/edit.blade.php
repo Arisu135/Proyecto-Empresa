@@ -10,7 +10,7 @@
     <div class="edit-container">
         <h1 class="edit-title">Editar Producto: {{ $producto->nombre }}</h1>
 
-        <form method="POST" action="/productos/{{ $producto->id }}">
+        <form method="POST" action="/productos/{{ $producto->id }}" enctype="multipart/form-data">
             @csrf 
             @method('PUT')
 
@@ -37,6 +37,21 @@
                     <option value="Bebidas" {{ $producto->categoria == 'Bebidas' ? 'selected' : '' }}>Bebidas</option>
                     <option value="Postres" {{ $producto->categoria == 'Postres' ? 'selected' : '' }}>Postres</option>
                 </select>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Imagen Actual:</label>
+                @if($producto->imagen_nombre)
+                    <img src="{{ asset('img/productos/' . $producto->imagen_nombre) }}" alt="{{ $producto->nombre }}" style="max-width: 200px; border-radius: 8px; margin-bottom: 10px;">
+                @else
+                    <p style="color: #666;">Sin imagen</p>
+                @endif
+            </div>
+
+            <div class="form-group">
+                <label for="imagen" class="form-label">Cambiar Imagen:</label>
+                <input type="file" id="imagen" name="imagen" accept="image/*" class="form-input">
+                <small style="color: #666;">Deja vacío si no quieres cambiar la imagen</small>
             </div>
 
             <button type="submit" class="btn-submit">Actualizar Producto</button>

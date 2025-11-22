@@ -61,16 +61,37 @@ class ProductoController extends Controller
 
     public function update(Request $request, Producto $producto)
     {
-        // 1. Validar y actualizar los campos del producto
-        $producto->update([
-            'nombre' => $request->nombre,
-            'descripcion' => $request->descripcion,
-            'precio' => $request->precio,
-            'categoria' => $request->categoria,
+        // 1. Validar datos
+        $validated = $request->validate([
+            'nombre' => 'required|string|max:255',
+            'descripcion' => 'required|string',
+            'precio' => 'required|numeric|min:0',
+            'categoria' => 'required|string',
+            'imagen' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
         ]);
+
+        // 2. Manejar la imagen si se subió una nueva
+        if ($request->hasFile('imagen')) {
+            // Eliminar imagen anterior si existe
+            if ($producto->imagen_nombre) {
+                $rutaAnterior = public_path('img/productos/' . $producto->imagen_nombre);
+                if (file_exists($rutaAnterior)) {
+                    unlink($rutaAnterior);
+                }
+            }
+
+            // Guardar nueva imagen
+            $imagen = $request->file('imagen');
+            $nombreImagen = time() . '_' . $imagen->getClientOriginalName();
+            $imagen->move(public_path('img/productos'), $nombreImagen);
+            $validated['imagen_nombre'] = $nombreImagen;
+        }
+
+        // 3. Actualizar producto
+        $producto->update($validated);
         
-        // 2. Redirigir al usuario de vuelta a la lista de productos
-        return redirect('/productos');
+        // 4. Redirigir
+        return redirect('/productos')->with('success', 'Producto actualizado correctamente.');
     }
 
     public function destroy(Producto $producto)
