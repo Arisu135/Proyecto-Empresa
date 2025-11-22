@@ -13,7 +13,7 @@ class PrintController extends Controller
         $pedidos = Pedido::with('detalles')
             ->where('pagado', true)
             ->where('impreso', false)
-            ->whereIn('metodo_pago', ['efectivo', 'yape'])
+            ->whereIn('metodo_pago', ['efectivo', 'yape', 'mixto'])
             ->whereDate('created_at', today())
             ->orderBy('created_at', 'asc')
             ->get();

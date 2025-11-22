@@ -22,7 +22,7 @@ class CajaController extends Controller
     public function marcarPagado(Request $request, Pedido $pedido)
     {
         $request->validate([
-            'metodo_pago' => 'required|in:efectivo,yape',
+            'metodo_pago' => 'required|in:efectivo,yape,mixto',
         ]);
         
         $pedido->pagado = true;

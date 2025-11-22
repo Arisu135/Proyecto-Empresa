@@ -12,7 +12,8 @@
             <h1 class="caja-title">💰 Caja - Pedidos Pendientes</h1>
             <div style="display: flex; gap: 0.75rem;">
                 <a href="{{ route('productos.menu', ['tipo_pedido' => 'Para Aqui']) }}" class="btn btn-green">➕ Nuevo Pedido</a>
-                <a href="{{ route('catalogo.index') }}" class="btn btn-gray">← Volver al Inicio</a>
+                <a href="{{ route('mesas.index') }}" class="btn btn-gray">🍳 Cocina</a>
+                <a href="{{ route('catalogo.index') }}" class="btn btn-gray">← Inicio</a>
             </div>
         </div>
 
@@ -64,6 +65,13 @@
                                 @method('PATCH')
                                 <input type="hidden" name="metodo_pago" value="yape">
                                 <button type="submit" class="btn-pagar" style="background: #9333ea;">📱 Yape</button>
+                            </form>
+                            
+                            <form action="{{ route('caja.marcarPagado', $pedido) }}" method="POST" style="flex: 1;">
+                                @csrf
+                                @method('PATCH')
+                                <input type="hidden" name="metodo_pago" value="mixto">
+                                <button type="submit" class="btn-pagar" style="background: #f59e0b;">🔄 Mixto</button>
                             </form>
                         </div>
 
