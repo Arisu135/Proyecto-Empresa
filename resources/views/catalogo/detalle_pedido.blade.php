@@ -134,7 +134,7 @@
                 <h2 class="text-xl font-bold text-brand-dark text-center mb-2 mt-6">Cantidad</h2>
                 <div class="qty-control">
                     <button type="button" id="decreaseBtn">—</button>
-                    <span id="quantityDisplay">1</span>
+                    <span id="quantityDisplay">0</span>
                     <button type="button" id="increaseBtn">+</button>
                 </div>
                 <hr class="mb-6">
@@ -205,7 +205,7 @@
             </div>
 
             {{-- Inputs Ocultos para el POST --}}
-            <input type="hidden" name="cantidad" id="hiddenQuantity" value="1">
+            <input type="hidden" name="cantidad" id="hiddenQuantity" value="0">
             <input type="hidden" name="opciones_seleccionadas" id="hiddenOptions">
             <input type="hidden" name="precio_final" id="hiddenFinalPrice">
             
@@ -216,7 +216,7 @@
         // (Tu script JS se mantiene igual)
 
         const basePrice = @json($producto->precio);
-        let currentQuantity = 1;
+        let currentQuantity = 0;
 
         // Elementos del DOM
         const quantityDisplay = document.getElementById('quantityDisplay');
@@ -291,7 +291,7 @@
         });
 
         document.getElementById('decreaseBtn').addEventListener('click', () => {
-            if (currentQuantity > 1) {
+            if (currentQuantity > 0) {
                 currentQuantity--;
                 quantityDisplay.textContent = currentQuantity;
                 hiddenQuantity.value = currentQuantity;
