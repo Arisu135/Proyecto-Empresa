@@ -16,8 +16,8 @@ class ProductoSeeder extends Seeder
      */
     public function run(): void
     {
-        // 1. Limpieza de la tabla de productos (PostgreSQL compatible)
-        DB::statement('TRUNCATE TABLE productos RESTART IDENTITY CASCADE;');
+        // 1. Limpieza de la tabla de productos (SQLite compatible)
+        DB::table('productos')->delete();
 
         // --- Mapeo de Categorías por Slug ---
         // Esto asegura que obtendremos el ID correcto.

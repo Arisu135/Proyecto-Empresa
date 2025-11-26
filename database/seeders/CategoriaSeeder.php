@@ -11,8 +11,8 @@ class CategoriaSeeder extends Seeder
 {
     public function run(): void
     {
-        // Limpieza de la tabla de categorías (PostgreSQL compatible)
-        DB::statement('TRUNCATE TABLE categorias RESTART IDENTITY CASCADE;');
+        // Limpieza de la tabla de categorías (SQLite compatible)
+        DB::table('categorias')->delete();
 
         $categorias = [
             'BEBIDAS CALIENTES', 
