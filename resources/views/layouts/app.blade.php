@@ -13,6 +13,15 @@
     <link rel="manifest" href="/manifest.json">
     
     <title>Rebel Jungle - @yield('title')</title>
+    
+    {{-- Service Worker --}}
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/sw.js')
+                .then(() => console.log('SW registered'))
+                .catch(() => console.log('SW failed'));
+        }
+    </script>
 
     {{-- *** ENLACE DE VITE (CSS y JS) *** --}}
     @vite(['resources/css/app.css', 'resources/js/app.js'])
