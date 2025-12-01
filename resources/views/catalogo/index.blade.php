@@ -161,6 +161,11 @@
     <div class="kiosko-container">
         <a href="{{ route('admin.panel') }}" class="admin-link">Admin</a>
         
+        <!-- Botón Pantalla Completa -->
+        <button id="btnFullscreen" style="position: fixed; bottom: 20px; right: 20px; padding: 12px 20px; background: #10b981; color: #fff; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.2); z-index: 1000;">
+            ⛶ Pantalla Completa
+        </button>
+        
         <div class="logo-section">
             <img src="{{ asset('img/logo.png') }}" alt="Rebel Jungle Logo">
         </div>
@@ -184,5 +189,18 @@
             </a>
         </div>
     </div>
+    
+    <script>
+        document.getElementById('btnFullscreen').addEventListener('click', function() {
+            var elem = document.documentElement;
+            if (elem.requestFullscreen) {
+                elem.requestFullscreen();
+            } else if (elem.webkitRequestFullscreen) {
+                elem.webkitRequestFullscreen();
+            } else if (elem.msRequestFullscreen) {
+                elem.msRequestFullscreen();
+            }
+        });
+    </script>
 </body>
 </html>
