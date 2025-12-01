@@ -4,21 +4,26 @@ Sistema de kiosco digital para gestión de pedidos desarrollado con Laravel 12, 
 
 ## 🚀 Inicio Rápido
 
-### Despliegue en Render (Producción)
+### Deploy Rápido (Recomendado)
 
 ```bash
-# 1. Preparar el proyecto
-./deploy-prepare.sh
+# Deploy instantáneo con Deploy Hook
+deploy.bat  # Windows
+./deploy.sh # Linux/Mac
+```
 
-# 2. Subir a Git
+📖 **[Guía de Deploy Rápido](./DEPLOY.md)**
+
+### Despliegue Completo en Render
+
+```bash
+# 1. Hacer cambios y commitear
 git add .
-git commit -m "Listo para despliegue"
+git commit -m "Descripción"
 git push
 
-# 3. En Render.com
-# - Conecta tu repositorio
-# - Selecciona "Blueprint"
-# - ¡Listo! Render hará el resto
+# 2. Deploy automático
+deploy.bat
 ```
 
 📖 **[Guía Completa de Despliegue](./RENDER_GUIDE.md)**
@@ -48,6 +53,7 @@ php artisan serve
 
 ## 📚 Documentación
 
+- **[DEPLOY.md](./DEPLOY.md)** - Deploy rápido con Deploy Hook ⚡
 - **[RENDER_GUIDE.md](./RENDER_GUIDE.md)** - Guía completa de despliegue en Render
 - **[DEPLOYMENT.md](./DEPLOYMENT.md)** - Documentación técnica y troubleshooting
 
@@ -106,6 +112,10 @@ php artisan serve
 ## 🔧 Scripts Útiles
 
 ```bash
+# Deploy rápido a Render
+deploy.bat              # Windows
+./deploy.sh             # Linux/Mac
+
 # Preparar para despliegue
 ./deploy-prepare.sh
 
