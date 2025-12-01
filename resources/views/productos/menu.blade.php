@@ -150,22 +150,6 @@
     </div>
     @endif
     
-    <!-- Botón Pantalla Completa -->
-    <button id="btnFullscreen" style="position: fixed; top: 20px; left: 20px; padding: 10px 16px; background: #10b981; color: #fff; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.2); z-index: 1000; font-size: 14px;">
-        ⛶
-    </button>
-    
-    <script>
-        document.getElementById('btnFullscreen').addEventListener('click', function() {
-            var elem = document.documentElement;
-            if (elem.requestFullscreen) {
-                elem.requestFullscreen();
-            } else if (elem.webkitRequestFullscreen) {
-                elem.webkitRequestFullscreen();
-            } else if (elem.msRequestFullscreen) {
-                elem.msRequestFullscreen();
-            }
-        });
-    </script>
+
 </body>
 </html>

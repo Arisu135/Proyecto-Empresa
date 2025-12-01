@@ -161,17 +161,12 @@
     <div class="kiosko-container">
         <a href="{{ route('admin.panel') }}" class="admin-link">Admin</a>
         
-        <!-- Botón Pantalla Completa -->
-        <button id="btnFullscreen" style="position: fixed; bottom: 20px; right: 20px; padding: 12px 20px; background: #10b981; color: #fff; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.2); z-index: 1000;">
-            ⛶ Pantalla Completa
-        </button>
-        
         <div class="logo-section">
             <img src="{{ asset('img/logo.png') }}" alt="Rebel Jungle Logo">
         </div>
 
         <div class="qr-section">
-            {!! QrCode::size(230)->generate('https://www.instagram.com/rebel_jungle_cafe_plantas_?igsh=NG8xZzJ2bTBpam5t') !!}
+            <img src="{{ asset('img/qr_instagram.jpg') }}" alt="QR Instagram" style="width: 200px; height: 200px; border: 4px solid #fff; border-radius: 10px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);">
             <p class="qr-text">@REBEL_JUNGLE_CAFE_PLANTAS_</p>
         </div>
 
@@ -190,17 +185,6 @@
         </div>
     </div>
     
-    <script>
-        document.getElementById('btnFullscreen').addEventListener('click', function() {
-            var elem = document.documentElement;
-            if (elem.requestFullscreen) {
-                elem.requestFullscreen();
-            } else if (elem.webkitRequestFullscreen) {
-                elem.webkitRequestFullscreen();
-            } else if (elem.msRequestFullscreen) {
-                elem.msRequestFullscreen();
-            }
-        });
-    </script>
+
 </body>
 </html>
