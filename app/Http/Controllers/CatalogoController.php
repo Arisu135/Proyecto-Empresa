@@ -199,16 +199,20 @@ class CatalogoController extends Controller
      */
     public function finalizarPedido(Request $request)
     {
-        // Registro inicial para depuración: captura inputs y estado de sesión
         Log::info('CatalogoController::finalizarPedido llamado', [
             'input' => $request->all(),
             'session_tipo_pedido' => Session::get('tipo_pedido'),
             'session_carrito_count' => count(Session::get('carrito', [])),
+            'pedido_actual' => Session::get('pedido_actual'),
         ]);
-        // 1. Validar el formulario de envío (nombre y dirección)
+
+        // Si hay un pedido_actual en sesión, agregar productos a ese pedido
+        if ($pedidoActualId = Session::get('pedido_actual')) {
+            return $this->agregarProductosAPedidoExistente($request, $pedidoActualId);
+        }
+
         try {
             $validated = $request->validate([
-                // Nota: Los campos 'nombre_cliente' y 'direccion' deben estar en tu formulario de resumen.
                 'nombre_cliente' => ['nullable', 'string', 'max:255'],
                 'direccion' => ['nullable', 'string', 'max:500'], 
             ]);
@@ -219,7 +223,6 @@ class CatalogoController extends Controller
         $tipoPedido = Session::get('tipo_pedido');
         $carrito = Session::get('carrito', []);
         
-        // Comprobaciones de seguridad
         if (!$tipoPedido) {
             return redirect()->route('catalogo.index')->with('error', 'Por favor, selecciona el tipo de pedido (Mesa/Llevar) para comenzar.');
         }
@@ -233,7 +236,6 @@ class CatalogoController extends Controller
         DB::beginTransaction();
 
         try {
-            // A. Crear el Pedido Principal
             Log::info('Creando Pedido en la DB', ['tipo_pedido' => $tipoPedido, 'total' => $total, 'nombre_cliente' => $validated['nombre_cliente'] ?? null]);
 
             $pedido = Pedido::create([
@@ -246,10 +248,7 @@ class CatalogoController extends Controller
                 'pagado' => false,
             ]);
 
-            // B. Crear los Detalles del Pedido
             foreach ($carrito as $itemKey => $item) { 
-                
-                // CRUCIAL: Convertir el array de opciones a JSON string para la columna TEXT
                 $opcionesJson = json_encode($item['opciones'] ?? []); 
                 
                 Log::info('Creando PedidoDetalle', ['pedido_id' => $pedido->id, 'producto_id' => $item['id'], 'cantidad' => $item['cantidad']]);
@@ -261,18 +260,17 @@ class CatalogoController extends Controller
                     'cantidad'                => $item['cantidad'],
                     'precio_unitario'         => $item['precio'], 
                     'subtotal'                => $item['subtotal'],
-                    'opciones_personalizadas' => $opcionesJson, // ¡Aquí se usa la columna que migramos!
+                    'opciones_personalizadas' => $opcionesJson,
                 ]);
             }
 
             DB::commit();
 
-            // 2. Limpiar la sesión
             Session::forget(['carrito', 'tipo_pedido']); 
 
-            // 3. Redirección de Éxito - Redirigir a cocina con mensaje
+            // Redirigir a cocina con datos para imprimir 2 tickets
             return redirect()->route('mesas.index')->with([
-                'pedido_confirmado' => true,
+                'imprimir_tickets' => true,
                 'pedido_id' => $pedido->id,
                 'pedido_cliente' => $pedido->nombre_cliente,
                 'pedido_total' => $pedido->total,
@@ -283,11 +281,55 @@ class CatalogoController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
             
-            // Log de error detallado para Heroku
             Log::error("Error al finalizar el pedido: " . $e->getMessage() . " en " . $e->getFile() . ":" . $e->getLine());
 
-            // Redirigimos al resumen con el error para que sea visible.
             return redirect()->route('pedido.resumen')->with('error', 'Hubo un error al procesar tu pedido. Por favor, inténtalo de nuevo. Detalles: ' . $e->getMessage());
+        }
+    }
+
+    private function agregarProductosAPedidoExistente(Request $request, $pedidoId)
+    {
+        $carrito = Session::get('carrito', []);
+        
+        if (empty($carrito)) {
+            return redirect()->route('caja.index')->with('error', 'No hay productos para agregar.');
+        }
+
+        DB::beginTransaction();
+
+        try {
+            $pedido = Pedido::findOrFail($pedidoId);
+            $totalNuevo = 0;
+
+            foreach ($carrito as $item) {
+                $opcionesJson = json_encode($item['opciones'] ?? null);
+                
+                PedidoDetalle::create([
+                    'pedido_id' => $pedido->id,
+                    'producto_id' => $item['id'],
+                    'nombre_producto' => $item['nombre'],
+                    'cantidad' => $item['cantidad'],
+                    'precio_unitario' => $item['precio'],
+                    'subtotal' => $item['precio'] * $item['cantidad'],
+                    'opciones_personalizadas' => $opcionesJson,
+                ]);
+                
+                $totalNuevo += $item['precio'] * $item['cantidad'];
+            }
+
+            $pedido->total += $totalNuevo;
+            $pedido->save();
+
+            DB::commit();
+
+            Session::forget(['carrito', 'pedido_actual', 'tipo_pedido']);
+
+            return redirect()->route('caja.index')->with('success', "Productos agregados al pedido #{$pedido->id}");
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error("Error al agregar productos: " . $e->getMessage());
+            return redirect()->route('caja.index')->with('error', 'Error al agregar productos.');
         }
     }
 
@@ -497,6 +539,18 @@ class CatalogoController extends Controller
         $query->forceDelete();
 
         return redirect()->route('admin.ventas.eliminadas')->with('success', "Se eliminaron {$count} registros del historial.");
+    }
+
+    public function ticketCocina(Pedido $pedido)
+    {
+        $pedido->load('detalles');
+        return view('tickets.cocina', compact('pedido'));
+    }
+
+    public function ticketCaja(Pedido $pedido)
+    {
+        $pedido->load('detalles');
+        return view('tickets.caja', compact('pedido'));
     }
 }
 

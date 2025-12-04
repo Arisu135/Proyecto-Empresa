@@ -47,4 +47,44 @@ class CajaController extends Controller
         return back()->with('success', "Venta #{$pedido->id} eliminada correctamente.")
                      ->with('imprimir_ticket_eliminado', $pedido->id);
     }
+
+    public function agregarProductos(Pedido $pedido)
+    {
+        session(['pedido_actual' => $pedido->id]);
+        session(['tipo_pedido' => $pedido->tipo_pedido ?? 'Para Aqui']);
+        return redirect()->route('productos.menu');
+    }
+
+    public function agregarProductosPost(Request $request, Pedido $pedido)
+    {
+        $carrito = session('carrito', []);
+        
+        if (empty($carrito)) {
+            return redirect()->route('caja.index')->with('error', 'No hay productos para agregar.');
+        }
+
+        $totalNuevo = 0;
+        foreach ($carrito as $item) {
+            $opcionesJson = json_encode($item['opciones'] ?? null);
+            
+            \App\Models\PedidoDetalle::create([
+                'pedido_id' => $pedido->id,
+                'producto_id' => $item['id'],
+                'nombre_producto' => $item['nombre'],
+                'cantidad' => $item['cantidad'],
+                'precio_unitario' => $item['precio'],
+                'subtotal' => $item['precio'] * $item['cantidad'],
+                'opciones_personalizadas' => $opcionesJson,
+            ]);
+            
+            $totalNuevo += $item['precio'] * $item['cantidad'];
+        }
+
+        $pedido->total += $totalNuevo;
+        $pedido->save();
+
+        session()->forget(['carrito', 'pedido_actual']);
+
+        return redirect()->route('caja.index')->with('success', "Productos agregados al pedido #{$pedido->id}");
+    }
 }

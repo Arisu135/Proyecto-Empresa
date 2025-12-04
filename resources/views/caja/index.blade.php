@@ -76,7 +76,10 @@
                         </div>
 
                         <div class="pedido-actions" style="margin-top: 0.5rem;">
-                            <button onclick="mostrarModalEliminar({{ $pedido->id }})" class="btn-eliminar" style="width: 100%;">
+                            <a href="{{ route('caja.agregarProductos', $pedido) }}" class="btn btn-green" style="flex: 1; text-align: center;">
+                                ➕ Agregar Productos
+                            </a>
+                            <button onclick="mostrarModalEliminar({{ $pedido->id }})" class="btn-eliminar" style="flex: 1;">
                                 🗑️ Eliminar
                             </button>
                         </div>

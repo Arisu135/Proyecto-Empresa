@@ -75,6 +75,8 @@ Route::middleware(['admin.auth'])->group(function () {
 Route::get('/caja', [CajaController::class, 'index'])->name('caja.index');
 Route::patch('/caja/{pedido}/pagar', [CajaController::class, 'marcarPagado'])->name('caja.marcarPagado');
 Route::delete('/caja/{pedido}/eliminar', [CajaController::class, 'eliminarVenta'])->name('caja.eliminarVenta');
+Route::get('/caja/{pedido}/agregar-productos', [CajaController::class, 'agregarProductos'])->name('caja.agregarProductos');
+Route::post('/caja/{pedido}/agregar-productos', [CajaController::class, 'agregarProductosPost'])->name('caja.agregarProductos.post');
 
 // Vista de Mesas (ahora es Cocina completa)
 Route::get('/mesas', [MesaController::class, 'index'])->name('mesas.index');
@@ -123,3 +125,7 @@ Route::get('/ops/check-db', function () {
 
 // API para sistema local de impresión
 Route::get('/api/print/pending', [\App\Http\Controllers\Api\PrintController::class, 'getPendingPrints']);
+
+// Rutas de tickets de impresión
+Route::get('/tickets/{pedido}/cocina', [CatalogoController::class, 'ticketCocina'])->name('tickets.cocina');
+Route::get('/tickets/{pedido}/caja', [CatalogoController::class, 'ticketCaja'])->name('tickets.caja');

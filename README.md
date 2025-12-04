@@ -102,6 +102,17 @@ php artisan serve
 - Panel de cocina
 - Estados de pedido
 
+✅ **Sistema de Tickets** 🎫
+- Impresión automática de 2 tickets al confirmar pedido:
+  - 🍳 Ticket Cocina (productos y opciones)
+  - 💰 Ticket Caja (precios y total)
+- Agregar productos a pedidos existentes desde Caja
+- Diseño optimizado para impresoras térmicas 80mm
+- Compatible con Xprinter XP-Q260NL (ESC/POS)
+
+📝 **[Ver Guía de Tickets](./TICKETS_FEATURE.md)**
+🖨️ **[Configurar Impresora](./IMPRESORA_CONFIG.md)**
+
 ✅ **Optimizado para Producción**
 - Docker multi-stage build
 - OPcache configurado
