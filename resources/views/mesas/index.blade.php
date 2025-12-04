@@ -40,11 +40,7 @@
 
     <main class="max-w-7xl mx-auto py-4 px-4">
 
-        @if(session('imprimir_tickets'))
-            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
-                <p class="font-bold">✅ Pedido #{{ session('pedido_id') }} confirmado - Tickets impresos automáticamente</p>
-            </div>
-        @endif
+
 
         @if(session('success'))
             <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
@@ -169,15 +165,7 @@
         document.getElementById('modalEliminar').style.display = 'none';
     }
 
-    // Auto-abrir tickets si hay pedido confirmado
-    @if(session('imprimir_tickets'))
-        window.addEventListener('load', function() {
-            window.open('{{ route('tickets.cocina', session('pedido_id')) }}', '_blank');
-            setTimeout(function() {
-                window.open('{{ route('tickets.caja', session('pedido_id')) }}', '_blank');
-            }, 500);
-        });
-    @endif
+
     </script>
 </body>
 </html>

@@ -268,15 +268,8 @@ class CatalogoController extends Controller
 
             Session::forget(['carrito', 'tipo_pedido']); 
 
-            // Redirigir a cocina con datos para imprimir 2 tickets
-            return redirect()->route('mesas.index')->with([
-                'imprimir_tickets' => true,
-                'pedido_id' => $pedido->id,
-                'pedido_cliente' => $pedido->nombre_cliente,
-                'pedido_total' => $pedido->total,
-                'pedido_fecha' => $pedido->created_at->format('d/m/Y H:i'),
-                'pedido_detalles' => $pedido->detalles
-            ]);
+            // Redirigir a cocina
+            return redirect()->route('mesas.index')->with('success', "Pedido #{$pedido->id} confirmado. Tickets imprimiéndose...");
 
         } catch (\Exception $e) {
             DB::rollBack();

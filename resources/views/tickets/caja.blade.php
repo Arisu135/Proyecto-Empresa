@@ -142,8 +142,7 @@
     </div>
 
     <script>
-        // Auto-imprimir al cargar (opcional)
-        // window.onload = function() { window.print(); }
+        // Auto-impresión desactivada - Se usa sistema local (iniciar.bat)
     </script>
 </body>
 </html>

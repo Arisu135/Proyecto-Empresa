@@ -35,6 +35,12 @@ class Pedido extends Model
         'eliminado_at' => 'datetime',
     ];
 
+    protected $attributes = [
+        'pagado' => false,
+        'impreso' => false,
+        'eliminado' => false,
+    ];
+
     /**
      * Define la relación con los detalles (ítems) del pedido.
      * Esto es necesario para el método confirmacionPedido($id).
