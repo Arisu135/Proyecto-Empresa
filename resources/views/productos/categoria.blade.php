@@ -84,11 +84,8 @@
                 
                 {{-- Contenedor de Imagen --}}
                 <div class="w-full h-36 bg-white rounded-lg mb-3 flex items-center justify-center overflow-hidden">
-                    {{-- PROTECCIÓN: Usa el operador ?? para prevenir un error si imagen_nombre es NULL --}}
-                    @php
-                        $imagenNombre = $producto->imagen_nombre ?? 'default.png';
-                    @endphp
-                    <img src="{{ asset('img/productos/' . $imagenNombre) }}" 
+                    {{-- PROTECCIÓN: Usa el operador ?? para prevenir un error si imagen es NULL --}}
+                    <img src="{{ asset($producto->imagen ?? '/img/productos/default.png') }}" 
                           alt="{{ $producto->nombre ?? 'Producto' }}" 
                           class="h-full w-full object-contain"
                           onerror="this.onerror=null; this.src='https://placehold.co/150x150/f8f8f8/4d2925?text=IMG'">

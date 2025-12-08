@@ -106,7 +106,7 @@
                class="product-card bg-white p-4 rounded-2xl shadow-md flex flex-col justify-center items-center cursor-pointer transform hover:-translate-y-1 transition-transform duration-300">
                 
                 <div class="h-36 bg-white rounded-lg mb-4 flex items-center justify-center overflow-hidden">
-                    <img src="{{ asset('img/categorias/' . $categoria->imagen_nombre) }}" 
+                    <img src="{{ asset($categoria->imagen ?? '/img/categorias/default.png') }}" 
                         alt="{{ $categoria->nombre }}" 
                         class="h-full w-full object-contain"
                         onerror="this.onerror=null; this.src='https://placehold.co/150x150/f8f8f8/4d2925?text=IMG'">
