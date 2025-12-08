@@ -94,7 +94,7 @@
 
             {{-- BLOQUE DE IMAGEN --}}
             <div class="h-48 w-full bg-brand-soft-green flex items-center justify-center overflow-hidden">
-                <img src="{{ asset('img/productos/' . $producto->imagen_nombre) }}" 
+                <img src="{{ asset($producto->imagen ?? '/img/productos/default.png') }}" 
                 alt="{{ $producto->nombre }}" 
                 class="max-w-xs max-h-full object-contain p-4"> 
             </div>
