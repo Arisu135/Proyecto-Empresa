@@ -133,15 +133,13 @@
         document.getElementById('modalConfirmar').style.display = 'none';
     }
 
-    // Asegurar que el formulario se envíe correctamente
     document.getElementById('formConfirmar')?.addEventListener('submit', function(e) {
         const nombre = document.getElementById('nombreCliente').value.trim();
         if (!nombre) {
             e.preventDefault();
             alert('Por favor ingresa tu nombre');
-            return false;
+            return;
         }
-        // Mostrar loading
         document.getElementById('btnConfirmar').textContent = 'Procesando...';
         document.getElementById('btnConfirmar').disabled = true;
     });
