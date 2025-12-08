@@ -100,14 +100,13 @@
     <div id="modalConfirmar" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:9999; align-items:center; justify-content:center;">
         <div style="background:white; padding:30px; border-radius:12px; max-width:500px; width:90%;">
             <h2 style="font-size:24px; font-weight:bold; margin-bottom:15px; color:#4d2925;">✅ Confirmar Pedido</h2>
-            <p style="margin-bottom:20px; color:#4b5563;">Por favor ingresa los siguientes datos:</p>
+            <p style="margin-bottom:20px; color:#4b5563;">Por favor ingresa tu nombre:</p>
             
-            <form id="formConfirmar" action="{{ route('pedido.finalizar') }}" method="POST">
+            <form action="{{ route('pedido.finalizar') }}" method="POST">
                 @csrf
                 
                 <div style="margin-bottom:20px;">
-                    <label style="display:block; font-weight:600; margin-bottom:5px; color:#374151;">Nombre del Cliente: <span style="color:#ef4444;">*</span></label>
-                    <input type="text" name="nombre_cliente" id="nombreCliente" placeholder="Tu nombre" required style="width:100%; padding:12px; border:2px solid #d1d5db; border-radius:8px; font-size:16px;">
+                    <input type="text" name="nombre_cliente" placeholder="Tu nombre" required style="width:100%; padding:12px; border:2px solid #d1d5db; border-radius:8px; font-size:16px;">
                 </div>
                 
                 <input type="hidden" name="direccion" value="En el local">
@@ -116,7 +115,7 @@
                     <button type="button" onclick="cerrarModalConfirmar()" style="flex:1; padding:12px; background:#6b7280; color:white; border:none; border-radius:8px; font-weight:bold; cursor:pointer; font-size:16px;">
                         Cancelar
                     </button>
-                    <button type="submit" id="btnConfirmar" style="flex:1; padding:12px; background:#4CAF50; color:white; border:none; border-radius:8px; font-weight:bold; cursor:pointer; font-size:16px;">
+                    <button type="submit" style="flex:1; padding:12px; background:#4CAF50; color:white; border:none; border-radius:8px; font-weight:bold; cursor:pointer; font-size:16px;">
                         Confirmar
                     </button>
                 </div>
@@ -128,21 +127,9 @@
     function mostrarModalConfirmar() {
         document.getElementById('modalConfirmar').style.display = 'flex';
     }
-
     function cerrarModalConfirmar() {
         document.getElementById('modalConfirmar').style.display = 'none';
     }
-
-    document.getElementById('formConfirmar')?.addEventListener('submit', function(e) {
-        const nombre = document.getElementById('nombreCliente').value.trim();
-        if (!nombre) {
-            e.preventDefault();
-            alert('Por favor ingresa tu nombre');
-            return;
-        }
-        document.getElementById('btnConfirmar').textContent = 'Procesando...';
-        document.getElementById('btnConfirmar').disabled = true;
-    });
     </script>
 
 </body>
