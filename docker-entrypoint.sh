@@ -12,26 +12,8 @@ else
     echo "⚠️  Variable PORT no definida, usando puerto 80 por defecto"
 fi
 
-# Espera a que la base de datos esté disponible
-echo "⏳ Esperando a la base de datos..."
-max_attempts=30
-attempt=0
-
-# Espera a que PostgreSQL acepte conexiones
-while [ $attempt -lt $max_attempts ]; do
-    if nc -z ${DB_HOST:-postgres} ${DB_PORT:-5432} 2>/dev/null; then
-        echo "✅ Base de datos disponible"
-        break
-    fi
-    attempt=$((attempt + 1))
-    echo "⏳ Intento $attempt de $max_attempts..."
-    sleep 2
-done
-
-if [ $attempt -eq $max_attempts ]; then
-    echo "❌ No se pudo conectar a la base de datos después de $max_attempts intentos"
-    echo "⚠️  Continuando de todos modos..."
-fi
+# Verificación de BD desactivada - Neon siempre disponible
+echo "✅ Conectando a base de datos externa (Neon)..."
 
 # Limpia cache de paquetes primero
 echo "🧹 Limpiando cache de paquetes..."
