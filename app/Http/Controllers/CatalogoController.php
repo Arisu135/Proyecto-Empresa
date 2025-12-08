@@ -220,12 +220,8 @@ class CatalogoController extends Controller
             return back()->withErrors($e->errors())->withInput();
         }
 
-        $tipoPedido = Session::get('tipo_pedido');
+        $tipoPedido = Session::get('tipo_pedido', 'dine_in');
         $carrito = Session::get('carrito', []);
-        
-        if (!$tipoPedido) {
-            return redirect()->route('catalogo.index')->with('error', 'Por favor, selecciona el tipo de pedido (Mesa/Llevar) para comenzar.');
-        }
 
         if (empty($carrito)) {
             return redirect()->route('catalogo.index')->with('error', 'No puedes finalizar un pedido sin productos.');
