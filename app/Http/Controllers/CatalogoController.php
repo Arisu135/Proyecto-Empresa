@@ -264,8 +264,9 @@ class CatalogoController extends Controller
 
             Session::forget(['carrito', 'tipo_pedido']); 
 
-            // Redirigir a cocina
-            return redirect()->route('mesas.index')->with('success', "Pedido #{$pedido->id} confirmado. Tickets imprimiéndose...");
+            // Redirigir a página de confirmación
+            return redirect()->route('pedido.confirmacion', ['id' => $pedido->id])
+                ->with('success', "Pedido #{$pedido->id} confirmado exitosamente.");
 
         } catch (\Exception $e) {
             DB::rollBack();
