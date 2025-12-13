@@ -271,9 +271,14 @@ class CatalogoController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
             
-            Log::error("Error al finalizar el pedido: " . $e->getMessage() . " en " . $e->getFile() . ":" . $e->getLine());
+            Log::error("ERROR FINALIZARPEDIDO", [
+                'message' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString()
+            ]);
 
-            return redirect()->route('pedido.resumen')->with('error', 'Hubo un error al procesar tu pedido. Por favor, inténtalo de nuevo. Detalles: ' . $e->getMessage());
+            return redirect()->route('pedido.resumen')->with('error', 'Error: ' . $e->getMessage());
         }
     }
 
