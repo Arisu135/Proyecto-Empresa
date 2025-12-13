@@ -123,6 +123,16 @@ Route::get('/ops/check-db', function () {
     ]);
 });
 
+Route::get('/ops/logs', function () {
+    $logFile = storage_path('logs/laravel.log');
+    if (!file_exists($logFile)) {
+        return response()->json(['error' => 'No log file found']);
+    }
+    $lines = file($logFile);
+    $lastLines = array_slice($lines, -100); // Últimas 100 líneas
+    return response('<pre>' . implode('', $lastLines) . '</pre>');
+});
+
 // API para sistema local de impresión
 Route::get('/api/print/pending', [\App\Http\Controllers\Api\PrintController::class, 'getPendingPrints']);
 
