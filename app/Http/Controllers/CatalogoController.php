@@ -230,9 +230,9 @@ class CatalogoController extends Controller
             'total' => $total,
         ]);
 
-        DB::beginTransaction();
-
         try {
+            DB::beginTransaction();
+
             $pedido = Pedido::create([
                 'tipo_pedido' => $tipoPedido, 
                 'nombre_cliente' => $nombreCliente,
@@ -243,25 +243,33 @@ class CatalogoController extends Controller
                 'pagado' => false,
             ]);
 
-            Log::info('Pedido creado', ['pedido_id' => $pedido->id]);
+            Log::info('Pedido creado OK', ['pedido_id' => $pedido->id]);
 
-            foreach ($carrito as $itemKey => $item) { 
-                PedidoDetalle::create([
-                    'pedido_id'               => $pedido->id,
-                    'producto_id'             => $item['id'], 
-                    'nombre_producto'         => $item['nombre'],
-                    'cantidad'                => $item['cantidad'],
-                    'precio_unitario'         => $item['precio'], 
-                    'subtotal'                => $item['subtotal'],
-                    'opciones_personalizadas' => json_encode($item['opciones'] ?? []),
-                ]);
+            foreach ($carrito as $itemKey => $item) {
+                try {
+                    PedidoDetalle::create([
+                        'pedido_id'               => $pedido->id,
+                        'producto_id'             => $item['id'], 
+                        'nombre_producto'         => $item['nombre'],
+                        'cantidad'                => $item['cantidad'],
+                        'precio_unitario'         => $item['precio'], 
+                        'subtotal'                => $item['subtotal'],
+                        'opciones_personalizadas' => json_encode($item['opciones'] ?? []),
+                    ]);
+                    Log::info('Detalle creado', ['item' => $item['nombre']]);
+                } catch (\Exception $e) {
+                    Log::error('Error al crear detalle', [
+                        'item' => $item,
+                        'error' => $e->getMessage()
+                    ]);
+                    throw $e;
+                }
             }
 
-            Log::info('Detalles creados, haciendo commit');
             DB::commit();
+            Log::info('Commit exitoso');
 
             Session::forget(['carrito', 'tipo_pedido']); 
-            Log::info('Sesión limpiada, redirigiendo a confirmación');
 
             return redirect()->route('pedido.confirmacion', ['id' => $pedido->id])
                 ->with('success', "Pedido #{$pedido->id} confirmado exitosamente.");
@@ -273,7 +281,6 @@ class CatalogoController extends Controller
                 'message' => $e->getMessage(),
                 'file' => $e->getFile(),
                 'line' => $e->getLine(),
-                'trace' => $e->getTraceAsString()
             ]);
 
             return redirect()->route('pedido.resumen')->with('error', 'Error: ' . $e->getMessage());
