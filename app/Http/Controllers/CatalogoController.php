@@ -199,94 +199,51 @@ class CatalogoController extends Controller
      */
     public function finalizarPedido(Request $request)
     {
-        Log::info('=== INICIO FINALIZAR PEDIDO ===', [
-            'all_input' => $request->all(),
-            'session_all' => $request->session()->all(),
-        ]);
+        $carrito = Session::get('carrito', []);
 
-        // Si hay un pedido_actual en sesión, agregar productos a ese pedido
+        if (empty($carrito)) {
+            return redirect()->route('catalogo.index')->with('error', 'Carrito vacío');
+        }
+
+        // Si hay pedido_actual, agregar productos
         if ($pedidoActualId = Session::get('pedido_actual')) {
-            Log::info('Detectado pedido_actual, redirigiendo');
             return $this->agregarProductosAPedidoExistente($request, $pedidoActualId);
         }
 
-        $carrito = Session::get('carrito', []);
-        Log::info('Carrito obtenido', ['count' => count($carrito), 'items' => $carrito]);
-
-        if (empty($carrito)) {
-            Log::warning('Carrito vacío');
-            return redirect()->route('catalogo.index')->with('error', 'No puedes finalizar un pedido sin productos.');
-        }
-
-        // Normalizar tipo_pedido
-        $tipoPedidoRaw = Session::get('tipo_pedido', 'dine_in');
-        $tipoPedido = ($tipoPedidoRaw == 'Para Aqui' || $tipoPedidoRaw == 'dine_in') ? 'dine_in' : 'takeaway';
-        
-        $total = array_sum(array_column($carrito, 'subtotal'));
-        $nombreCliente = $request->input('nombre_cliente', 'Cliente Kiosco');
-        $direccion = $request->input('direccion', 'En el lugar');
-
-        Log::info('Datos para crear pedido', [
-            'tipo_pedido' => $tipoPedido,
-            'nombre_cliente' => $nombreCliente,
-            'direccion' => $direccion,
-            'total' => $total,
-        ]);
-
         try {
-            DB::beginTransaction();
+            $total = array_sum(array_column($carrito, 'subtotal'));
+            
+            // Crear pedido SIN transacción primero para ver si funciona
+            $pedido = new Pedido();
+            $pedido->tipo_pedido = 'dine_in';
+            $pedido->nombre_cliente = $request->input('nombre_cliente', 'Cliente');
+            $pedido->direccion = 'En el local';
+            $pedido->total = $total;
+            $pedido->estado = 'Pendiente';
+            $pedido->pagado = false;
+            $pedido->save();
 
-            $pedido = Pedido::create([
-                'tipo_pedido' => $tipoPedido, 
-                'nombre_cliente' => $nombreCliente,
-                'direccion' => $direccion,
-                'numero_mesa' => $request->input('numero_mesa'),
-                'total' => $total,
-                'estado' => 'Pendiente',
-                'pagado' => false,
-            ]);
-
-            Log::info('Pedido creado OK', ['pedido_id' => $pedido->id]);
-
-            foreach ($carrito as $itemKey => $item) {
-                try {
-                    PedidoDetalle::create([
-                        'pedido_id'               => $pedido->id,
-                        'producto_id'             => $item['id'], 
-                        'nombre_producto'         => $item['nombre'],
-                        'cantidad'                => $item['cantidad'],
-                        'precio_unitario'         => $item['precio'], 
-                        'subtotal'                => $item['subtotal'],
-                        'opciones_personalizadas' => json_encode($item['opciones'] ?? []),
-                    ]);
-                    Log::info('Detalle creado', ['item' => $item['nombre']]);
-                } catch (\Exception $e) {
-                    Log::error('Error al crear detalle', [
-                        'item' => $item,
-                        'error' => $e->getMessage()
-                    ]);
-                    throw $e;
-                }
+            // Crear detalles
+            foreach ($carrito as $item) {
+                $detalle = new PedidoDetalle();
+                $detalle->pedido_id = $pedido->id;
+                $detalle->producto_id = $item['id'];
+                $detalle->nombre_producto = $item['nombre'];
+                $detalle->cantidad = $item['cantidad'];
+                $detalle->precio_unitario = $item['precio'];
+                $detalle->subtotal = $item['subtotal'];
+                $detalle->opciones_personalizadas = json_encode($item['opciones'] ?? []);
+                $detalle->save();
             }
 
-            DB::commit();
-            Log::info('Commit exitoso');
-
-            Session::forget(['carrito', 'tipo_pedido']); 
+            Session::forget(['carrito', 'tipo_pedido']);
 
             return redirect()->route('pedido.confirmacion', ['id' => $pedido->id])
-                ->with('success', "Pedido #{$pedido->id} confirmado exitosamente.");
+                ->with('success', "Pedido #{$pedido->id} confirmado.");
 
         } catch (\Exception $e) {
-            DB::rollBack();
-            
-            Log::error('=== ERROR FINALIZARPEDIDO ===', [
-                'message' => $e->getMessage(),
-                'file' => $e->getFile(),
-                'line' => $e->getLine(),
-            ]);
-
-            return redirect()->route('pedido.resumen')->with('error', 'Error: ' . $e->getMessage());
+            Log::error('ERROR FINALIZAR', ['msg' => $e->getMessage()]);
+            return redirect()->route('pedido.resumen')->with('error', $e->getMessage());
         }
     }
 
