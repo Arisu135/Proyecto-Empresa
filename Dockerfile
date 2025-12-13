@@ -84,11 +84,8 @@ RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
 # Configura PHP para producción
 RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 
-# Configura OPcache para mejor rendimiento
-RUN echo "opcache.enable=1" >> "$PHP_INI_DIR/conf.d/opcache.ini" \
-    && echo "opcache.memory_consumption=256" >> "$PHP_INI_DIR/conf.d/opcache.ini" \
-    && echo "opcache.max_accelerated_files=20000" >> "$PHP_INI_DIR/conf.d/opcache.ini" \
-    && echo "opcache.validate_timestamps=0" >> "$PHP_INI_DIR/conf.d/opcache.ini"
+# Configura OPcache (TEMPORALMENTE DESHABILITADO PARA DEBUG)
+RUN echo "opcache.enable=0" >> "$PHP_INI_DIR/conf.d/opcache.ini"
 
 # Habilita módulos de Apache necesarios
 RUN a2enmod rewrite headers
