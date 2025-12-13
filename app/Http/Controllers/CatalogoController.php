@@ -218,7 +218,10 @@ class CatalogoController extends Controller
             return redirect()->route('catalogo.index')->with('error', 'No puedes finalizar un pedido sin productos.');
         }
 
-        $tipoPedido = Session::get('tipo_pedido', 'dine_in');
+        // Normalizar tipo_pedido
+        $tipoPedidoRaw = Session::get('tipo_pedido', 'dine_in');
+        $tipoPedido = ($tipoPedidoRaw == 'Para Aqui' || $tipoPedidoRaw == 'dine_in') ? 'dine_in' : 'takeaway';
+        
         $total = array_sum(array_column($carrito, 'subtotal'));
         $nombreCliente = $request->input('nombre_cliente', 'Cliente Kiosco');
         $direccion = $request->input('direccion', 'En el lugar');
